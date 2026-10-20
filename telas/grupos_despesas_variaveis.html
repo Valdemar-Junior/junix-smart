@@ -273,7 +273,7 @@
   .sanfona .lista a:last-child { border-radius: 0 0 6px 6px; }
   .sanfona .lista a:hover { background: var(--hover-botao); }
 
-  .marca-erp { background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
+  .marca-erp { display: block; background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
   @media (prefers-color-scheme: dark) {
     html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
   }
@@ -308,7 +308,7 @@
   </defs>
 </svg>
 <nav id="sidebar">
-  <div class="sidebar-brand marca-erp"></div>
+  <a href="../menu/cadastros.html" class="sidebar-brand marca-erp" aria-label="Tela inicial" title="Tela inicial"></a>
   <div id="div_pesquisa_programa_menu">
     <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
   </div>
