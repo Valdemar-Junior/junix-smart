@@ -423,7 +423,7 @@
   #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
 </style>
 </head>
-<body>
+<body data-tela="venda" data-tabela="documentos" data-prefixo="documento_saida" data-lista="documentos_tipo_movimento_S.html">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-estrela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
@@ -981,7 +981,7 @@
                 </button>
 
                     <div style="width: 250px; display: inline-block;">
-                      <select name="_local_estocagem_padrao_usuario" id="_local_estocagem_padrao_usuario" class="form-control" form="formulario" data-locais-ordem-entrega="{&quot;307&quot;:&quot;DEPÓSITO DEMO&quot;,&quot;327&quot;:&quot;DEPÓSITO DEMO AUXILIAR&quot;,&quot;306&quot;:&quot;LOJA DEMO CENTRO&quot;,&quot;310&quot;:&quot;LOJA MOSSORO&quot;}" data-locais-filial="{&quot;306&quot;:&quot;LOJA DEMO CENTRO&quot;}" atributo="_local_estocagem_padrao_usuario"><option value="">Selecione Local de Estocagem</option>
+                      <select name="_local_estocagem_padrao_usuario" id="_local_estocagem_padrao_usuario" class="form-control" form="formulario" data-locais-ordem-entrega="{}" data-locais-filial="{}" atributo="_local_estocagem_padrao_usuario"><option value="">Selecione Local de Estocagem</option>
 
 
 
@@ -1174,7 +1174,7 @@
                   <label class="no-padding-right control-label col-xs-12 col-lg-6 label-sm label-md" for="forma_pagamento_id" id="titulo_campo_forma_pagamento_id">Forma
                     de Pagamento</label>
                   <div class="col-xs-12 col-lg-6">
-                    <div class="btn-group bootstrap-select form-control forma-pagamento-id combobox-com-pesquisa"><button type="button" class="btn dropdown-toggle bs-placeholder btn-default" data-toggle="dropdown" role="button" data-id="forma_pagamento_id_0" title="Selecione"><span class="filter-option pull-left">Selecione</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><div class="bs-searchbox"><input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar" role="textbox" aria-label="Search" style=""></div><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">Selecione</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="7"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Lucree</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="30"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">previsão de pagamento</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="31"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Importação</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="32"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Boleto</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="33"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Cheque</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="34"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Transferência Bancária / PIX (FORNECEDORES)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="45"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Cashback</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select atributo="forma_pagamento_id" data-permutas="[]" class="form-control forma-pagamento-id combobox-com-pesquisa" id="forma_pagamento_id_0" name="documento_saida[dados_dos_pagamentos][0][forma_pagamento_id]" data-live-search="true" data-size="10" data-live-search-placeholder="Pesquisar" data-none-results-text="Nenhum registro encontrado" tabindex="-98"><option value="">Selecione</option></select></div>
+                    <div class="btn-group bootstrap-select form-control forma-pagamento-id combobox-com-pesquisa"><button type="button" class="btn dropdown-toggle bs-placeholder btn-default" data-toggle="dropdown" role="button" data-id="forma_pagamento_id_0" title="Selecione"><span class="filter-option pull-left">Selecione</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><div class="bs-searchbox"><input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar" role="textbox" aria-label="Search" style=""></div><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">Selecione</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select atributo="forma_pagamento_id" data-permutas="[]" class="form-control forma-pagamento-id combobox-com-pesquisa" id="forma_pagamento_id_0" name="documento_saida[dados_dos_pagamentos][0][forma_pagamento_id]" data-live-search="true" data-size="10" data-live-search-placeholder="Pesquisar" data-none-results-text="Nenhum registro encontrado" tabindex="-98"><option value="">Selecione</option></select></div>
                   </div>
                   <span class="span-dados-despesas-bancarias"></span>
                 </div>
@@ -1909,5 +1909,9 @@
   // Links sem destino no protótipo não recarregam a página
   $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
 </script>
+
+<script src="../assets/meta.js"></script>
+<script src="../assets/erp-dados.js"></script>
+<script src="../assets/venda.js"></script>
 </body>
 </html>

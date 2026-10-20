@@ -69,6 +69,11 @@
     var n = Number(s);
     return isNaN(n) ? null : n;
   }
+  // as colunas são "timestamp without time zone": grava a hora local, não a UTC
+  function agoraLocal() {
+    var d = new Date(), p = function (n) { return ('0' + n).slice(-2); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
   function simNao(v) { return v === true ? 'Sim' : v === false ? 'Não' : ''; }
   function parametro(nome) { return new URLSearchParams(location.search).get(nome); }
 
@@ -197,11 +202,18 @@
     if (def.tipo === 'num') return numBR(v, 2);
     return v;
   }
-  function fkPorNome(tabela, base) {
+  function fkPorNome(tabela, base, coluna) {
     var fks = META.fks[tabela] || {};
     if (fks[base + '_id']) return base + '_id';
-    // "descricao_filial_cadastro" -> filial_cadastro_id; "nome_fornecedor" -> fornecedor_padrao_id
-    return Object.keys(fks).filter(function (c) { return c.indexOf(base) === 0 || c.indexOf('_' + base + '_') >= 0; })[0] || null;
+    // "descricao_filial_cadastro" -> filial_cadastro_id; "nome_fornecedor" -> fornecedor_padrao_id;
+    // "nome_cliente_fornecedor" -> pessoa_cliente_fornecedor_id (e não endereco_cliente_fornecedor_id: endereço não tem nome)
+    var notas = Object.keys(fks).map(function (c) {
+      var n = c === base + '_id' ? 4 : /_id$/.test(c) && c.slice(-(base.length + 4)) === '_' + base + '_id' ? 3
+        : c.indexOf(base) === 0 ? 2 : c.indexOf('_' + base + '_') >= 0 ? 1 : 0;
+      if (n && coluna && colunas(fks[c].tabela)[coluna]) n += 10;
+      return { c: c, n: n };
+    }).filter(function (x) { return x.n; }).sort(function (a, b) { return b.n - a.n; });
+    return notas[0] ? notas[0].c : null;
   }
   function visaoGenerica(tabela, ids) {
     var cols = colunas(tabela), embutir = {}, calc = {};
@@ -224,7 +236,7 @@
       var limpa = c.replace(/^_+/, '');
       if (cols[limpa]) { calc[c] = function (r) { return formatar(r[limpa], cols[limpa]); }; return; }
       var m = /^(descricao|nome|sigla|numero|codigo)_(.+)$/.exec(c);
-      var colFk = m ? fkPorNome(tabela, m[2]) : (fkDe(tabela, c + '_id') ? c + '_id' : null);
+      var colFk = m ? fkPorNome(tabela, m[2], m[1]) : (fkDe(tabela, c + '_id') ? c + '_id' : null);
       if (colFk) {
         var no = embutido(embutir, tabela, colFk), alvo = colunas(no.tabela);
         var mostrar = m && alvo[m[1]] ? m[1] : colunaRotulo(no.tabela), ap = 'r_' + colFk;
@@ -489,8 +501,15 @@
       vis.setAttribute('autocomplete', 'off');
       vis.dataset.tabelaRef = fk.tabela;
       var mapa = {}, espera;
+      // filtros que o ERP declara no campo (ex.: só clientes ativos: {"cliente":true})
+      var fixos = {};
+      try { fixos = JSON.parse(vis.dataset.filtros || '{}'); } catch (e) { fixos = {}; }
+      var colsRef = colunas(fk.tabela);
+      Object.keys(fixos).forEach(function (k) { if (!colsRef[k] || typeof fixos[k] === 'object') delete fixos[k]; });
       function buscar() {
-        sb.from(fk.tabela).select('id,' + col).ilike(col, '%' + vis.value + '%').order(col).limit(30).then(function (res) {
+        var q = sb.from(fk.tabela).select('id,' + col).ilike(col, '%' + vis.value + '%');
+        Object.keys(fixos).forEach(function (k) { q = q.eq(k, fixos[k]); });
+        q.order(col).limit(30).then(function (res) {
           if (res.error) return;
           mapa = {};
           dl.innerHTML = res.data.map(function (r) { mapa[r[col]] = r.id; return '<option value="' + esc(r[col]) + '">'; }).join('');
@@ -575,7 +594,7 @@
     return q.limit(1).then(function (res) {
       if (res.error) throw res.error;
       if (res.data.length) return res.data[0].id;
-      var agora = new Date().toISOString();
+      var agora = agoraLocal();
       var dados = Object.assign({ empresa_id: EMPRESA_ID, created_at: agora, updated_at: agora }, filtros, novo || {});
       return sb.from(tabela).insert(dados).select('id').single().then(function (r) {
         if (r.error) throw r.error;
@@ -742,7 +761,7 @@
         dados[col] = converter(v, cols[col]);
       });
 
-      var agora = new Date().toISOString();
+      var agora = agoraLocal();
       if (cols.empresa_id) dados.empresa_id = EMPRESA_ID;
       if (cols.data_atualizacao_cadastro) dados.data_atualizacao_cadastro = agora;
       if (cols.updated_at) dados.updated_at = agora;
@@ -819,7 +838,7 @@
         return Promise.reject(new Error('Aba ' + aba + ' incompleta. Preencha: ' + nomes.join(', ') + '.'));
       }
       d[def.pai] = paiId;
-      var c = colunas(f.tabela), agora = new Date().toISOString();
+      var c = colunas(f.tabela), agora = agoraLocal();
       if (c.empresa_id) d.empresa_id = EMPRESA_ID;
       if (c.updated_at) d.updated_at = agora;
       if (!idFilho && c.created_at) d.created_at = agora;
@@ -885,12 +904,21 @@
   });
   window.ERP_sincronizarBlocos = sincronizarBlocos;
 
+  // usado pelas telas com lógica própria (ex.: venda.js)
+  window.ERP = {
+    sb: sb, META: META, EMPRESA_ID: EMPRESA_ID, colunas: colunas, fkDe: fkDe, colunaRotulo: colunaRotulo,
+    agora: agoraLocal, esc: esc, numBR: numBR, dataBR: dataBR, dataHoraBR: dataHoraBR, paraISO: paraISO, paraNumero: paraNumero,
+    parametro: parametro, aviso: aviso, erroAmigavel: erroAmigavel, prepararBuscas: prepararBuscas,
+    preencherBuscas: preencherBuscas, prepararMascaras: prepararMascaras
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
     (window.ERP_SESSAO || Promise.resolve(true)).then(function (sessao) {
       if (!sessao) return;                                   // sem login: guarda.js já redirecionou
       if (parametro('salvo')) aviso('Registro salvo com sucesso.', 'success');
       if (corpo.tela === 'lista') iniciarLista();
       if (corpo.tela === 'form') { prepararMascaras(); iniciarForm(); }
+      if (corpo.tela === 'venda' && window.ERP_VENDA) window.ERP_VENDA.iniciar();
     });
   });
 })();
