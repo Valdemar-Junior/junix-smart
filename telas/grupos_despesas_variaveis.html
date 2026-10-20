@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="pt-BR" theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Despesas Variáveis</title>
+<link rel="icon" type="image/svg+xml" href="../assets/marca/favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/guarda.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Valores extraídos do CSS original (application.css / menu.css) */
+  :root {
+    --fundo: #f2f1f6;
+    --acrilico: #ffffff;
+    --texto: #363636;
+    --borda-botao: #36363666;
+    --hover-botao: #f3f3f333;
+    --destaque: #ff035b;
+    --sombra: 0 0 1rem 0 rgba(0,0,0,0.25);
+    --sombra-pesquisa: 0 0 1rem 0 rgba(0,0,0,0.2);
+    --placeholder: #8e8e93;
+  }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] {
+      --fundo: #1c1c1e;
+      --acrilico: #2c2c2e;
+      --texto: #dfdfdf;
+      --borda-botao: #dfdfdf66;
+      --hover-botao: #1c1c1e33;
+    }
+  }
+  html[theme-mode=dark] {
+    --fundo: #141a1f;
+    --acrilico: #232a2f;
+    --texto: #dfdfdf;
+    --borda-botao: #dfdfdf66;
+    --hover-botao: #141a1f33;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 10px; }
+  body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--fundo);
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .acrilico {
+    background: var(--acrilico);
+    box-shadow: var(--sombra);
+    border-radius: 15px;
+  }
+
+  /* ---------- Menu lateral ---------- */
+  #sidebar {
+    position: absolute;
+    top: 0; left: 0;
+    width: 250px;
+    padding-right: 15px;
+  }
+  .sidebar-brand {
+    height: 51px;
+    margin: 15px 0 15px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-marca {
+    width: 48px; height: 48px;
+  }
+  .logo-texto { line-height: 1; }
+  .logo-texto strong {
+    display: block;
+    font-size: 26px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--texto);
+  }
+  .logo-texto span {
+    display: block;
+    font-size: 12px; letter-spacing: 6px; text-align: center;
+    color: var(--texto);
+  }
+  #div_pesquisa_programa_menu {
+    margin: 0 0 0 10px;
+  }
+  #div_pesquisa_programa_menu input {
+    width: 100%;
+    height: 51px;
+    border: none;
+    border-radius: 15px;
+    padding: 0 12px;
+    font: 15px 'Work Sans', sans-serif;
+    color: var(--texto);
+    background: var(--acrilico);
+    box-shadow: var(--sombra-pesquisa);
+    outline: none;
+  }
+  #div_pesquisa_programa_menu input::placeholder { color: var(--placeholder); }
+  .sidebar-nav { list-style: none; margin: 0; padding: 0; }
+  .espacamento-itens-menu {
+    margin: 15px 0 15px 15px;
+    height: 51px;
+  }
+  .espacamento-itens-menu a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+  .espacamento-itens-menu svg {
+    width: 22px; height: 22px;
+    margin-right: 13px;
+    flex: none;
+    color: var(--destaque);
+  }
+  .espacamento-itens-menu .externo {
+    width: 16px; height: 16px; margin: 0 0 0 10px; color: var(--texto);
+  }
+
+  /* ---------- Barra superior ---------- */
+  #conteudo {
+    margin-left: 250px;
+    padding: 15px 15px 15px 0;
+  }
+  #barra_superior {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+  }
+  #barra_superior .titulo {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; font-weight: 400;
+  }
+  #barra_superior .titulo svg { width: 20px; height: 20px; }
+  #barra_superior .direita {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 22px;
+  }
+  .descricao-filial-menu {
+    text-transform: uppercase;
+    font-size: 12px; font-weight: 400;
+  }
+  .icone-topo { position: relative; display: flex; align-items: center; gap: 2px; }
+  .icone-topo svg { width: 20px; height: 20px; }
+  .icone-topo .caret {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
+  }
+  .icone-usuario[data-notificacoes]::after {
+    content: attr(data-notificacoes);
+    position: absolute;
+    top: -9px; left: 10px;
+    height: 12px;
+    padding: 0 4px;
+    border-radius: 12px;
+    background: var(--destaque);
+    color: white;
+    font: bolder 9px/13px monospace;
+  }
+
+  /* ---------- Conteúdo ---------- */
+  #container_conteudo {
+    margin-top: 15px;
+    padding: 15px;
+    min-height: 600px;
+  }
+  .grade-programas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 358px));
+    justify-content: center;
+    gap: 20px 30px;
+  }
+  .botao-programa-menu {
+    background-color: transparent;
+    border: 1px solid var(--borda-botao);
+    color: var(--texto);
+  }
+  .botao-programa-menu:hover { background-color: var(--hover-botao); }
+  .botao-responsivo {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    padding: 0 25px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-align: left;
+    overflow: hidden;
+  }
+  .texto-botao-responsivo { margin-left: 10px; }
+  .icone-botao-menu {
+    position: absolute;
+    right: 30px; top: 20px;
+    width: 40px; height: 40px;
+    color: var(--destaque);
+  }
+
+  /* ---------- Botão flutuante ---------- */
+  .flutuante {
+    position: fixed;
+    left: 20px; bottom: 20px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flutuante svg { width: 34px; height: 34px; }
+  .flutuante .ponto {
+    position: absolute; top: 2px; right: 2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--destaque);
+  }
+
+  /* ---------- Responsivo (mesmos pontos de quebra do original) ---------- */
+  @media (max-width: 767px) {
+    #sidebar { position: static; width: auto; padding: 0 16px; }
+    .espacamento-itens-menu { margin: 10px 0; }
+    #div_pesquisa_programa_menu { margin: 0; }
+    #conteudo { margin-left: 0; padding: 15px 16px; }
+    .grade-programas { grid-template-columns: 1fr; }
+    .botao-responsivo { height: 55px; line-height: 55px; }
+    .icone-botao-menu { width: 30px; height: 30px; top: 12px; }
+    .descricao-filial-menu { display: none; }
+  }
+
+  /* ---------- Protótipo ---------- */
+  /* Nomes longos quebram em duas linhas, como no original (line-height 25px) */
+  .botao-responsivo { display: flex; align-items: center; line-height: 25px; padding-right: 85px; }
+  .vazio { padding: 40px 15px; text-align: center; color: #8e8e93; font-size: 16px; }
+  .pendente { max-width: 640px; margin: 40px auto; text-align: center; font-size: 16px; line-height: 1.6; }
+  .pendente h2 { font-weight: 400; font-size: 22px; margin: 0 0 10px; }
+  .pendente a { color: #2f84ec; }
+  .pendente img { max-width: 100%; border-radius: 10px; margin-top: 20px; box-shadow: var(--sombra); }
+  .rotulo-grupo { font-size: 13px; color: #8e8e93; }
+
+  /* Configurações: grupos em sanfona */
+  .sanfona { display: flex; flex-direction: column; gap: 10px; }
+  .sanfona details { border: 1px solid var(--borda-botao); border-radius: 10px; overflow: hidden; }
+  .sanfona summary {
+    cursor: pointer; padding: 12px 15px; font-size: 16px;
+    background: rgba(127,127,127,0.08); list-style: none;
+  }
+  .sanfona summary::-webkit-details-marker { display: none; }
+  .sanfona .lista { display: flex; flex-direction: column; padding: 10px 15px 15px; }
+  .sanfona .lista span { padding: 10px 15px; background: #337ab7; color: #fff; border-radius: 6px 6px 0 0; }
+  .sanfona .lista a { padding: 10px 15px; border: 1px solid var(--borda-botao); border-top: none; }
+  .sanfona .lista a:last-child { border-radius: 0 0 6px 6px; }
+  .sanfona .lista a:hover { background: var(--hover-botao); }
+
+  .marca-erp { background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-estrela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+    <symbol id="i-cadastros" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="5" width="16" height="16" rx="1.5"/><path d="M7 2.5h10v2.5H7zM7 9h10M7 12h10M7 15h6M7 18h4"/></g></symbol>
+    <symbol id="i-vendas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><path d="M9 7v8M12.5 7v8M16 7v8M6.7 11h13.3"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></g></symbol>
+    <symbol id="i-ecommerce" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M12 9.5l2 2 3-3.5"/></g></symbol>
+    <symbol id="i-compras" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h18l-2 11H5z"/><path d="M8 9l4-6 4 6M8 12v5M10.7 12v5M13.3 12v5M16 12v5"/></g></symbol>
+    <symbol id="i-financeiro" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2v2.1c2.3.3 4 1.7 4.3 3.9h-2.6c-.3-1-1.2-1.6-2.7-1.6-1.6 0-2.6.7-2.6 1.7 0 1 .8 1.4 3.2 2 3.1.7 5 1.8 5 4.4 0 2.2-1.7 3.7-4.6 4V21h-2v-2.6c-2.7-.3-4.5-1.8-4.7-4.2h2.6c.2 1.2 1.3 2 3.2 2 1.8 0 2.8-.7 2.8-1.8 0-1-.8-1.5-3.4-2.1C8.6 11.6 7 10.5 7 8.2 7 6.1 8.6 4.6 11 4.2V2z"/></symbol>
+    <symbol id="i-estoque" viewBox="0 0 24 24"><g fill="currentColor"><rect x="8.5" y="2.5" width="7" height="7" rx=".5"/><rect x="2.5" y="10.5" width="9" height="10" rx=".5"/><rect x="12.5" y="10.5" width="9" height="10" rx=".5"/></g></symbol>
+    <symbol id="i-gerencial" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="13" height="9" rx="1"/><path d="M5 11V8M8 11V6M11 11V9M8.5 13v4M5 21l3.5-4 3.5 4"/><circle cx="19" cy="5" r="2"/><path d="M19 8v6M17 21l2-7 2 7M15 10l4-1"/></g></symbol>
+    <symbol id="i-fiscal" viewBox="0 0 24 24"><path fill="currentColor" d="M3 2h18v20l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L3 22zm4.6 4.5v1.1c-1.2.2-2 1-2 2.1 0 1.3 1 1.8 2.2 2.1 1 .2 1.3.5 1.3.9 0 .5-.5.8-1.2.8-.8 0-1.3-.4-1.4-1H5.2c.1 1.2 1 2 2.4 2.2v1.1h1.2v-1.1c1.3-.2 2.1-1 2.1-2.1 0-1.4-1.1-1.9-2.3-2.2-1-.2-1.2-.5-1.2-.8 0-.4.4-.7 1-.7.7 0 1.1.3 1.2.8h1.3c-.1-1.1-.9-1.8-2.1-2V6.5zM12.5 8v1.5H19V8zm0 3.5V13H19v-1.5zm0 3.5v1.5H19V15z"/></symbol>
+    <symbol id="i-tributacao" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h11l4 4v16H4z"/><path d="M15 2v4h4M7 6h5M7 9h9M7 12h4M7 15h4M7 18h4"/><rect x="13" y="13" width="6" height="7" rx=".5"/><path d="M14.5 15h3M14.5 17h1M16.5 17h1M14.5 18.7h1M16.5 18.7h1"/></g></symbol>
+    <symbol id="i-integracoes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="9" r="2.3"/><path d="M8 3.5v2M8 12.5v2M2.5 9h2M11.5 9h2M4.1 5.1l1.4 1.4M10.5 11.5l1.4 1.4M4.1 12.9l1.4-1.4M10.5 6.5l1.4-1.4"/><circle cx="17" cy="16" r="2"/><path d="M17 11.5v2M17 18.5v2M12.5 16h2M19.5 16h2M13.8 12.8l1.4 1.4M18.8 17.8l1.4 1.4M13.8 19.2l1.4-1.4M18.8 14.2l1.4-1.4"/></g></symbol>
+    <symbol id="i-configuracoes" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 2h3.4l.5 2.6c.7.2 1.3.5 1.9.9l2.3-1.4 2.4 2.4-1.4 2.3c.4.6.7 1.2.9 1.9l2.6.5v3.4l-2.6.5c-.2.7-.5 1.3-.9 1.9l1.4 2.3-2.4 2.4-2.3-1.4c-.6.4-1.2.7-1.9.9l-.5 2.6h-3.4l-.5-2.6c-.7-.2-1.3-.5-1.9-.9l-2.3 1.4-2.4-2.4 1.4-2.3c-.4-.6-.7-1.2-.9-1.9L1.5 13.7v-3.4l2.6-.5c.2-.7.5-1.3.9-1.9L3.6 5.6 6 3.2l2.3 1.4c.6-.4 1.2-.7 1.9-.9zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></symbol>
+    <symbol id="i-mensalidades" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3" y="3" width="1.6" height="15"/><rect x="6" y="3" width="2.4" height="15"/><rect x="9.8" y="3" width="1.2" height="15"/><rect x="12.4" y="3" width="2.4" height="15"/><rect x="16.2" y="3" width="1.2" height="15"/><rect x="18.8" y="3" width="2.2" height="15"/><rect x="3" y="20" width="3" height="1.4"/><rect x="8" y="20" width="3" height="1.4"/><rect x="13" y="20" width="3" height="1.4"/><rect x="18" y="20" width="3" height="1.4"/></g></symbol>
+    <symbol id="i-relatorios" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h12l3 3v17H4z"/><path d="M7 11V8M9.5 11V5.5M12 11V7.5M7 14h9M7 17h5"/><circle cx="16.5" cy="17.5" r="2.3"/><path d="M16.5 14v1.2M16.5 19.8V21M13 17.5h1.2M18.8 17.5H20"/></g></symbol>
+    <symbol id="i-externo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14v4.5a2.5 2.5 0 01-2.5 2.5h-10A2.5 2.5 0 013 18.5v-10A2.5 2.5 0 015.5 6H10"/><path d="M14 3h7v7M21 3l-9 9"/></g></symbol>
+    <symbol id="i-grade" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g></symbol>
+    <symbol id="i-manual" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 5.5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1V20c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6.5V21"/></g></symbol>
+    <symbol id="i-sino" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0v5l2 3H4l2-3z"/><path d="M10 20.5a2 2 0 004 0"/></g></symbol>
+    <symbol id="i-usuario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-pessoa" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="24" cy="24" r="21.5"/><circle cx="24" cy="18" r="5"/><path d="M14 33v-3.5a6.5 6.5 0 016.5-6.5h7a6.5 6.5 0 016.5 6.5V33z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-produto" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 22v-6a6 6 0 016-6h14a6 6 0 016 6v6"/><path d="M15 26h18v-2a3 3 0 013-3h4a4 4 0 010 8h-3v6H11v-6H8a4 4 0 010-8h4a3 3 0 013 3z"/><circle cx="8" cy="25" r="1.6"/><circle cx="40" cy="25" r="1.6"/><path d="M13 35v3M35 35v3M19 16h2M20 15v2M23 16h2M24 15v2M27 16h2M28 15v2"/></g></symbol>
+    <symbol id="i-kit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M26 4h16v38H26M30 4v4M30 12v4"/><path d="M14 10h8v6h-8zM18 16v3"/><path d="M8 26v-3a4 4 0 014-4h16a4 4 0 014 4v3"/><path d="M10 29h20v-1a2 2 0 012-2h1a3 3 0 010 6h-1v6H8v-6H7a3 3 0 010-6h1a2 2 0 012 2z"/><circle cx="7" cy="29" r="1"/><circle cx="33" cy="29" r="1"/><path d="M10 38v3M30 38v3M13 31h1M17 31h1M21 31h1M25 31h1M15 34h1M19 34h1M23 34h1"/></g></symbol>
+    <symbol id="i-servico" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="15" cy="15" r="4"/><path d="M15 6v3M15 21v3M6 15h3M21 15h3M8.6 8.6l2.2 2.2M19.2 19.2l2.2 2.2M8.6 21.4l2.2-2.2M19.2 10.8l2.2-2.2"/><circle cx="15" cy="15" r="9"/><path d="M33 14l11 4v10c0 7-5 11-11 14-6-3-11-7-11-14V18z"/><path d="M33 18l7 2.5V28c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-7.5z"/><path d="M29 28l3 3 6-6"/><path d="M27 39l-3 6 4-1 2 3 2-5M39 39l3 6-4-1-2 3-2-5"/></g></symbol>
+  </defs>
+</svg>
+<nav id="sidebar">
+  <div class="sidebar-brand marca-erp"></div>
+  <div id="div_pesquisa_programa_menu">
+    <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
+  </div>
+  <ul class="sidebar-nav">
+    <li class="espacamento-itens-menu acrilico"><a href="../menu/favoritos.html"><svg><use href="#i-estrela"/></svg>Favoritos</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/cadastros.html"><svg><use href="#i-cadastros"/></svg>Cadastros</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/ecommerce.html"><svg><use href="#i-ecommerce"/></svg>E-commerce</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/compras.html"><svg><use href="#i-compras"/></svg>Compras</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/financeiro.html"><svg><use href="#i-financeiro"/></svg>Financeiro</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/estoque.html"><svg><use href="#i-estoque"/></svg>Estoque</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/gerencial.html"><svg><use href="#i-gerencial"/></svg>Gerencial</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/tributacao.html"><svg><use href="#i-tributacao"/></svg>Tributação</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/integracoes.html"><svg><use href="#i-integracoes"/></svg>Integrações</a></li>
+<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/configuracao.html"><svg><use href="#i-configuracoes"/></svg>Configurações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/mensalidades.html"><svg><use href="#i-mensalidades"/></svg>Mensalidades</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="#"><svg><use href="#i-relatorios"/></svg>Relatórios<svg class="externo"><use href="#i-externo"/></svg></a></li>
+  </ul>
+</nav>
+<main id="conteudo">
+  <header id="barra_superior" class="acrilico">
+    <div class="titulo"><svg><use href="#i-grade"/></svg>Despesas Variáveis</div>
+    <div class="direita">
+      <span class="descricao-filial-menu">Loja Demo Centro</span>
+      <a href="#" class="icone-topo" aria-label="Manuais"><svg><use href="#i-manual"/></svg></a>
+      <a href="#" class="icone-topo icone-usuario" data-notificacoes="930" aria-label="Notificações"><svg><use href="#i-sino"/></svg><span class="caret"></span></a>
+      <a href="#" class="icone-topo" aria-label="Perfil"><svg><use href="#i-usuario"/></svg><span class="caret"></span></a>
+    </div>
+  </header>
+  <section id="container_conteudo" class="acrilico">
+<!-- pendente --><div class="pendente"><div class="rotulo-grupo">Gerais</div><h2>Despesas Variáveis</h2><p>Tela ainda não reconstruída.</p><p><a href="../menu/configuracao.html">← Voltar para Configurações</a></p></div>
+  </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="pt-BR" theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Produto</title>
+<link rel="icon" type="image/svg+xml" href="../assets/marca/favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/guarda.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/config_filtros_padroes.css">
+<link rel="stylesheet" href="../assets/telas/produtos.css">
+<style>
+  /* Valores extraídos do CSS original (application.css / menu.css) */
+  :root {
+    --fundo: #f2f1f6;
+    --acrilico: #ffffff;
+    --texto: #363636;
+    --borda-botao: #36363666;
+    --hover-botao: #f3f3f333;
+    --destaque: #ff035b;
+    --sombra: 0 0 1rem 0 rgba(0,0,0,0.25);
+    --sombra-pesquisa: 0 0 1rem 0 rgba(0,0,0,0.2);
+    --placeholder: #8e8e93;
+  }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] {
+      --fundo: #1c1c1e;
+      --acrilico: #2c2c2e;
+      --texto: #dfdfdf;
+      --borda-botao: #dfdfdf66;
+      --hover-botao: #1c1c1e33;
+    }
+  }
+  html[theme-mode=dark] {
+    --fundo: #141a1f;
+    --acrilico: #232a2f;
+    --texto: #dfdfdf;
+    --borda-botao: #dfdfdf66;
+    --hover-botao: #141a1f33;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 10px; }
+  body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--fundo);
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .acrilico {
+    background: var(--acrilico);
+    box-shadow: var(--sombra);
+    border-radius: 15px;
+  }
+
+  /* ---------- Menu lateral ---------- */
+  #sidebar {
+    position: absolute;
+    top: 0; left: 0;
+    width: 250px;
+    padding-right: 15px;
+  }
+  .sidebar-brand {
+    height: 51px;
+    margin: 15px 0 15px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-marca {
+    width: 48px; height: 48px;
+  }
+  .logo-texto { line-height: 1; }
+  .logo-texto strong {
+    display: block;
+    font-size: 26px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--texto);
+  }
+  .logo-texto span {
+    display: block;
+    font-size: 12px; letter-spacing: 6px; text-align: center;
+    color: var(--texto);
+  }
+  #div_pesquisa_programa_menu {
+    margin: 0 0 0 10px;
+  }
+  #div_pesquisa_programa_menu input {
+    width: 100%;
+    height: 51px;
+    border: none;
+    border-radius: 15px;
+    padding: 0 12px;
+    font: 15px 'Work Sans', sans-serif;
+    color: var(--texto);
+    background: var(--acrilico);
+    box-shadow: var(--sombra-pesquisa);
+    outline: none;
+  }
+  #div_pesquisa_programa_menu input::placeholder { color: var(--placeholder); }
+  .sidebar-nav { list-style: none; margin: 0; padding: 0; }
+  .espacamento-itens-menu {
+    margin: 15px 0 15px 15px;
+    height: 51px;
+  }
+  .espacamento-itens-menu a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+  .espacamento-itens-menu svg {
+    width: 22px; height: 22px;
+    margin-right: 13px;
+    flex: none;
+    color: var(--destaque);
+  }
+  .espacamento-itens-menu .externo {
+    width: 16px; height: 16px; margin: 0 0 0 10px; color: var(--texto);
+  }
+
+  /* ---------- Barra superior ---------- */
+  #conteudo {
+    margin-left: 250px;
+    padding: 15px 15px 15px 0;
+  }
+  #barra_superior {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+  }
+  #barra_superior .titulo {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; font-weight: 400;
+  }
+  #barra_superior .titulo svg { width: 20px; height: 20px; }
+  #barra_superior .direita {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 22px;
+  }
+  .descricao-filial-menu {
+    text-transform: uppercase;
+    font-size: 12px; font-weight: 400;
+  }
+  .icone-topo { position: relative; display: flex; align-items: center; gap: 2px; }
+  .icone-topo svg { width: 20px; height: 20px; }
+  .icone-topo .caret {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
+  }
+  .icone-usuario[data-notificacoes]::after {
+    content: attr(data-notificacoes);
+    position: absolute;
+    top: -9px; left: 10px;
+    height: 12px;
+    padding: 0 4px;
+    border-radius: 12px;
+    background: var(--destaque);
+    color: white;
+    font: bolder 9px/13px monospace;
+  }
+
+  /* ---------- Conteúdo ---------- */
+  #container_conteudo {
+    margin-top: 15px;
+    padding: 15px;
+    min-height: 600px;
+  }
+  .grade-programas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 358px));
+    justify-content: center;
+    gap: 20px 30px;
+  }
+  .botao-programa-menu {
+    background-color: transparent;
+    border: 1px solid var(--borda-botao);
+    color: var(--texto);
+  }
+  .botao-programa-menu:hover { background-color: var(--hover-botao); }
+  .botao-responsivo {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    padding: 0 25px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-align: left;
+    overflow: hidden;
+  }
+  .texto-botao-responsivo { margin-left: 10px; }
+  .icone-botao-menu {
+    position: absolute;
+    right: 30px; top: 20px;
+    width: 40px; height: 40px;
+    color: var(--destaque);
+  }
+
+  /* ---------- Botão flutuante ---------- */
+  .flutuante {
+    position: fixed;
+    left: 20px; bottom: 20px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flutuante svg { width: 34px; height: 34px; }
+  .flutuante .ponto {
+    position: absolute; top: 2px; right: 2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--destaque);
+  }
+
+  /* ---------- Responsivo (mesmos pontos de quebra do original) ---------- */
+  @media (max-width: 767px) {
+    #sidebar { position: static; width: auto; padding: 0 16px; }
+    .espacamento-itens-menu { margin: 10px 0; }
+    #div_pesquisa_programa_menu { margin: 0; }
+    #conteudo { margin-left: 0; padding: 15px 16px; }
+    .grade-programas { grid-template-columns: 1fr; }
+    .botao-responsivo { height: 55px; line-height: 55px; }
+    .icone-botao-menu { width: 30px; height: 30px; top: 12px; }
+    .descricao-filial-menu { display: none; }
+  }
+
+  /* ---------- Protótipo ---------- */
+  /* Nomes longos quebram em duas linhas, como no original (line-height 25px) */
+  .botao-responsivo { display: flex; align-items: center; line-height: 25px; padding-right: 85px; }
+  .vazio { padding: 40px 15px; text-align: center; color: #8e8e93; font-size: 16px; }
+  .pendente { max-width: 640px; margin: 40px auto; text-align: center; font-size: 16px; line-height: 1.6; }
+  .pendente h2 { font-weight: 400; font-size: 22px; margin: 0 0 10px; }
+  .pendente a { color: #2f84ec; }
+  .pendente img { max-width: 100%; border-radius: 10px; margin-top: 20px; box-shadow: var(--sombra); }
+  .rotulo-grupo { font-size: 13px; color: #8e8e93; }
+
+  /* Configurações: grupos em sanfona */
+  .sanfona { display: flex; flex-direction: column; gap: 10px; }
+  .sanfona details { border: 1px solid var(--borda-botao); border-radius: 10px; overflow: hidden; }
+  .sanfona summary {
+    cursor: pointer; padding: 12px 15px; font-size: 16px;
+    background: rgba(127,127,127,0.08); list-style: none;
+  }
+  .sanfona summary::-webkit-details-marker { display: none; }
+  .sanfona .lista { display: flex; flex-direction: column; padding: 10px 15px 15px; }
+  .sanfona .lista span { padding: 10px 15px; background: #337ab7; color: #fff; border-radius: 6px 6px 0 0; }
+  .sanfona .lista a { padding: 10px 15px; border: 1px solid var(--borda-botao); border-top: none; }
+  .sanfona .lista a:last-child { border-radius: 0 0 6px 6px; }
+  .sanfona .lista a:hover { background: var(--hover-botao); }
+
+  .marca-erp { background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
+  }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
+</style>
+</head>
+<body data-tela="lista" data-tabela="produtos" data-form="produtos_new.html">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-estrela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+    <symbol id="i-cadastros" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="5" width="16" height="16" rx="1.5"/><path d="M7 2.5h10v2.5H7zM7 9h10M7 12h10M7 15h6M7 18h4"/></g></symbol>
+    <symbol id="i-vendas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><path d="M9 7v8M12.5 7v8M16 7v8M6.7 11h13.3"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></g></symbol>
+    <symbol id="i-ecommerce" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M12 9.5l2 2 3-3.5"/></g></symbol>
+    <symbol id="i-compras" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h18l-2 11H5z"/><path d="M8 9l4-6 4 6M8 12v5M10.7 12v5M13.3 12v5M16 12v5"/></g></symbol>
+    <symbol id="i-financeiro" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2v2.1c2.3.3 4 1.7 4.3 3.9h-2.6c-.3-1-1.2-1.6-2.7-1.6-1.6 0-2.6.7-2.6 1.7 0 1 .8 1.4 3.2 2 3.1.7 5 1.8 5 4.4 0 2.2-1.7 3.7-4.6 4V21h-2v-2.6c-2.7-.3-4.5-1.8-4.7-4.2h2.6c.2 1.2 1.3 2 3.2 2 1.8 0 2.8-.7 2.8-1.8 0-1-.8-1.5-3.4-2.1C8.6 11.6 7 10.5 7 8.2 7 6.1 8.6 4.6 11 4.2V2z"/></symbol>
+    <symbol id="i-estoque" viewBox="0 0 24 24"><g fill="currentColor"><rect x="8.5" y="2.5" width="7" height="7" rx=".5"/><rect x="2.5" y="10.5" width="9" height="10" rx=".5"/><rect x="12.5" y="10.5" width="9" height="10" rx=".5"/></g></symbol>
+    <symbol id="i-gerencial" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="13" height="9" rx="1"/><path d="M5 11V8M8 11V6M11 11V9M8.5 13v4M5 21l3.5-4 3.5 4"/><circle cx="19" cy="5" r="2"/><path d="M19 8v6M17 21l2-7 2 7M15 10l4-1"/></g></symbol>
+    <symbol id="i-fiscal" viewBox="0 0 24 24"><path fill="currentColor" d="M3 2h18v20l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L3 22zm4.6 4.5v1.1c-1.2.2-2 1-2 2.1 0 1.3 1 1.8 2.2 2.1 1 .2 1.3.5 1.3.9 0 .5-.5.8-1.2.8-.8 0-1.3-.4-1.4-1H5.2c.1 1.2 1 2 2.4 2.2v1.1h1.2v-1.1c1.3-.2 2.1-1 2.1-2.1 0-1.4-1.1-1.9-2.3-2.2-1-.2-1.2-.5-1.2-.8 0-.4.4-.7 1-.7.7 0 1.1.3 1.2.8h1.3c-.1-1.1-.9-1.8-2.1-2V6.5zM12.5 8v1.5H19V8zm0 3.5V13H19v-1.5zm0 3.5v1.5H19V15z"/></symbol>
+    <symbol id="i-tributacao" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h11l4 4v16H4z"/><path d="M15 2v4h4M7 6h5M7 9h9M7 12h4M7 15h4M7 18h4"/><rect x="13" y="13" width="6" height="7" rx=".5"/><path d="M14.5 15h3M14.5 17h1M16.5 17h1M14.5 18.7h1M16.5 18.7h1"/></g></symbol>
+    <symbol id="i-integracoes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="9" r="2.3"/><path d="M8 3.5v2M8 12.5v2M2.5 9h2M11.5 9h2M4.1 5.1l1.4 1.4M10.5 11.5l1.4 1.4M4.1 12.9l1.4-1.4M10.5 6.5l1.4-1.4"/><circle cx="17" cy="16" r="2"/><path d="M17 11.5v2M17 18.5v2M12.5 16h2M19.5 16h2M13.8 12.8l1.4 1.4M18.8 17.8l1.4 1.4M13.8 19.2l1.4-1.4M18.8 14.2l1.4-1.4"/></g></symbol>
+    <symbol id="i-configuracoes" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 2h3.4l.5 2.6c.7.2 1.3.5 1.9.9l2.3-1.4 2.4 2.4-1.4 2.3c.4.6.7 1.2.9 1.9l2.6.5v3.4l-2.6.5c-.2.7-.5 1.3-.9 1.9l1.4 2.3-2.4 2.4-2.3-1.4c-.6.4-1.2.7-1.9.9l-.5 2.6h-3.4l-.5-2.6c-.7-.2-1.3-.5-1.9-.9l-2.3 1.4-2.4-2.4 1.4-2.3c-.4-.6-.7-1.2-.9-1.9L1.5 13.7v-3.4l2.6-.5c.2-.7.5-1.3.9-1.9L3.6 5.6 6 3.2l2.3 1.4c.6-.4 1.2-.7 1.9-.9zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></symbol>
+    <symbol id="i-mensalidades" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3" y="3" width="1.6" height="15"/><rect x="6" y="3" width="2.4" height="15"/><rect x="9.8" y="3" width="1.2" height="15"/><rect x="12.4" y="3" width="2.4" height="15"/><rect x="16.2" y="3" width="1.2" height="15"/><rect x="18.8" y="3" width="2.2" height="15"/><rect x="3" y="20" width="3" height="1.4"/><rect x="8" y="20" width="3" height="1.4"/><rect x="13" y="20" width="3" height="1.4"/><rect x="18" y="20" width="3" height="1.4"/></g></symbol>
+    <symbol id="i-relatorios" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h12l3 3v17H4z"/><path d="M7 11V8M9.5 11V5.5M12 11V7.5M7 14h9M7 17h5"/><circle cx="16.5" cy="17.5" r="2.3"/><path d="M16.5 14v1.2M16.5 19.8V21M13 17.5h1.2M18.8 17.5H20"/></g></symbol>
+    <symbol id="i-externo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14v4.5a2.5 2.5 0 01-2.5 2.5h-10A2.5 2.5 0 013 18.5v-10A2.5 2.5 0 015.5 6H10"/><path d="M14 3h7v7M21 3l-9 9"/></g></symbol>
+    <symbol id="i-grade" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g></symbol>
+    <symbol id="i-manual" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 5.5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1V20c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6.5V21"/></g></symbol>
+    <symbol id="i-sino" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0v5l2 3H4l2-3z"/><path d="M10 20.5a2 2 0 004 0"/></g></symbol>
+    <symbol id="i-usuario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-pessoa" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="24" cy="24" r="21.5"/><circle cx="24" cy="18" r="5"/><path d="M14 33v-3.5a6.5 6.5 0 016.5-6.5h7a6.5 6.5 0 016.5 6.5V33z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-produto" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 22v-6a6 6 0 016-6h14a6 6 0 016 6v6"/><path d="M15 26h18v-2a3 3 0 013-3h4a4 4 0 010 8h-3v6H11v-6H8a4 4 0 010-8h4a3 3 0 013 3z"/><circle cx="8" cy="25" r="1.6"/><circle cx="40" cy="25" r="1.6"/><path d="M13 35v3M35 35v3M19 16h2M20 15v2M23 16h2M24 15v2M27 16h2M28 15v2"/></g></symbol>
+    <symbol id="i-kit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M26 4h16v38H26M30 4v4M30 12v4"/><path d="M14 10h8v6h-8zM18 16v3"/><path d="M8 26v-3a4 4 0 014-4h16a4 4 0 014 4v3"/><path d="M10 29h20v-1a2 2 0 012-2h1a3 3 0 010 6h-1v6H8v-6H7a3 3 0 010-6h1a2 2 0 012 2z"/><circle cx="7" cy="29" r="1"/><circle cx="33" cy="29" r="1"/><path d="M10 38v3M30 38v3M13 31h1M17 31h1M21 31h1M25 31h1M15 34h1M19 34h1M23 34h1"/></g></symbol>
+    <symbol id="i-servico" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="15" cy="15" r="4"/><path d="M15 6v3M15 21v3M6 15h3M21 15h3M8.6 8.6l2.2 2.2M19.2 19.2l2.2 2.2M8.6 21.4l2.2-2.2M19.2 10.8l2.2-2.2"/><circle cx="15" cy="15" r="9"/><path d="M33 14l11 4v10c0 7-5 11-11 14-6-3-11-7-11-14V18z"/><path d="M33 18l7 2.5V28c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-7.5z"/><path d="M29 28l3 3 6-6"/><path d="M27 39l-3 6 4-1 2 3 2-5M39 39l3 6-4-1-2 3-2-5"/></g></symbol>
+  </defs>
+</svg>
+<nav id="sidebar">
+  <div class="sidebar-brand marca-erp"></div>
+  <div id="div_pesquisa_programa_menu">
+    <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
+  </div>
+  <ul class="sidebar-nav">
+    <li class="espacamento-itens-menu acrilico"><a href="../menu/favoritos.html"><svg><use href="#i-estrela"/></svg>Favoritos</a></li>
+<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/cadastros.html"><svg><use href="#i-cadastros"/></svg>Cadastros</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/ecommerce.html"><svg><use href="#i-ecommerce"/></svg>E-commerce</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/compras.html"><svg><use href="#i-compras"/></svg>Compras</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/financeiro.html"><svg><use href="#i-financeiro"/></svg>Financeiro</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/estoque.html"><svg><use href="#i-estoque"/></svg>Estoque</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/gerencial.html"><svg><use href="#i-gerencial"/></svg>Gerencial</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/tributacao.html"><svg><use href="#i-tributacao"/></svg>Tributação</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/integracoes.html"><svg><use href="#i-integracoes"/></svg>Integrações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/configuracao.html"><svg><use href="#i-configuracoes"/></svg>Configurações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/mensalidades.html"><svg><use href="#i-mensalidades"/></svg>Mensalidades</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="#"><svg><use href="#i-relatorios"/></svg>Relatórios<svg class="externo"><use href="#i-externo"/></svg></a></li>
+  </ul>
+</nav>
+<main id="conteudo">
+  <header id="barra_superior" class="acrilico">
+    <div class="titulo"><svg><use href="#i-grade"/></svg>Produto</div>
+    <div class="direita">
+      <span class="descricao-filial-menu">Loja Demo Centro</span>
+      <a href="#" class="icone-topo" aria-label="Manuais"><svg><use href="#i-manual"/></svg></a>
+      <a href="#" class="icone-topo icone-usuario" data-notificacoes="930" aria-label="Notificações"><svg><use href="#i-sino"/></svg><span class="caret"></span></a>
+      <a href="#" class="icone-topo" aria-label="Perfil"><svg><use href="#i-usuario"/></svg><span class="caret"></span></a>
+    </div>
+  </header>
+  <section id="container_conteudo" class="acrilico">
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        
+
+<div class="row">
+  <div class="col-xs-12">
+  <a class="btn btn-primary" href="produtos_new.html">Adicionar</a>
+</div>
+
+<div class="modal fade" id="modal_produtos_filhos" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">Produtos Filhos</h4>
+      </div>
+
+      <div class="modal-body" id="conteudo_modal_produtos_filhos"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_exibe_anexos" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="labelModal">
+  <div class="modal-dialog tamanho-grande" role="document">
+    <div class="modal-content tamanho-grande">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="labelModal">Imagens/Anexos do Produto</h4>
+      </div>
+      <div class="modal-body" id="conteudo_modal_exibe_anexos"> &gt;
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<form class="formulario-filtros" action="#" onsubmit="return false" accept-charset="UTF-8" method="post"><input type="hidden" name="_method" autocomplete="off" style="">
+
+    <input class="form-control" id="campo_id" name="campo_id" atributo="campo_id" type="hidden" style="">
+    <input class="form-control" id="campo_descricao" name="campo_descricao" atributo="campo_descricao" type="hidden" style="">
+    <input class="form-control" id="atributo_descricao" name="atributo_descricao" atributo="atributo_descricao" type="hidden" style="">
+    <input class="form-control" id="parametro_adicional" name="parametro_adicional" atributo="parametro_adicional" type="hidden" style="">
+
+    
+    <input class="form-control" id="page" name="page" value="1" atributo="page" type="hidden" style="">
+
+    <div class="col-xs-12">
+      <div class="space-6"></div>
+      <div class="panel panel-default painel-filtros-padroes">
+        <div class="panel-heading" data-toggle="collapse" href="#item_collapse_filtros">
+          <h4 class="panel-title">
+            <span class="glyphicon glyphicon-filter"></span>
+            <a><strong>Filtros</strong></a>
+              <span class="glyphicon glyphicon-cog pull-right config-filtros-padroes "></span>
+              <div class="opcoes-filtros-padroes pull-right hide">
+  <button class="btn btn btn-success btn-filtros-padroes btn-filtros-padroes-salva" type="button"><span class="glyphicon glyphicon-ok"></span> Salvar</button>
+  <button class="btn btn btn-default btn-filtros-padroes btn-filtros-padroes-descarta" type="button"><span class="glyphicon glyphicon-remove-sign"></span> Descartar</button>
+  <button class="btn btn btn-danger btn-filtros-padroes btn-filtros-padroes-exclui" type="button"><span class="glyphicon glyphicon-trash"></span> Excluir</button>
+</div>
+
+          </h4>
+        </div>
+        <div id="item_collapse_filtros" class="item_collapse_filtros panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="form-horizontal">
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_descricao_ilike"><div class="form-group" id="campo_descricao_ilike"><label class="col-xs-12" id="titulo_campo_descricao_ilike" for="descricao_ilike">Descrição</label><div class="col-xs-12"><input class="form-control" id="descricao_ilike" name="filtros[descricao_ilike]" atributo="descricao_ilike" type="text" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_codigo"><div class="form-group" id="campo_codigo"><label class="col-xs-12" id="titulo_campo_codigo" for="codigo">Código</label><div class="col-xs-12"><input class="form-control" id="codigo" name="filtros[codigo]" atributo="codigo" type="text" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_ativo"><div class="form-group" id="campo_ativo"><label class="col-xs-12" id="titulo_campo_ativo" for="ativo">Ativo</label><div class="col-xs-12"><select name="filtros[ativo]" id="ativo" class="form-control" atributo="ativo"><option value="true">Ativo</option>
+<option value="false">Inativo</option>
+<option value="">Ambos</option></select></div></div></div></div>
+
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_marca_produto_id"><div class="form-group" id="campo_marca_produto_id"><label class="col-xs-12" id="titulo_campo_marca_produto_id" for="marca_produto_id">Marca</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="marca_produto_id" campo="marcas_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="marcas_produtos.descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_marca_produto_id" value="" atributo="marca_produto_id" campo="marcas_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="marcas_produtos.descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="marca_produto_id" name="filtros[marca_produto_id]" atributo="marca_produto_id" type="hidden" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_grupos_produtos.departamento_produto_id"><div class="form-group" id="campo_grupos_produtos.departamento_produto_id"><label class="col-xs-12" id="titulo_campo_grupos_produtos.departamento_produto_id" for="grupos_produtos.departamento_produto_id">Departamento</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="grupos_produtos.departamento_produto_id" campo="departamentos_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="departamentos_produtos.descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_grupos_produtos.departamento_produto_id" value="" atributo="grupos_produtos.departamento_produto_id" campo="departamentos_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="departamentos_produtos.descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="grupos_produtos.departamento_produto_id" name="filtros[grupos_produtos.departamento_produto_id]" atributo="grupos_produtos.departamento_produto_id" type="hidden" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_subgrupos_produtos.grupo_produto_id"><div class="form-group" id="campo_subgrupos_produtos.grupo_produto_id"><label class="col-xs-12" id="titulo_campo_subgrupos_produtos.grupo_produto_id" for="subgrupos_produtos.grupo_produto_id">Grupo</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="subgrupos_produtos.grupo_produto_id" campo="grupos_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="grupos_produtos.descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_subgrupos_produtos.grupo_produto_id" value="" atributo="subgrupos_produtos.grupo_produto_id" campo="grupos_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="grupos_produtos.descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-2"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="subgrupos_produtos.grupo_produto_id" name="filtros[subgrupos_produtos.grupo_produto_id]" atributo="subgrupos_produtos.grupo_produto_id" type="hidden" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_subgrupo_produto_id"><div class="form-group" id="campo_subgrupo_produto_id"><label class="col-xs-12" id="titulo_campo_subgrupo_produto_id" for="subgrupo_produto_id">Subgrupo</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="subgrupo_produto_id" campo="subgrupos_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="subgrupos_produtos.descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_subgrupo_produto_id" value="" atributo="subgrupo_produto_id" campo="subgrupos_produtos.descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="subgrupos_produtos.descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-3"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="subgrupo_produto_id" name="filtros[subgrupo_produto_id]" atributo="subgrupo_produto_id" type="hidden" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_fornecedor_padrao_id"><div class="form-group" id="campo_fornecedor_padrao_id"><label class="col-xs-12" id="titulo_campo_fornecedor_padrao_id" for="fornecedor_padrao_id">Fornecedor Padrão</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="fornecedor_padrao_id" campo="nome" data-filtros="{&quot;escopos&quot;:&quot;fornecedores&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="nome" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_fornecedor_padrao_id" value="" atributo="fornecedor_padrao_id" campo="nome" data-filtros="{&quot;escopos&quot;:&quot;fornecedores&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="nome" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-4"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="fornecedor_padrao_id" name="filtros[fornecedor_padrao_id]" atributo="fornecedor_padrao_id" type="hidden" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_referencia_fornecedor_ilike"><div class="form-group" id="campo_referencia_fornecedor_ilike"><label class="col-xs-12" id="titulo_campo_referencia_fornecedor_ilike" for="referencia_fornecedor_ilike">Ref. Fornecedor/Produto</label><div class="col-xs-12"><input class="form-control" id="referencia_fornecedor_ilike" name="filtros[referencia_fornecedor_ilike]" atributo="referencia_fornecedor_ilike" type="text" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_codigo_barras"><div class="form-group" id="campo_codigo_barras"><label class="col-xs-12" id="titulo_campo_codigo_barras" for="codigo_barras">Código de Barras</label><div class="col-xs-12"><input class="form-control" id="codigo_barras" name="filtros[codigo_barras]" atributo="codigo_barras" type="text" style=""></div></div></div></div>
+  <div class="col-xs-12 col-sm-6 colunas-filtros-index"><div class="campo-filtros-padroes" id="_filtro_padrao_fora_linha"><div class="form-group" id="campo_fora_linha"><label class="col-xs-12" id="titulo_campo_fora_linha" for="fora_linha">Seleção de Produtos</label><div class="col-xs-12"><select name="filtros[fora_linha]" id="fora_linha" class="form-control" atributo="fora_linha"><option value="">Todos</option>
+<option value="false">De Linha</option>
+<option value="true">Fora de Linha</option></select></div></div></div></div>
+  <div class="tamanho-padrao-campo-multiselect-autocompletar">
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_produtos_kits_ids"><div class="form-group" id="campo_produtos_kits_ids"><label class="col-xs-12" id="titulo_campo_produtos_kits_ids" for="produtos_kits_ids">Kit de Produto</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="produtos_kits_ids" class=" multiselect-autocompletar" multiple="multiple" permite_novos_elementos="true" campo="descricao" data-registros="[]" data-filtrar_com="{}" name="filtros[produtos_kits_ids][]" id="produtos_kits_ids" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div></div></div>
+  </div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_exibe_produto_kit"><div class="form-group" id="campo_exibe_produto_kit"><label class="col-xs-12" id="titulo_campo_exibe_produto_kit">Exibe Produto Kit</label><div class="col-xs-12"><input tipo="checkbox_toggle" selecionado="true" value="false" titulo="Exibe Produto Kit" tamanho="col-xs-12 col-sm-6" campo_oculto="true" id="_exibe_produto_kit" name="filtros[exibe_produto_kit]" atributo="exibe_produto_kit" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-exibe_produto_kit"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" id="exibe_produto_kit" name="filtros[exibe_produto_kit]" value="true" atributo="exibe_produto_kit" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div></div>
+  <div class="col-xs-12"></div>
+
+</div>
+
+<div>
+  <div class="col-xs-12"><a data-toggle="collapse" href="#mais_filtros"><span class="glyphicon glyphicon-plus" title="Clique aqui para mais filtros"></span></a><div class="collapse" style="margin-top: 10px;" id="mais_filtros"><div class="well"><div class="row">
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_ncm.id"><div class="form-group filtro-escopo" id="Ncm"><label class="col-xs-12" id="titulo_campo_ncm.id" for="ncm.id">NCM</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="ncm.id" class=" multiselect-autocompletar" multiple="multiple" permite_novos_elementos="false" campo="numero" data-registros="[]" data-filtrar_com="{}" name="filtros[ncm.id][]" id="ncm" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div></div></div>
+</div></div></div></div></div>
+
+    <div class="form-group col-xs-12 col-sm-6" style="margin-top: 25px; ">
+      <button id="botao_filtro_varicao_grade" class="btn btn-default" type="button">Variações da Grade</button>
+    </div>
+
+    <div class="modal fade" id="modal_variacao_grade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Filtro de Variações da Grade</h4></div><div class="modal-body">
+        <div class="row form-horizontal">
+          <div id="container_filtros_variacoes">
+            <div class="col-xs-12"><div class="campo-filtros-padroes" id="_filtro_padrao_grupo_variacao_grade_id"><div class="form-group" id="campo_grupo_variacao_grade_id"><label class="col-xs-12" id="titulo_campo_grupo_variacao_grade_id" for="grupo_variacao_grade_id">Grupo de Variação</label><div class="col-xs-12"><select name="filtros[grupo_variacao_grade_id]" id="grupo_variacao_grade_id" class="form-control filtro-variacao" atributo="grupo_variacao_grade_id"><option value="">Selecione</option>
+<option value="1">CAIXA TERMICA</option>
+<option value="2">RACKS E ESTANTES BUFFET APARADOR</option>
+<option value="3">FOGOES</option>
+<option value="5">COZINHA</option>
+<option value="6">SALA STAR</option>
+<option value="4">DORMITORIO</option>
+<option value="7">SALA JANTAR</option>
+<option value="8">LAVADORAS</option>
+<option value="9">UTILIDADES DOMESTICAS</option>
+<option value="10">ESCRITORIO</option>
+<option value="11">ESPORTE LAZER</option>
+<option value="12">DECORAÇAO</option>
+<option value="13">REFRIGERACAO </option>
+<option value="14">TELEFONIA </option>
+<option value="16">MOTOS</option>
+<option value="17">COR</option>
+<option value="18">FCO ESTOFADOS</option>
+<option value="19">UTILIDADES CAMESA</option>
+<option value="21">ELETRODOMESTICOS</option></select></div></div></div></div>
+                <div class="copia-linha">
+                  <div class="col-xs-12 col-sm-5"><div class="campo-filtros-padroes" id="_filtro_padrao_variacao_grade_id"><div class="form-group" id="campo_variacao_grade_id"><label class="col-xs-12" id="titulo_campo_variacao_grade_id" for="variacao_grade_id">Variação</label><div class="col-xs-12"><select name="filtros[variacoes_grades][0][variacao_grade_id]" id="variacao_grade_id_0" class="form-control" atributo="variacao_grade_id"><option value="">Selecione</option></select></div></div></div></div>
+                  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_item_variacao_grade_ids"><div class="form-group" id="campo_item_variacao_grade_ids"><label class="col-xs-12" id="titulo_campo_item_variacao_grade_ids" for="item_variacao_grade_ids">Opções</label><div class="col-xs-12"><select name="filtros[variacoes_grades][0][item_variacao_grade_ids][]" id="item_variacao_grade_ids_0" class="form-control bootstrap-multiselect" multiple="multiple" atributo="item_variacao_grade_ids" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" title="Nenhum registro selecionado" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Nenhum registro selecionado</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"></ul></div></div></div></div></div>
+                  <input class="form-control checkbox exclui-registro-relacionado" id="_destroy_variacao_0" name="filtros[variacoes_grades][0][_destroy]" value="true" atributo="_destroy" type="checkbox" style=""><label for="_destroy_variacao_0">&nbsp;</label>
+                  <div class="col-xs-12 col-sm-1">
+                    <span class="glyphicon glyphicon-trash botao-remove-linha remove-filtro-variacao-grade" title="Remover Variação"></span>
+                  </div>
+                </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <button class="btn btn-primary adiciona-filtro-variacao-grade" type="button">Adiciona Variação</button>
+            <button class="btn btn-default" onclick="exibeMascara();" type="submit"><span class="glyphicon glyphicon-search"></span> Filtrar</button>
+          </div>
+        </div>
+</div></div></div></div>
+<div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="modal_exportacao_excel" role="dialog" tabindex="-1">
+  <div class="modal-dialog tamanho-medio">
+    <div class="modal-content tamanho-medio">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" title="Fechar" type="button"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Exportação para o Excel</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_exportar_url_anexos"><div class="form-group" id="campo_exportar_url_anexos"><label class="col-xs-12" id="titulo_campo_exportar_url_anexos" for="exportar_url_anexos">Exportar URL de Anexos</label><div class="col-xs-12"><input class="form-control static-value" value="false" atributo="exportar_url_anexos" type="hidden" style=""><input class="form-control form-control checkbox" id="exportar_url_anexos" value="true" atributo="exportar_url_anexos" type="checkbox" style=""><label for="exportar_url_anexos">&nbsp;</label></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_exportar_itens_grade"><div class="form-group" id="campo_exportar_itens_grade"><label class="col-xs-12" id="titulo_campo_exportar_itens_grade" for="exportar_itens_grade">Exportar Itens de Grade</label><div class="col-xs-12"><input class="form-control static-value" value="false" atributo="exportar_itens_grade" type="hidden" style=""><input class="form-control form-control checkbox" id="exportar_itens_grade" value="true" atributo="exportar_itens_grade" type="checkbox" style=""><label for="exportar_itens_grade">&nbsp;</label></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer rodape-modal-cinza">
+        <button class="btn btn-primary" id="btn_exportar_produtos_excel" type="button">Exportar</button>
+        <button class="btn btn-default" data-dismiss="modal" type="button">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+                <div class="col-xs-12 no-padding campo-filtros-padroes" id="_filtro_padrao__ordenacao_consulta">
+  <div class="form-group col-xs-11 col-lg-6"><input class="form-control campo-filtro" disabled="disabled" id="_exibicao_ordenacao_consulta" name="filtros[_exibicao_ordenacao_consulta]" placeholder="Ordenar por: " atributo="_exibicao_ordenacao_consulta" type="text" style=""></div>
+  <span id="configura_ordenacao_consulta" class="glyphicon glyphicon-sort" style="cursor: pointer; margin-top: 8px;" title="Configurar Ordenação da Consulta"></span>
+  <input class="form-control" id="_ordenacao_consulta" name="filtros[_ordenacao_consulta]" atributo="_ordenacao_consulta" type="hidden" style="">
+</div>
+
+<div class="modal fade" id="modal_ordenacao_consulta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">Ordenação da Consulta</h4>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div id="copia_ordenacao">
+              <div class="copia-linha">
+                <div class="form-group col-xs-12 col-sm-7"><select name="" id="coluna" class="form-control campo-filtro" atributo="coluna"><option value="">Selecione</option>
+<option value="codigo">Código</option>
+<option value="descricao">Descrição</option>
+<option value="quantidade_disponivel_estoque">Estoque</option>
+<option value="descricao_unidade_medida">Unidade de Medida</option>
+<option value="codigo_barras">Código de Barras</option>
+<option value="ativo">Ativo</option>
+<option value="descricao_departamento">Departamento</option>
+<option value="descricao_grupo">Grupo</option>
+<option value="descricao_subgrupo">Subgrupo</option>
+<option value="descricao_marca">Marca</option>
+<option value="descricao_cor">Cor</option>
+<option value="nome_fornecedor">Fornecedor Padrão</option>
+<option value="referencia_fornecedor">Ref. Fornecedor/Produto</option>
+<option value="possui_grade">Grade</option>
+<option value="kit">Kit</option>
+<option value="_produtos_kits">Kit de Produtos</option>
+<option value="produto_preco_padrao">Preço Padrão (R$)</option>
+<option value="id">Tabelas de Preço</option>
+<option value="descricao_origem_produto">Origem</option>
+<option value="numero_ncm">NCM</option>
+<option value="created_at">Data de Cadastro</option>
+<option value="informacoes_complementares">Informações Complementares</option>
+<option value="_possui_montagem">Montagem</option>
+<option value="fora_linha">Fora de Linha</option>
+<option value="created_at">Data de Criação</option>
+<option value="updated_at">Data de Atualização</option></select></div>
+                <div class="form-group col-xs-12 col-sm-4"><select name="" id="ordem" class="form-control campo-filtro" atributo="ordem"><option value="">⇧</option>
+<option value="desc">⇩</option></select></div>
+                <div class="col-xs-12 col-sm-1" id="btn_remove_ordenacao">
+                  <span class="glyphicon glyphicon-minus botao-remove-linha" title="Remover Ordenação" onclick="removeLinha(this, &quot;&quot;, {confirm: false});"></span>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-12 text-center">
+            <span class="glyphicon glyphicon-plus botao-copia-linha" title="Adicionar Ordenação" onclick="copiaUltimaLinha('#copia_ordenacao', {}, this);"></span>
+          </div>
+          <div class="col-xs-12">
+            <button class="btn btn-success" id="concluir_ordenacao_consulta" type="button">Concluir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+            <div class="col-xs-12">
+              <div class="pull-right">
+                <button class="btn btn-default" onclick="exibeMascara();" type="submit"><span class="glyphicon glyphicon-search"></span> Filtrar</button>
+                <button class="btn btn-default" onclick="limpaFormulario(this.form);" type="button"><span class="glyphicon glyphicon-erase"></span> Limpar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</form>
+<link rel="stylesheet" href="#">
+
+
+
+
+
+  <div class="col-xs-12">
+    <button type="button" class="btn btn-default botao-muda-visualizacao-tabela sobre-a-lista" responsivo="sim" title="Alterar modo de visualização da tabela"><span class="glyphicon glyphicon-resize-full"></span></button><button type="button" class="btn btn-default sobre-a-lista expande-lista-padrao" data-id-tabela="lista_padrao_produto" title="Prioriza espaço horizontal."><span class="glyphicon glyphicon-resize-horizontal"></span></button><div class="btn-group botao-exibe-oculta-colunas sobre-a-lista" title="Configurar colunas da tabela"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span><span class="caret"></span></button><ul class="dropdown-menu multipla-selecao" role="menu"><li><ul class="configuracao-multipla-selecao"><li><span class="glyphicon glyphicon-cog botao-salva-configuracao-multipla-selecao" title="Salvar Configurações"></span><input class="configuracao-lista-input-quantidade-linhas pull-right" title="Configurar a quantidade de linhas da tabela para exibir." style=""></li></ul></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_codigo" type="checkbox" checked="checked" desabilitado="true" disabled="disabled" style=""><label for="oculta_codigo">Código</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao">Descrição</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_quantidade_disponivel_estoque" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_quantidade_disponivel_estoque">Estoque</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_unidade_medida" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_unidade_medida">Unidade de Medida</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_codigo_barras" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_codigo_barras">Código de Barras</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_ativo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_ativo">Ativo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_departamento" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_departamento">Departamento</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_grupo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_grupo">Grupo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_subgrupo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_subgrupo">Subgrupo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_marca" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_marca">Marca</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_cor" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_cor">Cor</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_nome_fornecedor" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_nome_fornecedor">Fornecedor Padrão</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_referencia_fornecedor" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_referencia_fornecedor">Ref. Fornecedor/Produto</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_possui_grade" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_possui_grade">Grade</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_kit" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_kit">Kit</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__produtos_kits" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__produtos_kits">Kit de Produtos</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_produto_preco_padrao" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_produto_preco_padrao">Preço Padrão (R$)</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_id" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_id">Tabelas de Preço</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_link_custos" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_link_custos">Custos</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_origem_produto" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_origem_produto">Origem</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_numero_ncm" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_numero_ncm">NCM</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_created_at" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_created_at">Data de Cadastro</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_informacoes_complementares" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_informacoes_complementares">Informações Complementares</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__possui_montagem" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__possui_montagem">Montagem</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_fora_linha" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_fora_linha">Fora de Linha</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_icone_anexo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_icone_anexo">Imagem</label><span class="glyphicon glyphicon-move seta-mover"></span></li></ul></div><button class="btn btn-default abre-modal-planilha-produtos sobre-a-lista" title="Importação de planilha para atualização/criação de produtos." type="button" onclick="abreModalPlanilhaProdutos()">Importar de Planilha <i class="fa fa-file-excel-o" style="font-size:17px"></i></button><button class="btn btn-default exporta-excel-com-modal sobre-a-lista" title="Exporta para o Excel" type="button" onclick="abreModalExportacaoExcel()"><i class="fa fa-file-excel-o" style="font-size:17px"></i></button>
+    <button data-tabela="lista_padrao_produto" class="btn btn-default exporta-excel sobre-a-lista" title="Exporta para o Excel" type="button" style="display: none;"><i class="fa fa-file-excel-o" style="font-size:17px"></i></button>
+    
+
+    
+    <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-responsiva configuracoes-colunas" id="lista_padrao_produto" data-sortable="true" data-sortable-initialized="true"><thead><tr><th class="titulo_codigo principal nao-quebra-linha" data-coluna_id="codigo" data-descricao="Código" data-atributo_consulta="codigo">Código</th><th class="titulo_descricao" style="min-width: 300px;" data-coluna_id="descricao" data-descricao="Descrição" data-atributo_consulta="descricao">Descrição</th><th class="titulo_quantidade_disponivel_estoque coluna-valor" data-coluna_id="quantidade_disponivel_estoque" data-descricao="Estoque" data-atributo_consulta="quantidade_disponivel_estoque"><span>Estoque <span style="font-size: 16px; cursor: pointer;" class="glyphicon glyphicon-info-sign" title="Aplicado a Visibilidade de Estoque por Filial. Somente Locais de Estocagem configurados com &quot;Vendável=Sim&quot; e &quot;Compõe Estoque=Sim&quot; serão considerados." id="informacao_quantidade_disponivel_estoque"></span></span></th><th class="titulo_descricao_unidade_medida" data-coluna_id="descricao_unidade_medida" data-descricao="Unidade de Medida" data-atributo_consulta="descricao_unidade_medida">Unidade de Medida</th><th class="titulo_codigo_barras" data-coluna_id="codigo_barras" data-descricao="Código de Barras" data-atributo_consulta="codigo_barras">Código de Barras</th><th class="titulo_ativo" data-coluna_id="ativo" data-descricao="Ativo" data-atributo_consulta="ativo">Ativo</th><th class="titulo_descricao_departamento" data-coluna_id="descricao_departamento" data-descricao="Departamento" data-atributo_consulta="descricao_departamento">Departamento</th><th class="titulo_descricao_grupo" data-coluna_id="descricao_grupo" data-descricao="Grupo" data-atributo_consulta="descricao_grupo">Grupo</th><th class="titulo_descricao_subgrupo" data-coluna_id="descricao_subgrupo" data-descricao="Subgrupo" data-atributo_consulta="descricao_subgrupo">Subgrupo</th><th class="titulo_descricao_marca" data-coluna_id="descricao_marca" data-descricao="Marca" data-atributo_consulta="descricao_marca">Marca</th><th class="titulo_descricao_cor" data-coluna_id="descricao_cor" data-descricao="Cor" data-atributo_consulta="descricao_cor">Cor</th><th class="titulo_nome_fornecedor" data-coluna_id="nome_fornecedor" data-descricao="Fornecedor Padrão" data-atributo_consulta="nome_fornecedor">Fornecedor Padrão</th><th class="titulo_referencia_fornecedor" data-coluna_id="referencia_fornecedor" data-descricao="Ref. Fornecedor/Produto" data-atributo_consulta="referencia_fornecedor">Ref. Fornecedor/Produto</th><th class="titulo_possui_grade" data-coluna_id="possui_grade" data-descricao="Grade" data-atributo_consulta="possui_grade">Grade</th><th class="titulo_kit" data-coluna_id="kit" data-descricao="Kit" data-atributo_consulta="kit">Kit</th><th class="titulo__produtos_kits" data-coluna_id="_produtos_kits" data-descricao="Kit de Produtos" data-atributo_consulta="_produtos_kits">Kit de Produtos</th><th class="titulo_produto_preco_padrao coluna-valor text-right" data-coluna_id="produto_preco_padrao" data-descricao="Preço Padrão (R$)" data-atributo_consulta="produto_preco_padrao" data-num_format="0.00">Preço Padrão (R$)</th><th class="titulo_id" data-coluna_id="id" data-descricao="Tabelas de Preço" data-atributo_consulta="id" data-atributo_ocultar_coluna_excel="true">Tabelas de Preço</th><th class="titulo_link_custos" data-coluna_id="link_custos" data-descricao="Custos" data-sortable="false" data-atributo_consulta="link_custos" data-atributo_ocultar_coluna_excel="true">Custos</th><th class="titulo_descricao_origem_produto" style="min-width: 200px;" data-coluna_id="descricao_origem_produto" data-descricao="Origem" data-atributo_consulta="descricao_origem_produto">Origem</th><th class="titulo_numero_ncm" data-coluna_id="numero_ncm" data-descricao="NCM" data-atributo_consulta="numero_ncm">NCM</th><th class="titulo_created_at" data-coluna_id="created_at" data-descricao="Data de Cadastro" data-atributo_consulta="created_at">Data de Cadastro</th><th class="titulo_informacoes_complementares" data-coluna_id="informacoes_complementares" data-descricao="Informações Complementares" data-atributo_consulta="informacoes_complementares">Informações Complementares</th><th class="titulo__possui_montagem" data-coluna_id="_possui_montagem" data-descricao="Montagem" data-atributo_consulta="_possui_montagem">Montagem</th><th class="titulo_fora_linha" data-coluna_id="fora_linha" data-descricao="Fora de Linha" data-atributo_consulta="fora_linha">Fora de Linha</th><th class="titulo_icone_anexo" data-coluna_id="icone_anexo" data-descricao="Imagem" data-sortable="false" data-atributo_consulta="id" data-atributo_ocultar_coluna_excel="true"></th></tr></thead><tbody><tr><td>Carregando...</td></tr></tbody><tfoot><tr></tr></tfoot></table></div>
+
+      <div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="modal_planilha_produtos" role="dialog" tabindex="-1">
+  <div class="modal-dialog tamanho-medio">
+    <div class="modal-content tamanho-medio">
+
+      <form class="form-horizontal formulario-padrao" target="iframe_upload" enctype="multipart/form-data" action="#" onsubmit="return false" accept-charset="UTF-8" method="post">
+        <input class="form-control" id="permite_importar_planilha_alteracoes_produto" value="true" atributo="permite_importar_planilha_alteracoes_produto" type="hidden" style="">
+
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" title="Fechar" type="button"><span aria-hidden="true">×</span></button>
+          <h4 class="modal-title">Importação de planilha para atualização/criação de produtos</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="notificacoes-gerais-sistema"></div>
+            </div>
+
+            <div class="col-xs-12 text-primary" style="font-style: italic; font-size: 12px;">
+              <div>
+                <span class="glyphicon glyphicon-info-sign"></span> <span class="bold">Atenção:</span>
+              </div>
+              <div>
+                -As colunas serão identificadas pelo cabeçalho, caso o cabeçalho tenha sido alterado as informações da coluna serão desconsideradas.
+              </div>
+              <div>
+                -Formatos permitidos: <span class="bold">XLS, XLSX e CSV</span>.
+              </div>
+              <div>
+                -Arquivos CSV deverão estar separados por ";".
+              </div>
+              <div>
+                -Produtos de grade serão desconsiderados, a alteração deverá ser feita no produto principal.
+              </div>
+              <div style="margin-top: 8px; margin-bottom: 4px;">
+                <span class="bold">-Somente os seguintes dados serão atualizados:</span>
+                <div>Descrição, Código de Barras, Ativo, Ref. Fornecedor/Produto, Altura, Largura, Profundidade, Peso Bruto, Peso Líquido, Cubagem, Diâmetro, Quantidade de Volumes, Garantia em Meses, Altura da Embalagem (cm), Largura da Embalagem (cm), Comprimento da Embalagem (cm), Peso da Embalagem (kg), Departamento, Grupo, Subgrupo, Marca, Unidade de Medida, Origem, NCM, Montagem</div>
+              </div>
+            </div>
+
+            <div class="col-xs-12"><div class="form-group" id="campo_planilha"><label class="col-xs-12" id="titulo_campo_planilha" for="planilha"></label><div class="col-xs-12"><button type="button" title="Escolha um arquivo." class="btn btn-primary botao-upload-arquivo"><span class="glyphicon glyphicon-folder-open"></span> Planilha</button><input id="nome_do_arquivo_planilha" type="text" class="campo-descricao-arquivo-upload form-control" disabled="disabled" style=""><input id="file_field_planilha" type="file" class="campo-oculto-arquivo-upload" name="planilha" data-max-size="10485760" style=""></div></div></div>
+
+            <div class="col-xs-12" id="painel_log_retorno_importacao_planilha"></div>
+          </div>
+        </div>
+        <div class="modal-footer rodape-modal-cinza">
+          <button class="btn btn-primary" id="btn_importar_planilha_alteracoes" type="submit">Importar</button>
+          <button class="btn btn-default" data-dismiss="modal" type="button">Fechar</button>
+        </div>
+</form>
+    </div>
+  </div>
+</div>
+  <div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="modal_pre_processamento_planilha_produtos" role="dialog" tabindex="-1">
+  <div class="modal-dialog tamanho-medio">
+    <div class="modal-content tamanho-medio">
+
+      <form class="form-horizontal formulario-padrao" action="#" onsubmit="return false" accept-charset="UTF-8" data-remote="true" method="post">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" title="Fechar" type="button"><span aria-hidden="true">×</span></button>
+          <h4 class="modal-title">Deseja adicionar novos produtos?</h4>
+        </div>
+
+        <div class="modal-body">
+          <div id="conteudo_pre_processamento_planilha_produtos"></div>
+        </div>
+
+        <div class="modal-footer rodape-modal-cinza">
+          <button class="btn btn-primary" type="submit">Confirmar</button>
+          <button class="btn btn-default" data-dismiss="modal" type="button">Fechar</button>
+        </div>
+</form>    </div>
+  </div>
+</div>
+
+    <div class="text-center div-paginacao-responsiva row"><ul class="pagination pagination"><li class="prev disabled"><span>&lt;</span></li> <li class="active"><span>1</span></li> <li><a target="_self" rel="next" href="#">2</a></li> <li><a target="_self" href="#">3</a></li> <li><a target="_self" href="#">4</a></li> <li><a target="_self" href="#">5</a></li> <li class="disabled"><span>…</span></li> <li><a target="_self" href="#">1164</a></li> <li><a target="_self" href="#">1165</a></li> <li class="next"><a target="_self" rel="next" href="#">&gt;</a></li></ul><input id="numero_pagina" class="col-xs-12 input-numero-pagina campo-numerico" style=""></div>
+  </div>
+</div>
+
+
+
+      </div>
+  </section>
+</main>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
+
+<script src="../assets/meta.js"></script>
+<script src="../assets/erp-dados.js"></script>
+</body>
+</html>

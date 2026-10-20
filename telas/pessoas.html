@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="pt-BR" theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pessoa</title>
+<link rel="icon" type="image/svg+xml" href="../assets/marca/favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/guarda.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/config_filtros_padroes.css">
+<link rel="stylesheet" href="../assets/telas/pessoas.css">
+<style>
+  /* Valores extraídos do CSS original (application.css / menu.css) */
+  :root {
+    --fundo: #f2f1f6;
+    --acrilico: #ffffff;
+    --texto: #363636;
+    --borda-botao: #36363666;
+    --hover-botao: #f3f3f333;
+    --destaque: #ff035b;
+    --sombra: 0 0 1rem 0 rgba(0,0,0,0.25);
+    --sombra-pesquisa: 0 0 1rem 0 rgba(0,0,0,0.2);
+    --placeholder: #8e8e93;
+  }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] {
+      --fundo: #1c1c1e;
+      --acrilico: #2c2c2e;
+      --texto: #dfdfdf;
+      --borda-botao: #dfdfdf66;
+      --hover-botao: #1c1c1e33;
+    }
+  }
+  html[theme-mode=dark] {
+    --fundo: #141a1f;
+    --acrilico: #232a2f;
+    --texto: #dfdfdf;
+    --borda-botao: #dfdfdf66;
+    --hover-botao: #141a1f33;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 10px; }
+  body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--fundo);
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .acrilico {
+    background: var(--acrilico);
+    box-shadow: var(--sombra);
+    border-radius: 15px;
+  }
+
+  /* ---------- Menu lateral ---------- */
+  #sidebar {
+    position: absolute;
+    top: 0; left: 0;
+    width: 250px;
+    padding-right: 15px;
+  }
+  .sidebar-brand {
+    height: 51px;
+    margin: 15px 0 15px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-marca {
+    width: 48px; height: 48px;
+  }
+  .logo-texto { line-height: 1; }
+  .logo-texto strong {
+    display: block;
+    font-size: 26px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--texto);
+  }
+  .logo-texto span {
+    display: block;
+    font-size: 12px; letter-spacing: 6px; text-align: center;
+    color: var(--texto);
+  }
+  #div_pesquisa_programa_menu {
+    margin: 0 0 0 10px;
+  }
+  #div_pesquisa_programa_menu input {
+    width: 100%;
+    height: 51px;
+    border: none;
+    border-radius: 15px;
+    padding: 0 12px;
+    font: 15px 'Work Sans', sans-serif;
+    color: var(--texto);
+    background: var(--acrilico);
+    box-shadow: var(--sombra-pesquisa);
+    outline: none;
+  }
+  #div_pesquisa_programa_menu input::placeholder { color: var(--placeholder); }
+  .sidebar-nav { list-style: none; margin: 0; padding: 0; }
+  .espacamento-itens-menu {
+    margin: 15px 0 15px 15px;
+    height: 51px;
+  }
+  .espacamento-itens-menu a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+  .espacamento-itens-menu svg {
+    width: 22px; height: 22px;
+    margin-right: 13px;
+    flex: none;
+    color: var(--destaque);
+  }
+  .espacamento-itens-menu .externo {
+    width: 16px; height: 16px; margin: 0 0 0 10px; color: var(--texto);
+  }
+
+  /* ---------- Barra superior ---------- */
+  #conteudo {
+    margin-left: 250px;
+    padding: 15px 15px 15px 0;
+  }
+  #barra_superior {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+  }
+  #barra_superior .titulo {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; font-weight: 400;
+  }
+  #barra_superior .titulo svg { width: 20px; height: 20px; }
+  #barra_superior .direita {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 22px;
+  }
+  .descricao-filial-menu {
+    text-transform: uppercase;
+    font-size: 12px; font-weight: 400;
+  }
+  .icone-topo { position: relative; display: flex; align-items: center; gap: 2px; }
+  .icone-topo svg { width: 20px; height: 20px; }
+  .icone-topo .caret {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
+  }
+  .icone-usuario[data-notificacoes]::after {
+    content: attr(data-notificacoes);
+    position: absolute;
+    top: -9px; left: 10px;
+    height: 12px;
+    padding: 0 4px;
+    border-radius: 12px;
+    background: var(--destaque);
+    color: white;
+    font: bolder 9px/13px monospace;
+  }
+
+  /* ---------- Conteúdo ---------- */
+  #container_conteudo {
+    margin-top: 15px;
+    padding: 15px;
+    min-height: 600px;
+  }
+  .grade-programas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 358px));
+    justify-content: center;
+    gap: 20px 30px;
+  }
+  .botao-programa-menu {
+    background-color: transparent;
+    border: 1px solid var(--borda-botao);
+    color: var(--texto);
+  }
+  .botao-programa-menu:hover { background-color: var(--hover-botao); }
+  .botao-responsivo {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    padding: 0 25px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-align: left;
+    overflow: hidden;
+  }
+  .texto-botao-responsivo { margin-left: 10px; }
+  .icone-botao-menu {
+    position: absolute;
+    right: 30px; top: 20px;
+    width: 40px; height: 40px;
+    color: var(--destaque);
+  }
+
+  /* ---------- Botão flutuante ---------- */
+  .flutuante {
+    position: fixed;
+    left: 20px; bottom: 20px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flutuante svg { width: 34px; height: 34px; }
+  .flutuante .ponto {
+    position: absolute; top: 2px; right: 2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--destaque);
+  }
+
+  /* ---------- Responsivo (mesmos pontos de quebra do original) ---------- */
+  @media (max-width: 767px) {
+    #sidebar { position: static; width: auto; padding: 0 16px; }
+    .espacamento-itens-menu { margin: 10px 0; }
+    #div_pesquisa_programa_menu { margin: 0; }
+    #conteudo { margin-left: 0; padding: 15px 16px; }
+    .grade-programas { grid-template-columns: 1fr; }
+    .botao-responsivo { height: 55px; line-height: 55px; }
+    .icone-botao-menu { width: 30px; height: 30px; top: 12px; }
+    .descricao-filial-menu { display: none; }
+  }
+
+  /* ---------- Protótipo ---------- */
+  /* Nomes longos quebram em duas linhas, como no original (line-height 25px) */
+  .botao-responsivo { display: flex; align-items: center; line-height: 25px; padding-right: 85px; }
+  .vazio { padding: 40px 15px; text-align: center; color: #8e8e93; font-size: 16px; }
+  .pendente { max-width: 640px; margin: 40px auto; text-align: center; font-size: 16px; line-height: 1.6; }
+  .pendente h2 { font-weight: 400; font-size: 22px; margin: 0 0 10px; }
+  .pendente a { color: #2f84ec; }
+  .pendente img { max-width: 100%; border-radius: 10px; margin-top: 20px; box-shadow: var(--sombra); }
+  .rotulo-grupo { font-size: 13px; color: #8e8e93; }
+
+  /* Configurações: grupos em sanfona */
+  .sanfona { display: flex; flex-direction: column; gap: 10px; }
+  .sanfona details { border: 1px solid var(--borda-botao); border-radius: 10px; overflow: hidden; }
+  .sanfona summary {
+    cursor: pointer; padding: 12px 15px; font-size: 16px;
+    background: rgba(127,127,127,0.08); list-style: none;
+  }
+  .sanfona summary::-webkit-details-marker { display: none; }
+  .sanfona .lista { display: flex; flex-direction: column; padding: 10px 15px 15px; }
+  .sanfona .lista span { padding: 10px 15px; background: #337ab7; color: #fff; border-radius: 6px 6px 0 0; }
+  .sanfona .lista a { padding: 10px 15px; border: 1px solid var(--borda-botao); border-top: none; }
+  .sanfona .lista a:last-child { border-radius: 0 0 6px 6px; }
+  .sanfona .lista a:hover { background: var(--hover-botao); }
+
+  .marca-erp { background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
+  }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
+</style>
+</head>
+<body data-tela="lista" data-tabela="pessoas" data-form="pessoas_new.html">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-estrela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+    <symbol id="i-cadastros" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="5" width="16" height="16" rx="1.5"/><path d="M7 2.5h10v2.5H7zM7 9h10M7 12h10M7 15h6M7 18h4"/></g></symbol>
+    <symbol id="i-vendas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><path d="M9 7v8M12.5 7v8M16 7v8M6.7 11h13.3"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></g></symbol>
+    <symbol id="i-ecommerce" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M12 9.5l2 2 3-3.5"/></g></symbol>
+    <symbol id="i-compras" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h18l-2 11H5z"/><path d="M8 9l4-6 4 6M8 12v5M10.7 12v5M13.3 12v5M16 12v5"/></g></symbol>
+    <symbol id="i-financeiro" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2v2.1c2.3.3 4 1.7 4.3 3.9h-2.6c-.3-1-1.2-1.6-2.7-1.6-1.6 0-2.6.7-2.6 1.7 0 1 .8 1.4 3.2 2 3.1.7 5 1.8 5 4.4 0 2.2-1.7 3.7-4.6 4V21h-2v-2.6c-2.7-.3-4.5-1.8-4.7-4.2h2.6c.2 1.2 1.3 2 3.2 2 1.8 0 2.8-.7 2.8-1.8 0-1-.8-1.5-3.4-2.1C8.6 11.6 7 10.5 7 8.2 7 6.1 8.6 4.6 11 4.2V2z"/></symbol>
+    <symbol id="i-estoque" viewBox="0 0 24 24"><g fill="currentColor"><rect x="8.5" y="2.5" width="7" height="7" rx=".5"/><rect x="2.5" y="10.5" width="9" height="10" rx=".5"/><rect x="12.5" y="10.5" width="9" height="10" rx=".5"/></g></symbol>
+    <symbol id="i-gerencial" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="13" height="9" rx="1"/><path d="M5 11V8M8 11V6M11 11V9M8.5 13v4M5 21l3.5-4 3.5 4"/><circle cx="19" cy="5" r="2"/><path d="M19 8v6M17 21l2-7 2 7M15 10l4-1"/></g></symbol>
+    <symbol id="i-fiscal" viewBox="0 0 24 24"><path fill="currentColor" d="M3 2h18v20l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L3 22zm4.6 4.5v1.1c-1.2.2-2 1-2 2.1 0 1.3 1 1.8 2.2 2.1 1 .2 1.3.5 1.3.9 0 .5-.5.8-1.2.8-.8 0-1.3-.4-1.4-1H5.2c.1 1.2 1 2 2.4 2.2v1.1h1.2v-1.1c1.3-.2 2.1-1 2.1-2.1 0-1.4-1.1-1.9-2.3-2.2-1-.2-1.2-.5-1.2-.8 0-.4.4-.7 1-.7.7 0 1.1.3 1.2.8h1.3c-.1-1.1-.9-1.8-2.1-2V6.5zM12.5 8v1.5H19V8zm0 3.5V13H19v-1.5zm0 3.5v1.5H19V15z"/></symbol>
+    <symbol id="i-tributacao" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h11l4 4v16H4z"/><path d="M15 2v4h4M7 6h5M7 9h9M7 12h4M7 15h4M7 18h4"/><rect x="13" y="13" width="6" height="7" rx=".5"/><path d="M14.5 15h3M14.5 17h1M16.5 17h1M14.5 18.7h1M16.5 18.7h1"/></g></symbol>
+    <symbol id="i-integracoes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="9" r="2.3"/><path d="M8 3.5v2M8 12.5v2M2.5 9h2M11.5 9h2M4.1 5.1l1.4 1.4M10.5 11.5l1.4 1.4M4.1 12.9l1.4-1.4M10.5 6.5l1.4-1.4"/><circle cx="17" cy="16" r="2"/><path d="M17 11.5v2M17 18.5v2M12.5 16h2M19.5 16h2M13.8 12.8l1.4 1.4M18.8 17.8l1.4 1.4M13.8 19.2l1.4-1.4M18.8 14.2l1.4-1.4"/></g></symbol>
+    <symbol id="i-configuracoes" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 2h3.4l.5 2.6c.7.2 1.3.5 1.9.9l2.3-1.4 2.4 2.4-1.4 2.3c.4.6.7 1.2.9 1.9l2.6.5v3.4l-2.6.5c-.2.7-.5 1.3-.9 1.9l1.4 2.3-2.4 2.4-2.3-1.4c-.6.4-1.2.7-1.9.9l-.5 2.6h-3.4l-.5-2.6c-.7-.2-1.3-.5-1.9-.9l-2.3 1.4-2.4-2.4 1.4-2.3c-.4-.6-.7-1.2-.9-1.9L1.5 13.7v-3.4l2.6-.5c.2-.7.5-1.3.9-1.9L3.6 5.6 6 3.2l2.3 1.4c.6-.4 1.2-.7 1.9-.9zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></symbol>
+    <symbol id="i-mensalidades" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3" y="3" width="1.6" height="15"/><rect x="6" y="3" width="2.4" height="15"/><rect x="9.8" y="3" width="1.2" height="15"/><rect x="12.4" y="3" width="2.4" height="15"/><rect x="16.2" y="3" width="1.2" height="15"/><rect x="18.8" y="3" width="2.2" height="15"/><rect x="3" y="20" width="3" height="1.4"/><rect x="8" y="20" width="3" height="1.4"/><rect x="13" y="20" width="3" height="1.4"/><rect x="18" y="20" width="3" height="1.4"/></g></symbol>
+    <symbol id="i-relatorios" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h12l3 3v17H4z"/><path d="M7 11V8M9.5 11V5.5M12 11V7.5M7 14h9M7 17h5"/><circle cx="16.5" cy="17.5" r="2.3"/><path d="M16.5 14v1.2M16.5 19.8V21M13 17.5h1.2M18.8 17.5H20"/></g></symbol>
+    <symbol id="i-externo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14v4.5a2.5 2.5 0 01-2.5 2.5h-10A2.5 2.5 0 013 18.5v-10A2.5 2.5 0 015.5 6H10"/><path d="M14 3h7v7M21 3l-9 9"/></g></symbol>
+    <symbol id="i-grade" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g></symbol>
+    <symbol id="i-manual" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 5.5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1V20c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6.5V21"/></g></symbol>
+    <symbol id="i-sino" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0v5l2 3H4l2-3z"/><path d="M10 20.5a2 2 0 004 0"/></g></symbol>
+    <symbol id="i-usuario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-pessoa" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="24" cy="24" r="21.5"/><circle cx="24" cy="18" r="5"/><path d="M14 33v-3.5a6.5 6.5 0 016.5-6.5h7a6.5 6.5 0 016.5 6.5V33z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-produto" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 22v-6a6 6 0 016-6h14a6 6 0 016 6v6"/><path d="M15 26h18v-2a3 3 0 013-3h4a4 4 0 010 8h-3v6H11v-6H8a4 4 0 010-8h4a3 3 0 013 3z"/><circle cx="8" cy="25" r="1.6"/><circle cx="40" cy="25" r="1.6"/><path d="M13 35v3M35 35v3M19 16h2M20 15v2M23 16h2M24 15v2M27 16h2M28 15v2"/></g></symbol>
+    <symbol id="i-kit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M26 4h16v38H26M30 4v4M30 12v4"/><path d="M14 10h8v6h-8zM18 16v3"/><path d="M8 26v-3a4 4 0 014-4h16a4 4 0 014 4v3"/><path d="M10 29h20v-1a2 2 0 012-2h1a3 3 0 010 6h-1v6H8v-6H7a3 3 0 010-6h1a2 2 0 012 2z"/><circle cx="7" cy="29" r="1"/><circle cx="33" cy="29" r="1"/><path d="M10 38v3M30 38v3M13 31h1M17 31h1M21 31h1M25 31h1M15 34h1M19 34h1M23 34h1"/></g></symbol>
+    <symbol id="i-servico" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="15" cy="15" r="4"/><path d="M15 6v3M15 21v3M6 15h3M21 15h3M8.6 8.6l2.2 2.2M19.2 19.2l2.2 2.2M8.6 21.4l2.2-2.2M19.2 10.8l2.2-2.2"/><circle cx="15" cy="15" r="9"/><path d="M33 14l11 4v10c0 7-5 11-11 14-6-3-11-7-11-14V18z"/><path d="M33 18l7 2.5V28c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-7.5z"/><path d="M29 28l3 3 6-6"/><path d="M27 39l-3 6 4-1 2 3 2-5M39 39l3 6-4-1-2 3-2-5"/></g></symbol>
+  </defs>
+</svg>
+<nav id="sidebar">
+  <div class="sidebar-brand marca-erp"></div>
+  <div id="div_pesquisa_programa_menu">
+    <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
+  </div>
+  <ul class="sidebar-nav">
+    <li class="espacamento-itens-menu acrilico"><a href="../menu/favoritos.html"><svg><use href="#i-estrela"/></svg>Favoritos</a></li>
+<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/cadastros.html"><svg><use href="#i-cadastros"/></svg>Cadastros</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/ecommerce.html"><svg><use href="#i-ecommerce"/></svg>E-commerce</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/compras.html"><svg><use href="#i-compras"/></svg>Compras</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/financeiro.html"><svg><use href="#i-financeiro"/></svg>Financeiro</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/estoque.html"><svg><use href="#i-estoque"/></svg>Estoque</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/gerencial.html"><svg><use href="#i-gerencial"/></svg>Gerencial</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/tributacao.html"><svg><use href="#i-tributacao"/></svg>Tributação</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/integracoes.html"><svg><use href="#i-integracoes"/></svg>Integrações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/configuracao.html"><svg><use href="#i-configuracoes"/></svg>Configurações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/mensalidades.html"><svg><use href="#i-mensalidades"/></svg>Mensalidades</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="#"><svg><use href="#i-relatorios"/></svg>Relatórios<svg class="externo"><use href="#i-externo"/></svg></a></li>
+  </ul>
+</nav>
+<main id="conteudo">
+  <header id="barra_superior" class="acrilico">
+    <div class="titulo"><svg><use href="#i-grade"/></svg>Pessoa</div>
+    <div class="direita">
+      <span class="descricao-filial-menu">Loja Demo Centro</span>
+      <a href="#" class="icone-topo" aria-label="Manuais"><svg><use href="#i-manual"/></svg></a>
+      <a href="#" class="icone-topo icone-usuario" data-notificacoes="930" aria-label="Notificações"><svg><use href="#i-sino"/></svg><span class="caret"></span></a>
+      <a href="#" class="icone-topo" aria-label="Perfil"><svg><use href="#i-usuario"/></svg><span class="caret"></span></a>
+    </div>
+  </header>
+  <section id="container_conteudo" class="acrilico">
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        
+
+<div class="row">
+  <div class="col-xs-12">
+  <a class="btn btn-primary" href="pessoas_new.html">Adicionar</a>
+</div>
+
+  
+<form class="formulario-filtros" action="#" onsubmit="return false" accept-charset="UTF-8" method="post"><input type="hidden" name="_method" autocomplete="off" style="">
+
+    <input class="form-control" id="campo_id" name="campo_id" atributo="campo_id" type="hidden" style="">
+    <input class="form-control" id="campo_descricao" name="campo_descricao" atributo="campo_descricao" type="hidden" style="">
+    <input class="form-control" id="atributo_descricao" name="atributo_descricao" atributo="atributo_descricao" type="hidden" style="">
+    <input class="form-control" id="parametro_adicional" name="parametro_adicional" atributo="parametro_adicional" type="hidden" style="">
+
+    
+    <input class="form-control" id="page" name="page" value="1" atributo="page" type="hidden" style="">
+
+    <div class="col-xs-12">
+      <div class="space-6"></div>
+      <div class="panel panel-default ">
+        <div class="panel-heading" data-toggle="collapse" href="#item_collapse_filtros">
+          <h4 class="panel-title">
+            <span class="glyphicon glyphicon-filter"></span>
+            <a><strong>Filtros</strong></a>
+          </h4>
+        </div>
+        <div id="item_collapse_filtros" class="item_collapse_filtros panel-collapse collapse in">
+          <div class="panel-body">
+            <div class="form-horizontal">
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_nome"><div class="form-group" id="campo_nome"><label class="col-xs-12" id="titulo_campo_nome" for="nome">Nome</label><div class="col-xs-12"><input class="form-control" id="nome" name="filtros[nome]" atributo="nome" type="text" style=""></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_primeiro_nome"><div class="form-group" id="campo_primeiro_nome"><label class="col-xs-12" id="titulo_campo_primeiro_nome">Buscar pelo primeiro Nome</label><div class="col-xs-12"><input tipo="checkbox_toggle" titulo="Buscar pelo primeiro Nome" value="false" campo_oculto="true" tamanho="col-sm-6" id="_primeiro_nome" name="filtros[primeiro_nome]" atributo="primeiro_nome" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-primeiro_nome"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" id="primeiro_nome" name="filtros[primeiro_nome]" value="true" atributo="primeiro_nome" type="checkbox" style="display: none;"></div></div></div></div></div></div>
+  <div class="col-xs-12"></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_codigo"><div class="form-group" id="campo_codigo"><label class="col-xs-12" id="titulo_campo_codigo" for="codigo">Código</label><div class="col-xs-12"><input class="form-control" id="codigo" name="filtros[codigo]" atributo="codigo" type="text" style=""></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_nome_fantasia_ilike"><div class="form-group" id="campo_nome_fantasia_ilike"><label class="col-xs-12" id="titulo_campo_nome_fantasia_ilike" for="nome_fantasia_ilike">Nome Fantasia/Apelido</label><div class="col-xs-12"><input class="form-control" id="nome_fantasia_ilike" name="filtros[nome_fantasia_ilike]" atributo="nome_fantasia_ilike" type="text" style=""></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_tipo_pessoa"><div class="form-group" id="campo_tipo_pessoa"><label class="col-xs-12" id="titulo_campo_tipo_pessoa" for="tipo_pessoa">Pessoa</label><div class="col-xs-12"><select name="filtros[tipo_pessoa]" id="tipo_pessoa" class="form-control" atributo="tipo_pessoa"><option value="">Selecione</option>
+<option value="F">Física</option>
+<option value="J">Jurídica</option>
+<option value="E">Estrangeira</option></select></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_ativo"><div class="form-group" id="campo_ativo"><label class="col-xs-12" id="titulo_campo_ativo" for="ativo">Ativo</label><div class="col-xs-12"><select name="filtros[ativo]" id="ativo" class="form-control" value="true" atributo="ativo"><option selected="selected" value="true">Ativo</option>
+<option value="false">Inativo</option>
+<option value="">Ambos</option></select></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_cpf_cnpj"><div class="form-group" id="campo_cpf_cnpj"><label class="col-xs-12" id="titulo_campo_cpf_cnpj" for="cpf_cnpj">CPF</label><div class="col-xs-12"><input class="form-control" id="cpf_cnpj_cpf" name="filtros[cpf_cnpj]" placeholder="999.999.999-99" value="" atributo="cpf_cnpj" type="text" mascara="999.999.999-99" maxlength="14" autocomplete="off" style=""></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_cpf_cnpj"><div class="form-group" id="campo_cpf_cnpj"><label class="col-xs-12" id="titulo_campo_cpf_cnpj" for="cpf_cnpj">CNPJ</label><div class="col-xs-12"><input class="form-control" id="cpf_cnpj_cnpj" name="filtros[cpf_cnpj]" placeholder="99.999.999/9999-99" value="" atributo="cpf_cnpj" type="text" style=""></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_finalidade"><div class="form-group" id="campo_finalidade"><label class="col-xs-12" id="titulo_campo_finalidade" for="finalidade">Finalidade</label><div class="col-xs-12"><select name="filtros[finalidade]" id="finalidade" class="form-control" atributo="finalidade"><option value="">Selecione</option>
+<option value="C">Consumidor</option>
+<option value="R">Revendedor</option></select></div></div></div></div>
+  <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_filial_cadastro_id"><div class="form-group" id="campo_filial_cadastro_id"><label class="col-xs-12" id="titulo_campo_filial_cadastro_id" for="filial_cadastro_id">Filial cadastro</label><div class="col-xs-12"><select name="filtros[filial_cadastro_id][]" id="filial_cadastro_id" class="form-control bootstrap-multiselect" multiple="multiple" atributo="filial_cadastro_id" data-bms="{&quot;nonSelectedText&quot;:&quot;Filiais de cadastro&quot;}" style="display: none;"><option value="5">LOJA DEMO CENTRO</option>
+<option value="9">LOJA DEMO 2</option>
+<option value="6">DEPÓSITO DEMO</option>
+<option value="12">LOJA AVELLOZ ASSU</option>
+<option value="3">Depósito</option>
+<option value="1">Lojão dos Móveis</option></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" title="Filiais de cadastro" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Filiais de cadastro</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="5" style=""> LOJA DEMO CENTRO</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="9" style=""> LOJA DEMO 2</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="6" style=""> DEPÓSITO DEMO</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="12" style=""> LOJA AVELLOZ ASSU</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="3" style=""> Depósito</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="1" style=""> Lojão dos Móveis</label></a></li></ul></div></div></div></div></div>
+
+  <div class="col-xs-12"><a data-toggle="collapse" href="#mais_filtros"><span class="glyphicon glyphicon-plus" title="Clique aqui para mais filtros"></span></a><div class="collapse" style="margin-top: 10px;" id="mais_filtros"><div class="well"><div class="row">
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_pessoas_enderecos.logradouro_ilike"><div class="form-group" id="campo_pessoas_enderecos.logradouro_ilike"><label class="col-xs-12" id="titulo_campo_pessoas_enderecos.logradouro_ilike" for="pessoas_enderecos.logradouro_ilike">Logradouro</label><div class="col-xs-12"><input class="form-control" id="pessoas_enderecos.logradouro_ilike" name="filtros[pessoas_enderecos.logradouro_ilike]" atributo="pessoas_enderecos.logradouro_ilike" type="text" style=""></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_ceps.cep_ilike"><div class="form-group" id="campo_ceps.cep_ilike"><label class="col-xs-12" id="titulo_campo_ceps.cep_ilike" for="ceps.cep_ilike">CEP</label><div class="col-xs-12"><input class="form-control" id="ceps.cep_ilike" name="filtros[ceps.cep_ilike]" placeholder="99999-999" atributo="ceps.cep_ilike" mascara="99999-999" type="text" maxlength="9" autocomplete="off" style=""></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_cidades.id"><div class="form-group" id="campo_cidades.id"><label class="col-xs-12" id="titulo_campo_cidades.id" for="cidades.id">Cidade</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="cidades.id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_cidade_id" value="" atributo="cidades.id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="cidade_id" name="filtros[cidades.id]" atributo="cidades.id" type="hidden" style=""></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_bairros.id"><div class="form-group" id="campo_bairros.id"><label class="col-xs-12" id="titulo_campo_bairros.id" for="bairros.id">Bairro</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" disabled="disabled" value="" atributo="bairros.id" campo="descricao" data-filtros="{}" data-filtrar_com="{&quot;cidade_id&quot;:&quot;cidade_id&quot;}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(238, 238, 238);"><input class="form-control autocompletar tt-input" disabled="disabled" id="autocompletar_bairros.id" value="" atributo="bairros.id" campo="descricao" data-filtros="{}" data-filtrar_com="{&quot;cidade_id&quot;:&quot;cidade_id&quot;}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" disabled="disabled" id="bairros.id" name="filtros[bairros.id]" atributo="bairros.id" type="hidden" style=""></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_ufs.id"><div class="form-group" id="campo_ufs.id"><label class="col-xs-12" id="titulo_campo_ufs.id" for="ufs.id">UF</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="ufs.id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_ufs.id" value="" atributo="ufs.id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-2"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="ufs.id" name="filtros[ufs.id]" atributo="ufs.id" type="hidden" style=""></div></div></div></div>
+    <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_data_nascimento_fundacao"><div class="form-group" id="campo_data_nascimento_fundacao"><label class="col-xs-12" id="titulo_campo_data_nascimento_fundacao" for="data_nascimento_fundacao">Data de Nascimento/Fundação</label><div class="col-xs-12"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" id="data_nascimento_fundacao" name="filtros[data_nascimento_fundacao]" atributo="data_nascimento_fundacao" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_grupo_economico_id"><div class="form-group" id="campo_grupo_economico_id"><label class="col-xs-12" id="titulo_campo_grupo_economico_id" for="grupo_economico_id">Grupo Econômico</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" value="" atributo="grupo_economico_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" id="autocompletar_grupo_economico_id" value="" atributo="grupo_economico_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-3"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" id="grupo_economico_id" name="filtros[grupo_economico_id]" atributo="grupo_economico_id" type="hidden" style=""></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_fornecedor"><div class="form-group" id="campo_fornecedor"><label class="col-xs-12" id="titulo_campo_fornecedor" for="fornecedor">Fornecedor</label><div class="col-xs-12"><select name="filtros[fornecedor]" id="fornecedor" class="form-control" atributo="fornecedor"><option value="">Ambos</option>
+<option value="true">Sim</option>
+<option value="false">Não</option></select></div></div></div></div>
+    <div class="col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_classe_cliente_id"><div class="form-group" id="campo_classe_cliente_id"><label class="col-xs-12" id="titulo_campo_classe_cliente_id" for="classe_cliente_id">Classe </label><div class="col-xs-12"><select name="filtros[classe_cliente_id]" id="classe_cliente_id" class="form-control" atributo="classe_cliente_id"><option value="">Selecione</option></select></div></div></div></div>
+</div></div></div></div></div>
+                <div class="col-xs-12 no-padding campo-filtros-padroes" id="_filtro_padrao__ordenacao_consulta">
+  <div class="form-group col-xs-11 col-lg-6"><input class="form-control campo-filtro" disabled="disabled" id="_exibicao_ordenacao_consulta" name="filtros[_exibicao_ordenacao_consulta]" placeholder="Ordenar por: " atributo="_exibicao_ordenacao_consulta" type="text" style=""></div>
+  <span id="configura_ordenacao_consulta" class="glyphicon glyphicon-sort" style="cursor: pointer; margin-top: 8px;" title="Configurar Ordenação da Consulta"></span>
+  <input class="form-control" id="_ordenacao_consulta" name="filtros[_ordenacao_consulta]" atributo="_ordenacao_consulta" type="hidden" style="">
+</div>
+
+<div class="modal fade" id="modal_ordenacao_consulta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">Ordenação da Consulta</h4>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div id="copia_ordenacao">
+              <div class="copia-linha">
+                <div class="form-group col-xs-12 col-sm-7"><select name="" id="coluna" class="form-control campo-filtro" atributo="coluna"><option value="">Selecione</option>
+<option value="nome">Nome</option>
+<option value="nome_fantasia">Nome Fantasia/Apelido</option>
+<option value="descricao_tipo_pessoa">Pessoa</option>
+<option value="descricao_filial_cadastro">Filial de Cadastro</option>
+<option value="ativo">Ativo</option>
+<option value="cpf_cnpj">CPF/CNPJ</option>
+<option value="descricao_sexo">Sexo</option>
+<option value="renda">Renda</option>
+<option value="descricao_estado_civil">Estado Civil</option>
+<option value="identidade">RG/ID</option>
+<option value="descricao_finalidade">Finalidade</option>
+<option value="data_nascimento_fundacao">Nascimento/Fundação</option>
+<option value="descricao_cidade">Cidade</option>
+<option value="endereco_completo">Endereco Completo</option>
+<option value="data_atualizacao_cadastro">Data de Atualização do Cadastro</option>
+<option value="descricao_cliente"></option>
+<option value="descricao_fornecedor">Fornecedor</option>
+<option value="created_at">Data de Inclusão</option>
+<option value="codigo">Código</option>
+<option value="ultimo_usuario_alteracao">Usuário Ult. Alteração</option>
+<option value="meio_contato_1">Telefone Residencial</option>
+<option value="meio_contato_2">Telefone Comercial</option>
+<option value="meio_contato_3">Celular</option>
+<option value="meio_contato_4">E-mail</option>
+<option value="meio_contato_5">Skype</option>
+<option value="meio_contato_6">Telefone Celular</option>
+<option value="meio_contato_7">Outros</option>
+<option value="created_at">Data de Criação</option>
+<option value="updated_at">Data de Atualização</option></select></div>
+                <div class="form-group col-xs-12 col-sm-4"><select name="" id="ordem" class="form-control campo-filtro" atributo="ordem"><option value="">⇧</option>
+<option value="desc">⇩</option></select></div>
+                <div class="col-xs-12 col-sm-1" id="btn_remove_ordenacao">
+                  <span class="glyphicon glyphicon-minus botao-remove-linha" title="Remover Ordenação" onclick="removeLinha(this, &quot;&quot;, {confirm: false});"></span>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-12 text-center">
+            <span class="glyphicon glyphicon-plus botao-copia-linha" title="Adicionar Ordenação" onclick="copiaUltimaLinha('#copia_ordenacao', {}, this);"></span>
+          </div>
+          <div class="col-xs-12">
+            <button class="btn btn-success" id="concluir_ordenacao_consulta" type="button">Concluir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+            <div class="col-xs-12">
+              <div class="pull-right">
+                <button class="btn btn-default" onclick="exibeMascara();" type="submit"><span class="glyphicon glyphicon-search"></span> Filtrar</button>
+                <button class="btn btn-default" onclick="limpaFormulario(this.form);" type="button"><span class="glyphicon glyphicon-erase"></span> Limpar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</form>
+
+
+  <div class="col-xs-12">
+    <button type="button" class="btn btn-default botao-muda-visualizacao-tabela sobre-a-lista" responsivo="sim" title="Alterar modo de visualização da tabela"><span class="glyphicon glyphicon-resize-full"></span></button><button type="button" class="btn btn-default sobre-a-lista expande-lista-padrao" data-id-tabela="lista_padrao_pessoa" title="Prioriza espaço horizontal."><span class="glyphicon glyphicon-resize-horizontal"></span></button><div class="btn-group botao-exibe-oculta-colunas sobre-a-lista" title="Configurar colunas da tabela"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span><span class="caret"></span></button><ul class="dropdown-menu multipla-selecao" role="menu"><li><ul class="configuracao-multipla-selecao"><li><span class="glyphicon glyphicon-cog botao-salva-configuracao-multipla-selecao" title="Salvar Configurações"></span><input class="configuracao-lista-input-quantidade-linhas pull-right" title="Configurar a quantidade de linhas da tabela para exibir." style=""></li></ul></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_nome" type="checkbox" checked="checked" desabilitado="true" disabled="disabled" style=""><label for="oculta_nome">Nome</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_nome_fantasia" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_nome_fantasia">Nome Fantasia/Apelido</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_tipo_pessoa" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_tipo_pessoa">Pessoa</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_filial_cadastro" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_filial_cadastro">Filial de Cadastro</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_ativo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_ativo">Ativo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_cpf_cnpj" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_cpf_cnpj">CPF/CNPJ</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_sexo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_sexo">Sexo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_renda" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_renda">Renda</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_estado_civil" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_estado_civil">Estado Civil</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_identidade" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_identidade">RG/ID</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_finalidade" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_finalidade">Finalidade</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_data_nascimento_fundacao" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_data_nascimento_fundacao">Nascimento/Fundação</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_cidade" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_cidade">Cidade</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_endereco_completo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_endereco_completo">Endereco Completo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_data_atualizacao_cadastro" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_data_atualizacao_cadastro">Data de Atualização do Cadastro</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_cliente" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_cliente"></label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_fornecedor" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_fornecedor">Fornecedor</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_created_at" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_created_at">Data de Inclusão</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_codigo" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_codigo">Código</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_ultimo_usuario_alteracao" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_ultimo_usuario_alteracao">Usuário Ult. Alteração</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_1" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_1">Telefone Residencial</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_2" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_2">Telefone Comercial</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_3" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_3">Celular</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_4" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_4">E-mail</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_5" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_5">Skype</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_6" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_6">Telefone Celular</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_meio_contato_7" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_meio_contato_7">Outros</label><span class="glyphicon glyphicon-move seta-mover"></span></li></ul></div>
+    
+    <button data-tabela="lista_padrao_pessoa" class="btn btn-default exportacao-excel sobre-a-lista" title="Exporta para o Excel" type="button"><i class="fa fa-file-excel-o" style="font-size:17px"></i></button>
+
+    
+    <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-responsiva configuracoes-colunas" id="lista_padrao_pessoa" data-sortable="true" data-sortable-initialized="true"><thead><tr><th class="titulo_nome principal" style="min-width: 300px;" data-coluna_id="nome" data-descricao="Nome" data-atributo_consulta="nome">Nome</th><th class="titulo_nome_fantasia" data-coluna_id="nome_fantasia" data-descricao="Nome Fantasia/Apelido" data-atributo_consulta="nome_fantasia">Nome Fantasia/Apelido</th><th class="titulo_descricao_tipo_pessoa" data-coluna_id="descricao_tipo_pessoa" data-descricao="Pessoa" data-atributo_consulta="descricao_tipo_pessoa">Pessoa</th><th class="titulo_descricao_filial_cadastro" data-coluna_id="descricao_filial_cadastro" data-descricao="Filial de Cadastro" data-atributo_consulta="descricao_filial_cadastro">Filial de Cadastro</th><th class="titulo_ativo" data-coluna_id="ativo" data-descricao="Ativo" data-atributo_consulta="ativo">Ativo</th><th class="titulo_cpf_cnpj nao-quebra-linha" data-coluna_id="cpf_cnpj" data-descricao="CPF/CNPJ" data-atributo_consulta="cpf_cnpj">CPF/CNPJ</th><th class="titulo_descricao_sexo" data-coluna_id="descricao_sexo" data-descricao="Sexo" data-atributo_consulta="descricao_sexo">Sexo</th><th class="titulo_renda" style="min-width: 150px;" data-coluna_id="renda" data-descricao="Renda" data-atributo_consulta="renda">Renda</th><th class="titulo_descricao_estado_civil" data-coluna_id="descricao_estado_civil" data-descricao="Estado Civil" data-atributo_consulta="descricao_estado_civil">Estado Civil</th><th class="titulo_identidade nao-quebra-linha" data-coluna_id="identidade" data-descricao="RG/ID" data-atributo_consulta="identidade">RG/ID</th><th class="titulo_descricao_finalidade" data-coluna_id="descricao_finalidade" data-descricao="Finalidade" data-atributo_consulta="descricao_finalidade">Finalidade</th><th class="titulo_data_nascimento_fundacao" data-coluna_id="data_nascimento_fundacao" data-descricao="Nascimento/Fundação" data-atributo_consulta="data_nascimento_fundacao">Nascimento/Fundação</th><th class="titulo_descricao_cidade nao-quebra-linha" data-coluna_id="descricao_cidade" data-descricao="Cidade" data-atributo_consulta="descricao_cidade">Cidade</th><th class="titulo_endereco_completo" style="min-width: 300px;" data-coluna_id="endereco_completo" data-descricao="Endereco Completo" data-atributo_consulta="endereco_completo">Endereco Completo</th><th class="titulo_data_atualizacao_cadastro" data-coluna_id="data_atualizacao_cadastro" data-descricao="Data de Atualização do Cadastro" data-atributo_consulta="data_atualizacao_cadastro">Data de Atualização do Cadastro</th><th class="titulo_descricao_cliente" data-coluna_id="descricao_cliente" data-descricao="" data-atributo_consulta="descricao_cliente"></th><th class="titulo_descricao_fornecedor" data-coluna_id="descricao_fornecedor" data-descricao="Fornecedor" data-atributo_consulta="descricao_fornecedor">Fornecedor</th><th class="titulo_created_at" data-coluna_id="created_at" data-descricao="Data de Inclusão" data-atributo_consulta="created_at">Data de Inclusão</th><th class="titulo_codigo" data-coluna_id="codigo" data-descricao="Código" data-atributo_consulta="codigo">Código</th><th class="titulo_ultimo_usuario_alteracao" data-coluna_id="ultimo_usuario_alteracao" data-descricao="Usuário Ult. Alteração" data-atributo_consulta="ultimo_usuario_alteracao">Usuário Ult. Alteração</th><th class="titulo_meio_contato_1 nao-quebra-linha" data-coluna_id="meio_contato_1" data-descricao="Telefone Residencial" data-atributo_consulta="meio_contato_1">Telefone Residencial</th><th class="titulo_meio_contato_2 nao-quebra-linha" data-coluna_id="meio_contato_2" data-descricao="Telefone Comercial" data-atributo_consulta="meio_contato_2">Telefone Comercial</th><th class="titulo_meio_contato_3 nao-quebra-linha" data-coluna_id="meio_contato_3" data-descricao="Celular" data-atributo_consulta="meio_contato_3">Celular</th><th class="titulo_meio_contato_4 nao-quebra-linha" data-coluna_id="meio_contato_4" data-descricao="E-mail" data-atributo_consulta="meio_contato_4">E-mail</th><th class="titulo_meio_contato_5 nao-quebra-linha" data-coluna_id="meio_contato_5" data-descricao="Skype" data-atributo_consulta="meio_contato_5">Skype</th><th class="titulo_meio_contato_6 nao-quebra-linha" data-coluna_id="meio_contato_6" data-descricao="Telefone Celular" data-atributo_consulta="meio_contato_6">Telefone Celular</th><th class="titulo_meio_contato_7 nao-quebra-linha" data-coluna_id="meio_contato_7" data-descricao="Outros" data-atributo_consulta="meio_contato_7">Outros</th></tr></thead><tbody><tr><td>Carregando...</td></tr></tbody><tfoot><tr></tr></tfoot></table></div>
+
+    
+    <div class="text-center div-paginacao-responsiva row"><ul class="pagination pagination"><li class="prev disabled"><span>&lt;</span></li> <li class="active"><span>1</span></li> <li><a target="_self" rel="next" href="#">2</a></li> <li><a target="_self" href="#">3</a></li> <li><a target="_self" href="#">4</a></li> <li><a target="_self" href="#">5</a></li> <li class="disabled"><span>…</span></li> <li><a target="_self" href="#">13745</a></li> <li><a target="_self" href="#">13746</a></li> <li class="next"><a target="_self" rel="next" href="#">&gt;</a></li></ul><input id="numero_pagina" class="col-xs-12 input-numero-pagina campo-numerico" style=""></div>
+  </div>
+</div>
+
+
+
+
+
+      </div>
+  </section>
+</main>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
+
+<script src="../assets/meta.js"></script>
+<script src="../assets/erp-dados.js"></script>
+</body>
+</html>
