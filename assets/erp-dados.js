@@ -186,6 +186,78 @@
     }
   };
 
+  // telas sem visão escrita à mão: monta a partir das colunas da tabela e das chaves.
+  // "descricao_marca" vira marca_id -> marcas_produtos(descricao), e assim por diante.
+  function formatar(v, def) {
+    if (v == null) return '';
+    if (typeof v === 'boolean') return simNao(v);
+    if (!def) return v;
+    if (def.tipo === 'date') return dataBR(v);
+    if (def.tipo === 'ts') return dataHoraBR(v);
+    if (def.tipo === 'num') return numBR(v, 2);
+    return v;
+  }
+  function fkPorNome(tabela, base) {
+    var fks = META.fks[tabela] || {};
+    if (fks[base + '_id']) return base + '_id';
+    // "descricao_filial_cadastro" -> filial_cadastro_id; "nome_fornecedor" -> fornecedor_padrao_id
+    return Object.keys(fks).filter(function (c) { return c.indexOf(base) === 0 || c.indexOf('_' + base + '_') >= 0; })[0] || null;
+  }
+  function visaoGenerica(tabela, ids) {
+    var cols = colunas(tabela), embutir = {}, calc = {};
+    function embutido(raiz, t, colFk) {
+      var fk = fkDe(t, colFk), ap = 'r_' + colFk;
+      raiz[ap] = raiz[ap] || { tabela: fk.tabela, coluna: colFk, sub: {} };
+      return raiz[ap];
+    }
+    // embute pela coluna (r_x:x_id(*)): funciona também quando a tabela aponta para ela mesma
+    function texto(no) {
+      return Object.keys(no).map(function (ap) {
+        var s = texto(no[ap].sub);
+        return ap + ':' + no[ap].coluna + '(*' + (s ? ',' + s : '') + ')';
+      }).join(',');
+    }
+    function chavesDe(t) { return Object.keys(META.fks[t] || {}).filter(function (k) { return k !== 'empresa_id'; }); }
+    ids.forEach(function (c) {
+      if (cols[c]) { calc[c] = function (r) { return formatar(r[c], cols[c]); }; return; }
+      // "_ativo": versão formatada da coluna "ativo"
+      var limpa = c.replace(/^_+/, '');
+      if (cols[limpa]) { calc[c] = function (r) { return formatar(r[limpa], cols[limpa]); }; return; }
+      var m = /^(descricao|nome|sigla|numero|codigo)_(.+)$/.exec(c);
+      var colFk = m ? fkPorNome(tabela, m[2]) : (fkDe(tabela, c + '_id') ? c + '_id' : null);
+      if (colFk) {
+        var no = embutido(embutir, tabela, colFk), alvo = colunas(no.tabela);
+        var mostrar = m && alvo[m[1]] ? m[1] : colunaRotulo(no.tabela), ap = 'r_' + colFk;
+        calc[c] = function (r) { return r[ap] ? formatar(r[ap][mostrar], alvo[mostrar]) : ''; };
+        return;
+      }
+      // coluna de uma tabela ligada (auditorias -> usuarios.login)
+      var direto = chavesDe(tabela).filter(function (k) { return fkDe(tabela, k).tabela !== tabela && colunas(fkDe(tabela, k).tabela)[c]; })[0];
+      if (direto) {
+        embutido(embutir, tabela, direto);
+        var ad = 'r_' + direto, td = fkDe(tabela, direto).tabela;
+        calc[c] = function (r) { return r[ad] ? formatar(r[ad][c], colunas(td)[c]) : ''; };
+        return;
+      }
+      // ... ou a dois passos (bairros -> cidades -> ufs.sigla)
+      var achado = null;
+      chavesDe(tabela).some(function (k1) {
+        var t2 = fkDe(tabela, k1).tabela;
+        if (t2 === tabela) return false;
+        return chavesDe(t2).some(function (k2) {
+          if (colunas(fkDe(t2, k2).tabela)[c]) { achado = [k1, t2, k2]; return true; }
+          return false;
+        });
+      });
+      if (!achado) { calc[c] = function () { return ''; }; return; }
+      embutido(embutido(embutir, tabela, achado[0]).sub, achado[1], achado[2]);
+      var a1 = 'r_' + achado[0], a2 = 'r_' + achado[2];
+      calc[c] = function (r) { return r[a1] && r[a1][a2] ? formatar(r[a1][a2][c]) : ''; };
+    });
+    var s = texto(embutir);
+    return { select: '*' + (s ? ',' + s : ''), ordem: colunaRotulo(tabela), calc: calc };
+  }
+
   function principal(lista) {
     if (!lista || !lista.length) return null;
     return lista.filter(function (e) { return e.endereco_principal; })[0] || lista[0];
@@ -194,13 +266,13 @@
   // ---------- LISTAGEM ----------
   function iniciarLista() {
     var tabela = corpo.tabela;
-    var visao = VISOES[tabela];
     var tab = document.querySelector('table[id^="lista_padrao"]');
-    if (!tab || !visao) return;
+    if (!tab || !META.tabelas[tabela]) return;
     var tbody = tab.querySelector('tbody');
     var cols = Array.prototype.map.call(tab.querySelectorAll('thead th[data-coluna_id]'), function (th) {
       return { id: th.dataset.coluna_id, classe: th.className.replace(/\btitulo_/g, 'campo_') };
     });
+    var visao = VISOES[tabela] || visaoGenerica(tabela, cols.map(function (c) { return c.id; }));
     // paginação capturada mostra os números do ERP real: some até termos a nossa
     Array.prototype.forEach.call(document.querySelectorAll('.pagination'), function (p) { p.style.display = 'none'; });
     var form = document.querySelector('form.formulario-filtros') || (tab.closest('#atualiza_conteudo') || document).querySelector('form');
@@ -223,11 +295,11 @@
         return;
       }
       tbody.innerHTML = regs.map(function (r) {
-        var link = corpo.form + '?id=' + r.id;
+        var link = corpo.form ? corpo.form + '?id=' + r.id : '';
         return '<tr>' + cols.map(function (c, i) {
           var v = valor(r, c.id);
           var txt = (visao.html && visao.html[c.id]) ? (v || '') : esc(v);
-          if (i === 0) txt = '<a href="' + link + '">' + txt + '</a>';
+          if (i === 0 && link) txt = '<a href="' + link + '">' + (txt === '' ? '(sem descrição)' : txt) + '</a>';
           return '<td class="' + esc(c.classe) + '" data-title="' + esc(c.id) + '">' + txt + '</td>';
         }).join('') + '</tr>';
       }).join('');
@@ -298,6 +370,23 @@
   };
   var ALIASES = { pessoas: { apelido: 'nome_fantasia' } };
 
+  // aba filha sem entrada em FILHOS: procura a tabela que aponta para a principal
+  // ("agencias_attributes" -> agencias.banco_id -> bancos)
+  var filhosCache = {};
+  function filhoDe(tabela, assoc) {
+    if (FILHOS[tabela] && FILHOS[tabela][assoc]) return FILHOS[tabela][assoc];
+    var chave = tabela + '|' + assoc;
+    if (chave in filhosCache) return filhosCache[chave];
+    var nome = assoc.replace(/_attributes$/, '');
+    var candidatas = Object.keys(META.fks).map(function (t) {
+      var pai = Object.keys(META.fks[t]).filter(function (c) { return META.fks[t][c].tabela === tabela && c !== 'empresa_id'; })[0];
+      if (!pai || t === tabela) return null;
+      var nota = t === nome ? 3 : t.indexOf(nome) >= 0 ? 2 : nome.indexOf(t) >= 0 ? 1 : 0;
+      return nota ? { tabela: t, pai: pai, nota: nota } : null;
+    }).filter(Boolean).sort(function (a, b) { return b.nota - a.nota; });
+    return filhosCache[chave] = candidatas[0] ? { tabela: candidatas[0].tabela, pai: candidatas[0].pai } : null;
+  }
+
   // alguns campos do ERP vêm como x[itens_kits_attributes[0]][col]; padroniza para x[itens_kits_attributes][0][col]
   function nomePadrao(nome) { return String(nome || '').replace(/\[([a-z_]+_attributes)\[(\d+)\]\]/, '[$1][$2]'); }
 
@@ -313,7 +402,7 @@
 
   function tabelaDoCampo(tabela, cp) {
     if (!cp.assoc) return tabela;
-    var f = (FILHOS[tabela] || {})[cp.assoc];
+    var f = filhoDe(tabela, cp.assoc);
     return f ? f.tabela : null;
   }
 
@@ -386,7 +475,7 @@
         document.querySelector('input[type="hidden"][name$="[' + atributo + ']"]');
       var nomeOculto = oculto ? nomePadrao(oculto.name) : '';
       var m = /\[([a-z_]+_attributes)\]\[\d+\]/.exec(nomeOculto);
-      var t = m ? ((FILHOS[tabela] || {})[m[1]] || {}).tabela : tabela;
+      var t = m ? (filhoDe(tabela, m[1]) || {}).tabela : tabela;
       var fk = t && fkDe(t, atributo);
       if (!fk) return;
       vis.disabled = false;
@@ -593,10 +682,12 @@
     if (id) {
       var titulo = document.querySelector('#barra_superior .titulo');
       if (titulo) titulo.lastChild.textContent = titulo.lastChild.textContent.replace('Adicionar', 'Editar');
-      var embutir = Object.keys(FILHOS[tabela] || {}).map(function (a) {
-        var f = FILHOS[tabela][a];
-        return a + ':' + f.tabela + '!' + fkDe(f.tabela, f.pai).fk + '(*)';
-      });
+      var assocs = Object.keys(FILHOS[tabela] || {});
+      lista.forEach(function (cp) { if (cp.assoc && assocs.indexOf(cp.assoc) < 0) assocs.push(cp.assoc); });
+      var embutir = assocs.map(function (a) {
+        var f = filhoDe(tabela, a);
+        return f ? a + ':' + f.tabela + '!' + fkDe(f.tabela, f.pai).fk + '(*)' : null;
+      }).filter(Boolean);
       Promise.all([prontos, sb.from(tabela).select(['*'].concat(embutir).join(',')).eq('id', id).single()]).then(function (r) {
         var res = r[1];
         if (res.error) { aviso(erroAmigavel(res.error)); return; }
@@ -659,6 +750,7 @@
       if (tabela === 'pessoas' && !dados.tipo_pessoa) dados.tipo_pessoa = 'F';
       // o ERP preenche pela loja do usuário logado; no protótipo, a loja padrão
       if (cols.filial_cadastro_id && !id && !dados.filial_cadastro_id) dados.filial_cadastro_id = 1;
+      if (cols.filial_id && cols.filial_id.obrigatorio && !id && !dados.filial_id) dados.filial_id = 1;
 
       var gerar = document.querySelector('[name$="[gera_codigo_automatico]"]');
       var precisaCodigo = cols.codigo && (!dados.codigo) && (!gerar || gerar.checked || cols.codigo.obrigatorio);
@@ -708,7 +800,7 @@
   // grava as linhas filhas (endereços, contatos...) que tiverem conteúdo
   function salvarFilhos(tabela, paiId, filhos) {
     var passos = Object.keys(filhos).map(function (k) {
-      var f = filhos[k], def = FILHOS[tabela][f.assoc], d = f.dados;
+      var f = filhos[k], def = filhoDe(tabela, f.assoc), d = f.dados;
       var temConteudo = Object.keys(d).some(function (c) {
         return c !== 'id' && c !== '_destroy' && d[c] !== null && d[c] !== '' && d[c] !== false && colunas(f.tabela)[c] && colunas(f.tabela)[c].tipo !== 'bool';
       });
