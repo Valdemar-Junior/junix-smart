@@ -51,7 +51,7 @@
     var sb = window.ERP_SB;
     var volta = new URLSearchParams(location.search).get('volta');
     // só aceita voltar para uma página deste mesmo site
-    if (!volta || volta.charAt(0) !== '/' || volta.charAt(1) === '/') volta = 'menu/cadastros.html';
+    if (!volta || volta.charAt(0) !== '/' || volta.charAt(1) === '/') volta = 'telas/home.html';
     window.ERP_SESSAO.then(function (s) { if (s) location.replace(volta); });
 
     var form = document.getElementById('entrar'), erro = document.getElementById('erro'), botao = document.getElementById('botao');

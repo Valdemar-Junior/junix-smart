@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="pt-BR" theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adicionar CT-e</title>
+<link rel="icon" type="image/svg+xml" href="../assets/marca/favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/guarda.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/cte.css">
+<link rel="stylesheet" href="../assets/telas/vendas.css">
+<style>
+  /* Valores extraídos do CSS original (application.css / menu.css) */
+  :root {
+    --fundo: #f2f1f6;
+    --acrilico: #ffffff;
+    --texto: #363636;
+    --borda-botao: #36363666;
+    --hover-botao: #f3f3f333;
+    --destaque: #ff035b;
+    --sombra: 0 0 1rem 0 rgba(0,0,0,0.25);
+    --sombra-pesquisa: 0 0 1rem 0 rgba(0,0,0,0.2);
+    --placeholder: #8e8e93;
+  }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] {
+      --fundo: #1c1c1e;
+      --acrilico: #2c2c2e;
+      --texto: #dfdfdf;
+      --borda-botao: #dfdfdf66;
+      --hover-botao: #1c1c1e33;
+    }
+  }
+  html[theme-mode=dark] {
+    --fundo: #141a1f;
+    --acrilico: #232a2f;
+    --texto: #dfdfdf;
+    --borda-botao: #dfdfdf66;
+    --hover-botao: #141a1f33;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 10px; }
+  body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--fundo);
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .acrilico {
+    background: var(--acrilico);
+    box-shadow: var(--sombra);
+    border-radius: 15px;
+  }
+
+  /* ---------- Menu lateral ---------- */
+  #sidebar {
+    position: absolute;
+    top: 0; left: 0;
+    width: 250px;
+    padding-right: 15px;
+  }
+  .sidebar-brand {
+    height: 51px;
+    margin: 15px 0 15px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-marca {
+    width: 48px; height: 48px;
+  }
+  .logo-texto { line-height: 1; }
+  .logo-texto strong {
+    display: block;
+    font-size: 26px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--texto);
+  }
+  .logo-texto span {
+    display: block;
+    font-size: 12px; letter-spacing: 6px; text-align: center;
+    color: var(--texto);
+  }
+  #div_pesquisa_programa_menu {
+    margin: 0 0 0 10px;
+  }
+  #div_pesquisa_programa_menu input {
+    width: 100%;
+    height: 51px;
+    border: none;
+    border-radius: 15px;
+    padding: 0 12px;
+    font: 15px 'Work Sans', sans-serif;
+    color: var(--texto);
+    background: var(--acrilico);
+    box-shadow: var(--sombra-pesquisa);
+    outline: none;
+  }
+  #div_pesquisa_programa_menu input::placeholder { color: var(--placeholder); }
+  .sidebar-nav { list-style: none; margin: 0; padding: 0; }
+  .espacamento-itens-menu {
+    margin: 15px 0 15px 15px;
+    height: 51px;
+  }
+  .espacamento-itens-menu a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+  .espacamento-itens-menu svg {
+    width: 22px; height: 22px;
+    margin-right: 13px;
+    flex: none;
+    color: var(--destaque);
+  }
+  .espacamento-itens-menu .externo {
+    width: 16px; height: 16px; margin: 0 0 0 10px; color: var(--texto);
+  }
+
+  /* ---------- Barra superior ---------- */
+  #conteudo {
+    margin-left: 250px;
+    padding: 15px 15px 15px 0;
+  }
+  #barra_superior {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+  }
+  #barra_superior .titulo {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; font-weight: 400;
+  }
+  #barra_superior .titulo svg { width: 20px; height: 20px; }
+  #barra_superior .direita {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 22px;
+  }
+  .descricao-filial-menu {
+    text-transform: uppercase;
+    font-size: 12px; font-weight: 400;
+  }
+  .icone-topo { position: relative; display: flex; align-items: center; gap: 2px; }
+  .icone-topo svg { width: 20px; height: 20px; }
+  .icone-topo .caret {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
+  }
+  .icone-usuario[data-notificacoes]::after {
+    content: attr(data-notificacoes);
+    position: absolute;
+    top: -9px; left: 10px;
+    height: 12px;
+    padding: 0 4px;
+    border-radius: 12px;
+    background: var(--destaque);
+    color: white;
+    font: bolder 9px/13px monospace;
+  }
+
+  /* ---------- Conteúdo ---------- */
+  #container_conteudo {
+    margin-top: 15px;
+    padding: 15px;
+    min-height: 600px;
+  }
+  /* Mesma grade do ERP: .row > .col-lg-1 (vazia) + .col-sm-6.col-lg-5 por cartão,
+     com 15px de respiro lateral e margem inferior de 2% */
+  .grade-programas {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+  }
+  .grade-programas > a {
+    width: calc(50% - 30px);
+    margin: 0 15px 2%;
+  }
+  @media (min-width: 1200px) {
+    .grade-programas { padding-left: 8.3333%; }
+    .grade-programas > a { width: calc(41.6667% - 30px); }
+  }
+  .botao-programa-menu {
+    background-color: transparent;
+    border: 1px solid var(--borda-botao);
+    color: var(--texto);
+  }
+  .botao-programa-menu:hover { background-color: var(--hover-botao); }
+  .botao-responsivo {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    padding: 0 25px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-align: left;
+    overflow: hidden;
+  }
+  .texto-botao-responsivo { margin-left: 10px; }
+  .icone-botao-menu {
+    position: absolute;
+    right: 30px; top: 20px;
+    width: 40px; height: 40px;
+    color: var(--destaque);
+  }
+
+  /* ---------- Botão flutuante ---------- */
+  .flutuante {
+    position: fixed;
+    left: 20px; bottom: 20px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flutuante svg { width: 34px; height: 34px; }
+  .flutuante .ponto {
+    position: absolute; top: 2px; right: 2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--destaque);
+  }
+
+  /* ---------- Responsivo (mesmos pontos de quebra do original) ---------- */
+  @media (max-width: 767px) {
+    #sidebar { position: static; width: auto; padding: 0 16px; }
+    .espacamento-itens-menu { margin: 10px 0; }
+    #div_pesquisa_programa_menu { margin: 0; }
+    #conteudo { margin-left: 0; padding: 15px 16px; }
+    .grade-programas > a { width: calc(100% - 30px); }
+    .botao-responsivo { height: 55px; line-height: 55px; }
+    .icone-botao-menu { width: 30px; height: 30px; top: 12px; }
+    .descricao-filial-menu { display: none; }
+  }
+
+  /* ---------- Protótipo ---------- */
+  /* Nomes longos quebram em duas linhas, como no original (line-height 25px) */
+  .botao-responsivo { display: flex; align-items: center; line-height: 25px; padding-right: 85px; }
+  .vazio { padding: 40px 15px; text-align: center; color: #8e8e93; font-size: 16px; }
+  .pendente { max-width: 640px; margin: 40px auto; text-align: center; font-size: 16px; line-height: 1.6; }
+  .pendente h2 { font-weight: 400; font-size: 22px; margin: 0 0 10px; }
+  .pendente a { color: #2f84ec; }
+  .pendente img { max-width: 100%; border-radius: 10px; margin-top: 20px; box-shadow: var(--sombra); }
+  .rotulo-grupo { font-size: 13px; color: #8e8e93; }
+
+  /* Configurações: grupos em sanfona */
+  .sanfona { display: flex; flex-direction: column; gap: 10px; }
+  .sanfona details { border: 1px solid var(--borda-botao); border-radius: 10px; overflow: hidden; }
+  .sanfona summary {
+    cursor: pointer; padding: 12px 15px; font-size: 16px;
+    background: rgba(127,127,127,0.08); list-style: none;
+  }
+  .sanfona summary::-webkit-details-marker { display: none; }
+  .sanfona .lista { display: flex; flex-direction: column; padding: 10px 15px 15px; }
+  .sanfona .lista span { padding: 10px 15px; background: #337ab7; color: #fff; border-radius: 6px 6px 0 0; }
+  .sanfona .lista a { padding: 10px 15px; border: 1px solid var(--borda-botao); border-top: none; }
+  .sanfona .lista a:last-child { border-radius: 0 0 6px 6px; }
+  .sanfona .lista a:hover { background: var(--hover-botao); }
+
+  .marca-erp { display: block; background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
+  }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-estrela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+    <symbol id="i-cadastros" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="5" width="16" height="16" rx="1.5"/><path d="M7 2.5h10v2.5H7zM7 9h10M7 12h10M7 15h6M7 18h4"/></g></symbol>
+    <symbol id="i-vendas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><path d="M9 7v8M12.5 7v8M16 7v8M6.7 11h13.3"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></g></symbol>
+    <symbol id="i-ecommerce" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M12 9.5l2 2 3-3.5"/></g></symbol>
+    <symbol id="i-compras" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h18l-2 11H5z"/><path d="M8 9l4-6 4 6M8 12v5M10.7 12v5M13.3 12v5M16 12v5"/></g></symbol>
+    <symbol id="i-financeiro" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2v2.1c2.3.3 4 1.7 4.3 3.9h-2.6c-.3-1-1.2-1.6-2.7-1.6-1.6 0-2.6.7-2.6 1.7 0 1 .8 1.4 3.2 2 3.1.7 5 1.8 5 4.4 0 2.2-1.7 3.7-4.6 4V21h-2v-2.6c-2.7-.3-4.5-1.8-4.7-4.2h2.6c.2 1.2 1.3 2 3.2 2 1.8 0 2.8-.7 2.8-1.8 0-1-.8-1.5-3.4-2.1C8.6 11.6 7 10.5 7 8.2 7 6.1 8.6 4.6 11 4.2V2z"/></symbol>
+    <symbol id="i-estoque" viewBox="0 0 24 24"><g fill="currentColor"><rect x="8.5" y="2.5" width="7" height="7" rx=".5"/><rect x="2.5" y="10.5" width="9" height="10" rx=".5"/><rect x="12.5" y="10.5" width="9" height="10" rx=".5"/></g></symbol>
+    <symbol id="i-gerencial" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="13" height="9" rx="1"/><path d="M5 11V8M8 11V6M11 11V9M8.5 13v4M5 21l3.5-4 3.5 4"/><circle cx="19" cy="5" r="2"/><path d="M19 8v6M17 21l2-7 2 7M15 10l4-1"/></g></symbol>
+    <symbol id="i-fiscal" viewBox="0 0 24 24"><path fill="currentColor" d="M3 2h18v20l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L3 22zm4.6 4.5v1.1c-1.2.2-2 1-2 2.1 0 1.3 1 1.8 2.2 2.1 1 .2 1.3.5 1.3.9 0 .5-.5.8-1.2.8-.8 0-1.3-.4-1.4-1H5.2c.1 1.2 1 2 2.4 2.2v1.1h1.2v-1.1c1.3-.2 2.1-1 2.1-2.1 0-1.4-1.1-1.9-2.3-2.2-1-.2-1.2-.5-1.2-.8 0-.4.4-.7 1-.7.7 0 1.1.3 1.2.8h1.3c-.1-1.1-.9-1.8-2.1-2V6.5zM12.5 8v1.5H19V8zm0 3.5V13H19v-1.5zm0 3.5v1.5H19V15z"/></symbol>
+    <symbol id="i-tributacao" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h11l4 4v16H4z"/><path d="M15 2v4h4M7 6h5M7 9h9M7 12h4M7 15h4M7 18h4"/><rect x="13" y="13" width="6" height="7" rx=".5"/><path d="M14.5 15h3M14.5 17h1M16.5 17h1M14.5 18.7h1M16.5 18.7h1"/></g></symbol>
+    <symbol id="i-integracoes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="9" r="2.3"/><path d="M8 3.5v2M8 12.5v2M2.5 9h2M11.5 9h2M4.1 5.1l1.4 1.4M10.5 11.5l1.4 1.4M4.1 12.9l1.4-1.4M10.5 6.5l1.4-1.4"/><circle cx="17" cy="16" r="2"/><path d="M17 11.5v2M17 18.5v2M12.5 16h2M19.5 16h2M13.8 12.8l1.4 1.4M18.8 17.8l1.4 1.4M13.8 19.2l1.4-1.4M18.8 14.2l1.4-1.4"/></g></symbol>
+    <symbol id="i-configuracoes" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 2h3.4l.5 2.6c.7.2 1.3.5 1.9.9l2.3-1.4 2.4 2.4-1.4 2.3c.4.6.7 1.2.9 1.9l2.6.5v3.4l-2.6.5c-.2.7-.5 1.3-.9 1.9l1.4 2.3-2.4 2.4-2.3-1.4c-.6.4-1.2.7-1.9.9l-.5 2.6h-3.4l-.5-2.6c-.7-.2-1.3-.5-1.9-.9l-2.3 1.4-2.4-2.4 1.4-2.3c-.4-.6-.7-1.2-.9-1.9L1.5 13.7v-3.4l2.6-.5c.2-.7.5-1.3.9-1.9L3.6 5.6 6 3.2l2.3 1.4c.6-.4 1.2-.7 1.9-.9zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></symbol>
+    <symbol id="i-mensalidades" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3" y="3" width="1.6" height="15"/><rect x="6" y="3" width="2.4" height="15"/><rect x="9.8" y="3" width="1.2" height="15"/><rect x="12.4" y="3" width="2.4" height="15"/><rect x="16.2" y="3" width="1.2" height="15"/><rect x="18.8" y="3" width="2.2" height="15"/><rect x="3" y="20" width="3" height="1.4"/><rect x="8" y="20" width="3" height="1.4"/><rect x="13" y="20" width="3" height="1.4"/><rect x="18" y="20" width="3" height="1.4"/></g></symbol>
+    <symbol id="i-relatorios" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h12l3 3v17H4z"/><path d="M7 11V8M9.5 11V5.5M12 11V7.5M7 14h9M7 17h5"/><circle cx="16.5" cy="17.5" r="2.3"/><path d="M16.5 14v1.2M16.5 19.8V21M13 17.5h1.2M18.8 17.5H20"/></g></symbol>
+    <symbol id="i-externo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14v4.5a2.5 2.5 0 01-2.5 2.5h-10A2.5 2.5 0 013 18.5v-10A2.5 2.5 0 015.5 6H10"/><path d="M14 3h7v7M21 3l-9 9"/></g></symbol>
+    <symbol id="i-grade" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g></symbol>
+    <symbol id="i-manual" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 5.5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1V20c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6.5V21"/></g></symbol>
+    <symbol id="i-sino" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0v5l2 3H4l2-3z"/><path d="M10 20.5a2 2 0 004 0"/></g></symbol>
+    <symbol id="i-usuario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-pessoa" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="24" cy="24" r="21.5"/><circle cx="24" cy="18" r="5"/><path d="M14 33v-3.5a6.5 6.5 0 016.5-6.5h7a6.5 6.5 0 016.5 6.5V33z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-produto" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 22v-6a6 6 0 016-6h14a6 6 0 016 6v6"/><path d="M15 26h18v-2a3 3 0 013-3h4a4 4 0 010 8h-3v6H11v-6H8a4 4 0 010-8h4a3 3 0 013 3z"/><circle cx="8" cy="25" r="1.6"/><circle cx="40" cy="25" r="1.6"/><path d="M13 35v3M35 35v3M19 16h2M20 15v2M23 16h2M24 15v2M27 16h2M28 15v2"/></g></symbol>
+    <symbol id="i-kit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M26 4h16v38H26M30 4v4M30 12v4"/><path d="M14 10h8v6h-8zM18 16v3"/><path d="M8 26v-3a4 4 0 014-4h16a4 4 0 014 4v3"/><path d="M10 29h20v-1a2 2 0 012-2h1a3 3 0 010 6h-1v6H8v-6H7a3 3 0 010-6h1a2 2 0 012 2z"/><circle cx="7" cy="29" r="1"/><circle cx="33" cy="29" r="1"/><path d="M10 38v3M30 38v3M13 31h1M17 31h1M21 31h1M25 31h1M15 34h1M19 34h1M23 34h1"/></g></symbol>
+    <symbol id="i-servico" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="15" cy="15" r="4"/><path d="M15 6v3M15 21v3M6 15h3M21 15h3M8.6 8.6l2.2 2.2M19.2 19.2l2.2 2.2M8.6 21.4l2.2-2.2M19.2 10.8l2.2-2.2"/><circle cx="15" cy="15" r="9"/><path d="M33 14l11 4v10c0 7-5 11-11 14-6-3-11-7-11-14V18z"/><path d="M33 18l7 2.5V28c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-7.5z"/><path d="M29 28l3 3 6-6"/><path d="M27 39l-3 6 4-1 2 3 2-5M39 39l3 6-4-1-2 3-2-5"/></g></symbol>
+  </defs>
+</svg>
+<nav id="sidebar">
+  <a href="../telas/home.html" class="sidebar-brand marca-erp" aria-label="Tela inicial" title="Tela inicial"></a>
+  <div id="div_pesquisa_programa_menu">
+    <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
+  </div>
+  <ul class="sidebar-nav">
+    <li class="espacamento-itens-menu acrilico"><a href="../menu/favoritos.html"><svg><use href="#i-estrela"/></svg>Favoritos</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/cadastros.html"><svg><use href="#i-cadastros"/></svg>Cadastros</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/ecommerce.html"><svg><use href="#i-ecommerce"/></svg>E-commerce</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/compras.html"><svg><use href="#i-compras"/></svg>Compras</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/financeiro.html"><svg><use href="#i-financeiro"/></svg>Financeiro</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/estoque.html"><svg><use href="#i-estoque"/></svg>Estoque</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/gerencial.html"><svg><use href="#i-gerencial"/></svg>Gerencial</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/tributacao.html"><svg><use href="#i-tributacao"/></svg>Tributação</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/integracoes.html"><svg><use href="#i-integracoes"/></svg>Integrações</a></li>
+<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/configuracao.html"><svg><use href="#i-configuracoes"/></svg>Configurações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/mensalidades.html"><svg><use href="#i-mensalidades"/></svg>Mensalidades</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="#"><svg><use href="#i-relatorios"/></svg>Relatórios<svg class="externo"><use href="#i-externo"/></svg></a></li>
+  </ul>
+</nav>
+<main id="conteudo">
+  <header id="barra_superior" class="acrilico">
+    <div class="titulo"><svg><use href="#i-grade"/></svg>Adicionar CT-e</div>
+    <div class="direita">
+      <span class="descricao-filial-menu">Loja Demo Centro</span>
+      <a href="#" class="icone-topo" aria-label="Manuais"><svg><use href="#i-manual"/></svg></a>
+      <a href="#" class="icone-topo icone-usuario" data-notificacoes="930" aria-label="Notificações"><svg><use href="#i-sino"/></svg><span class="caret"></span></a>
+      <a href="#" class="icone-topo" aria-label="Perfil"><svg><use href="#i-usuario"/></svg><span class="caret"></span></a>
+    </div>
+  </header>
+  <section id="container_conteudo" class="acrilico">
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        
+<form class="form-horizontal formulario-padrao" id="new_cte" action="#" onsubmit="return false" accept-charset="UTF-8" data-remote="true" method="post">
+  <input class="form-control" disabled="disabled" form="new_cte" id="input_crud_salvar_continuar" name="crud_salvar_continuar" value="true" atributo="input_crud_salvar_continuar" type="hidden" style="">
+  
+
+
+
+  
+
+<input class="form-control" form="new_cte" id="id" atributo="id" type="hidden" style="">
+<div class="form-group" id="campo_operacao_documento_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_operacao_documento_id" for="operacao_documento_id">Operação do CT-e*</label><div class="col-sm-8 col-lg-7"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_cte" value="" atributo="operacao_documento_id" campo="operacoes_documentos.descricao" data-filtros="{&quot;escopos&quot;:&quot;entrada_exceto_devolucao.ativos&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="operacoes_documentos.descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_cte" id="autocompletar_operacao_documento_id" value="" atributo="operacao_documento_id" campo="operacoes_documentos.descricao" data-filtros="{&quot;escopos&quot;:&quot;entrada_exceto_devolucao.ativos&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="operacoes_documentos.descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_cte" id="operacao_documento_id" name="cte[operacao_documento_id]" atributo="operacao_documento_id" type="hidden" style=""></div></div>
+
+<div class="form-group" id="campo_transportador_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_transportador_id" for="transportador_id">Transportador*</label><div class="col-sm-8 col-lg-7"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_cte" value="" atributo="transportador_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_cte" id="autocompletar_transportador_id" value="" atributo="transportador_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_cte" id="transportador_id" name="cte[transportador_id]" atributo="transportador_id" type="hidden" style=""></div></div>
+
+<div class="form-group" id="campo_data_lancamento"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_data_lancamento" for="data_lancamento">Data de Lançamento*</label><div class="col-sm-8 col-lg-7"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="new_cte" id="data_lancamento" name="cte[data_lancamento]" value="20/10/2026" atributo="data_lancamento" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div>
+<div class="form-group" id="campo_data_emissao"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_data_emissao" for="data_emissao">Data de Emissão*</label><div class="col-sm-8 col-lg-7"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="new_cte" id="data_emissao" name="cte[data_emissao]" value="20/10/2026" atributo="data_emissao" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div>
+
+<div class="form-group" id="campo_modelo_nf_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_modelo_nf_id" for="modelo_nf_id">Modelo CT-e*</label><div class="col-sm-8 col-lg-7"><select name="cte[modelo_nf_id]" id="modelo_nf_id" class="form-control" form="new_cte" atributo="modelo_nf_id"><option value="">Selecione</option></select></div></div>
+<div class="form-group" id="campo_numero"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_numero" for="numero">Número*</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico" form="new_cte" id="numero" name="cte[numero]" type="text" atributo="numero" style=""></div></div>
+<div class="form-group" id="campo_serie"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_serie" for="serie">Série*</label><div class="col-sm-8 col-lg-7"><input class="form-control" form="new_cte" id="serie" name="cte[serie]" atributo="serie" type="text" style=""></div></div>
+
+<div class="form-group" id="campo_valor_base_calculo_icms"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_base_calculo_icms" for="valor_base_calculo_icms">Base de Cálculo de ICMS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_base_calculo_icms" name="cte[valor_base_calculo_icms]" type="text" value="0,00" atributo="valor_base_calculo_icms" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_aliquota_icms"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_aliquota_icms" for="aliquota_icms">Alíquota de ICMS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="aliquota_icms" name="cte[aliquota_icms]" type="text" value="0,00" atributo="aliquota_icms" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_icms"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_icms" for="valor_icms">Valor de ICMS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_icms" name="cte[valor_icms]" type="text" value="0,00" atributo="valor_icms" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_pis"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_pis" for="valor_pis">Valor de PIS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_pis" name="cte[valor_pis]" type="text" value="0,00" atributo="valor_pis" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_cofins"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_cofins" for="valor_cofins">Valor de COFINS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_cofins" name="cte[valor_cofins]" type="text" value="0,00" atributo="valor_cofins" mascara_monetario="true" style=""></div></div>
+
+<div class="form-group" id="campo_valor_total_documento"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_total_documento" for="valor_total_documento">Valor</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_total_documento" name="cte[valor]" type="text" value="0,00" atributo="valor_total_documento" mascara_monetario="true" style=""></div></div>
+
+<div class="form-group" id="campo_cst_icms_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_cst_icms_id" for="cst_icms_id">CST de ICMS*</label><div class="col-sm-8 col-lg-7"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_cte" value="" atributo="cst_icms_id" campo="descricao_completa" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao_completa" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_cte" id="autocompletar_cst_icms_id" value="" atributo="cst_icms_id" campo="descricao_completa" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao_completa" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-2"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_cte" id="cst_icms_id" name="cte[cst_icms_id]" atributo="cst_icms_id" type="hidden" style=""></div></div>
+
+<div class="page-header separador"><h3><small>CBS / IBS</small></h3></div>
+
+<div class="form-group" id="campo_valor_bc_cbs"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_bc_cbs" for="valor_bc_cbs">Base de Cálculo de CBS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_bc_cbs" name="cte[valor_bc_cbs]" type="text" value="0,00" atributo="valor_bc_cbs" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_aliquota_cbs"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_aliquota_cbs" for="aliquota_cbs">Alíquota de CBS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="aliquota_cbs" name="cte[aliquota_cbs]" type="text" value="0,00" atributo="aliquota_cbs" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_cbs"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_cbs" for="valor_cbs">Valor de CBS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_cbs" name="cte[valor_cbs]" type="text" value="0,00" atributo="valor_cbs" mascara_monetario="true" style=""></div></div>
+
+<div class="form-group" id="campo_valor_bc_ibs_uf"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_bc_ibs_uf" for="valor_bc_ibs_uf">Base de Cálculo de IBS Estadual</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_bc_ibs_uf" name="cte[valor_bc_ibs_uf]" type="text" value="0,00" atributo="valor_bc_ibs_uf" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_aliquota_ibs_uf"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_aliquota_ibs_uf" for="aliquota_ibs_uf">Alíquota de IBS Estadual</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="aliquota_ibs_uf" name="cte[aliquota_ibs_uf]" type="text" value="0,00" atributo="aliquota_ibs_uf" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_ibs_uf"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_ibs_uf" for="valor_ibs_uf">Valor de IBS Estadual</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_ibs_uf" name="cte[valor_ibs_uf]" type="text" value="0,00" atributo="valor_ibs_uf" mascara_monetario="true" style=""></div></div>
+
+<div class="form-group" id="campo_valor_bc_ibs_municipal"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_bc_ibs_municipal" for="valor_bc_ibs_municipal">Base de Cálculo de IBS Municipal</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_bc_ibs_municipal" name="cte[valor_bc_ibs_municipal]" type="text" value="0,00" atributo="valor_bc_ibs_municipal" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_aliquota_ibs_municipal"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_aliquota_ibs_municipal" for="aliquota_ibs_municipal">Alíquota de IBS Municipal</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="aliquota_ibs_municipal" name="cte[aliquota_ibs_municipal]" type="text" value="0,00" atributo="aliquota_ibs_municipal" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_ibs_municipal"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_ibs_municipal" for="valor_ibs_municipal">Valor de IBS Municipal</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_ibs_municipal" name="cte[valor_ibs_municipal]" type="text" value="0,00" atributo="valor_ibs_municipal" mascara_monetario="true" style=""></div></div>
+
+<div class="form-group" id="campo_valor_bc_is"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_bc_is" for="valor_bc_is">Base de Cálculo de IS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_bc_is" name="cte[valor_bc_is]" type="text" value="0,00" atributo="valor_bc_is" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_aliquota_is"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_aliquota_is" for="aliquota_is">Alíquota de IS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="aliquota_is" name="cte[aliquota_is]" type="text" value="0,00" atributo="aliquota_is" mascara_monetario="true" style=""></div></div>
+<div class="form-group" id="campo_valor_is"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_valor_is" for="valor_is">Valor de IS</label><div class="col-sm-8 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_is" name="cte[valor_is]" type="text" value="0,00" atributo="valor_is" mascara_monetario="true" style=""></div></div>
+
+<input class="form-control" form="new_cte" id="xml_cte_id" name="cte[xml_cte_id]" atributo="xml_cte_id" type="hidden" style="">
+
+<div class="form-group" id="campo_chave_acesso"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_chave_acesso" for="chave_acesso">Chave acesso</label><div class="col-sm-8 col-lg-7"><input class="form-control" form="new_cte" id="chave_acesso" name="cte[chave_acesso]" atributo="chave_acesso" type="text" style=""></div></div>
+
+<div class="form-group" id="campo_cidade_origem_id" style="margin-top: 10px;"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_cidade_origem_id" for="cidade_origem_id">Cidade de Origem <span class="glyphicon glyphicon-info-sign" title="Cidade de origem do transporte (informação para o SPED)"></span></label><div class="col-sm-8 col-lg-7"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_cte" value="" atributo="cidade_origem_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_cte" id="autocompletar_cidade_origem_id" value="" atributo="cidade_origem_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-3"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_cte" id="cidade_origem_id" name="cte[cidade_origem_id]" atributo="cidade_origem_id" type="hidden" style=""></div></div>
+
+<div class="col-xs-12">
+  <div class="col-lg-3"></div>
+  <div class="col-xs-12 col-lg-7 no-padding">
+    <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-editavel" id="tabela_itens_cte">
+      <thead>
+      <tr>
+        <th width="35px" class=""></th>
+        <th>Filial</th>
+        <th>Nº Documento</th>
+        <th>Nº Lançamento</th>
+        <th>Valor Total</th>
+        <th class="hidden">Valor (R$)</th>
+        <th width="35px" class=""></th>
+      </tr>
+      </thead>
+      <tbody id="container_conteudo_tabela_itens_cte">
+        <tr class="copia-linha">
+          <td width="35px" class="">
+            <input class="form-control" form="new_cte" id="id_0" name="[cte][itens_cte_attributes[0]][id]" atributo="id" type="hidden" style="">
+            <input class="form-control" form="new_cte" id="documento_id_0" name="[cte][itens_cte_attributes[0]][documento_id]" atributo="documento_id" type="hidden" style="">
+            <input class="form-control static-value" form="new_cte" name="[cte][itens_cte_attributes[0]][_destroy]" value="false" atributo="_destroy" type="hidden" style=""><input class="form-control form-control checkbox exclui-registro-relacionado" form="new_cte" id="_destroy_item_cte_0" name="[cte][itens_cte_attributes[0]][_destroy]" value="true" atributo="_destroy" type="checkbox" style=""><label for="_destroy_item_cte_0">&nbsp;</label>
+            <span title="Buscar Documento" class="glyphicon glyphicon-search" style="cursor: pointer;" onclick="Cte.buscaDocumentoCte(this);"></span>
+          </td>
+          <td class="coluna-filial-descricao"></td>
+          <td class="coluna-numero-documento"></td>
+          <td><input class="form-control campo-numerico numero_lancamento" form="new_cte" id="numero_lancamento_0" name="desconsiderar" type="text" atributo="numero_lancamento" style=""></td>
+          <td class="coluna-valor-total-documento">0,00</td>
+          <td class="hidden">0,00</td>
+          <td class="">
+            <span class="glyphicon glyphicon-trash" title="Remover Item" style="cursor: pointer; color: #2F4F4F; font-size: 15px;" onclick="removeLinha(this);"></span>
+          </td>
+        </tr>
+      </tbody>
+</table></div>      <button type="button" class="btn btn-primary" onclick="copiaUltimaLinha('#container_conteudo_tabela_itens_cte'); Cte.limpaCamposLinhaItemCte();">
+        <span class="glyphicon glyphicon-plus-sign"></span> Novo Item
+      </button>
+  </div>
+  <div class="col-lg-3"></div>
+</div>
+
+<div class="col-xs-12">
+  
+<div class="col-xs-12" style="margin-top: 20px;">
+  <div class="panel panel-default">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#painel_pagamentos">
+      <h4 class="panel-title">
+        <a id="titulo_pagamentos"><span class="glyphicon glyphicon-credit-card"></span> <strong>Pagamento</strong></a>
+      </h4>
+    </div>
+
+    <div id="painel_pagamentos" class="panel-collapse collapse in" data-cte="cte">
+      <div class="panel-body">
+        <div id="copia_forma_pagamento" nivel="1" class="copia row">
+
+            <div class="copia-linha linha-painel-pagamentos row" nivel="1" style="border-bottom: 1px dashed #ccc; margin: 15px; position: relative;">
+
+              <div class="col-xs-12 col-sm-6">
+                <div class="form-group" id="campo_forma_pagamento_id">
+                  <label class="no-padding-right control-label col-xs-12 col-lg-6 label-sm label-md" for="forma_pagamento_id" id="titulo_campo_forma_pagamento_id">Forma
+                    de Pagamento</label>
+                  <div class="col-xs-12 col-lg-6">
+                    <div class="btn-group bootstrap-select form-control forma-pagamento-id combobox-com-pesquisa"><button type="button" class="btn dropdown-toggle bs-placeholder btn-default" data-toggle="dropdown" role="button" data-id="forma_pagamento_id_0" title="Selecione"><span class="filter-option pull-left">Selecione</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><div class="bs-searchbox"><input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar" role="textbox" aria-label="Search" style=""></div><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">Selecione</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="1"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">FINANCEIRA AGORA CREDITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="2"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BANCO SICREDI REPASSE FINANCEIRA </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Cashback</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="4"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">FINANCEIRA CREFAZ</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="5"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO SEM JUROS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="6"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDITO FORNECEDOR</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="7"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BLUE À VISTA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="8"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO BRADESCO </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="9"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">RENEGOCIAÇÃO DE DIVIDAS (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="10"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">RENEGOCIAÇÃO DE DIVIDAS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="11"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CARNEZINHO MOTOS MOSSORÓ</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="12"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CARNEZINHO MOTOS ASSU</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="13"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO ASSU +</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="14"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO MOSSORÓ +</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="15"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PIX APPMAX ECOMMERCE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="16"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PIX PAGBANK ECOMMERCE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="17"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO MOSSORÓ OFERTA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="18"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO ASSU OFERTA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="19"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO ASSU (-)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="20"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PIX (CLIENTES)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="21"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Boleto</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="22"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CARNEZINHO MOTOS MOSSORÓ (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="23"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CARNEZINHO MOTOS ASSU (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="24"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO ASSU + (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="25"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO MOSSORÓ + (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="26"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO MOSSORÓ OFERTA (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="27"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO ASSU OFERTA (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="28"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Cheque</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="29"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DINHEIRO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="30"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO OUTLET</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="31"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BOLETO NOTAS DE ENTRADA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="32"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Importação</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="33"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDITO CLIENTE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="34"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO FUNCIONARIO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="35"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CREDIARIO ASSU (-) (NÃO USAR)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="36"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PIX VINDI ECOMERCE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select atributo="forma_pagamento_id" data-permutas="[]" class="form-control forma-pagamento-id combobox-com-pesquisa" id="forma_pagamento_id_0" name="documento_saida[dados_dos_pagamentos][0][forma_pagamento_id]" data-live-search="true" data-size="10" data-live-search-placeholder="Pesquisar" data-none-results-text="Nenhum registro encontrado" tabindex="-98"><option value="">Selecione</option></select></div>
+                  </div>
+                  
+                </div>
+              </div>
+
+
+              <div class="col-xs-12 col-sm-6 campo-valor-pagamento">
+                <div class="form-group" id="campo_valor"><label class="col-xs-12 col-lg-5 label-sm label-md no-padding-right control-label" id="titulo_campo_valor" for="valor">Valor*</label><div class="col-xs-12 col-lg-7"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_0" name="documento_saida[dados_dos_pagamentos][0][valor]" type="text" value="0,00" atributo="valor" mascara_monetario="true" style=""></div></div>
+                <input class="form-control" form="new_cte" id="valor_parcela_financeira_0" name="documento_saida[dados_dos_pagamentos][0][valor_parcela_financeira]" atributo="valor_parcela_financeira" type="hidden" style="">
+              </div>
+
+
+
+              <div class="col-xs-12 no-padding" id="campo_pagamentos">
+                <div class="col-xs-12 col-sm-6 hidden" id="parcela"><div class="form-group" id="campo_parcelas"><label class="col-xs-12 col-lg-6 label-sm label-md no-padding-right control-label" id="titulo_campo_parcelas" for="parcelas">Parcelas</label><div class="col-xs-12 col-lg-6"><input class="form-control campo-numerico" form="new_cte" id="parcela_0" name="nao_considerar" type="text" value="1" atributo="parcelas" style=""></div></div></div>
+                <div class="col-xs-12 col-sm-6 hidden" id="data_primeiro_vencimento"><div class="form-group" id="campo_data_primeiro_vencimento"><label class="col-xs-12 col-lg-5 label-sm label-md no-padding-right control-label" id="titulo_campo_data_primeiro_vencimento" for="data_primeiro_vencimento">Data 1º Vencimento</label><div class="col-xs-12 col-lg-7"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="new_cte" id="data_primeiro_vencimento_0" name="nao_considerar" value="20/11/2026 17:56:12" atributo="data_primeiro_vencimento" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div></div>
+                
+
+                  <input class="form-control" form="new_cte" id="valor_acrescimos_servicos" name="documento_saida[dados_dos_pagamentos][0][valor_acrescimos_servicos]" value="0.0" data-percentual-acrescimo-servicos="0.0" atributo="valor_acrescimos_servicos" type="hidden" style="">
+                  <input class="form-control" form="new_cte" id="valor_acrescimo_calculado" name="documento_saida[dados_dos_pagamentos][0][valor_acrescimo_calculado]" value="0,00" atributo="valor_acrescimo_calculado" type="hidden" style="">
+                  <div class="col-xs-12 col-sm-6 campo-valor-acrescimos-pagamentos hidden" id="campo_valor_acrescimos_pagamentos" style="display: none;"><div class="form-group" id="campo_valor_acrescimos"><label class="col-xs-12 col-lg-6 label-sm label-md no-padding-right control-label" id="titulo_campo_valor_acrescimos" for="valor_acrescimos">Acréscimos</label><div class="col-xs-12 col-lg-6"><input class="form-control campo-numerico monetario" form="new_cte" id="valor_acrescimos_pagamentos_0" name="documento_saida[dados_dos_pagamentos][0][valor_acrescimos]" type="text" value="0,00" atributo="valor_acrescimos" mascara_monetario="true" style=""></div></div></div>
+                  
+                  <div class="col-xs-12 col-sm-6 campo-valor-total-acrescimos-pagamentos hidden" id="campo_valor_total_acrescimos_pagamentos" style="display: none;"><div class="form-group" id="campo_valor_total_acrescimos"><label class="col-xs-12 col-lg-5 label-sm label-md no-padding-right control-label" id="titulo_campo_valor_total_acrescimos" for="valor_total_acrescimos">Total</label><div class="col-xs-12 col-lg-7"><input class="form-control campo-numerico monetario" disabled="disabled" form="new_cte" id="valor_total_acrescimos_pagamentos_0" name="nao_considerar" type="text" value="0,00" atributo="valor_total_acrescimos" mascara_monetario="true" style=""></div></div></div>
+
+                <input class="form-control" form="new_cte" id="valor_acrescimo_prestamista" name="documento_saida[dados_dos_pagamentos][0][valor_acrescimo_prestamista]" value="0,00" atributo="valor_acrescimo_prestamista" type="hidden" style="">
+                <div class="col-xs-12 col-sm-6 campo-valor-acrescimo-prestamista-pagamentos" id="campo_valor_acrescimo_prestamista_pagamentos_0" style="display: none;">
+                  <div class="form-group" id="campo_valor_acrescimo_prestamista"><label class="col-xs-12 col-lg-6 label-sm label-md no-padding-right control-label" id="titulo_campo_valor_acrescimo_prestamista" for="valor_acrescimo_prestamista">Acréscimo Prestamista</label><div class="col-xs-12 col-lg-6"><input class="form-control campo-numerico valor-acrescimo-prestamista-exibicao monetario" disabled="disabled" form="new_cte" id="valor_acrescimo_prestamista_exibicao_0" type="text" value="0,00" atributo="valor_acrescimo_prestamista" mascara_monetario="true" style=""></div></div>
+                </div>
+
+                   <div class="col-xs-12 historico_receita_despesa hidden"><div class="form-group" id="campo_historico_receita_despesa_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_historico_receita_despesa_id" for="historico_receita_despesa_id">Histórico de Receita e Despesa</label><div class="col-xs-12 col-sm-9"><div class="btn-group bootstrap-select form-control combobox-com-pesquisa"><button type="button" class="btn dropdown-toggle btn-default" data-toggle="dropdown" role="button" data-id="historico_receita_despesa_0" title="Pagamento de Fornecedor"><span class="filter-option pull-left">Pagamento de Fornecedor</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><div class="bs-searchbox"><input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar" role="textbox" aria-label="Search" style=""></div><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Acordo advocatício</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="1"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Acordo Agiliza - Negociação de Títulos </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="2"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">ACORDO QUITAÇÃO DE DÉBITO - SERVIÇOS PRESTADOS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Ajuda de custo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="4"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Aluguel de Véiculo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="5"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Aluguel D V VERAS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="6"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">ALUGUEL - EMPRÉSTIMO  MARILIA C IVO FERREIRA  - 35.262.494/0001-67</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="7"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Aquisição de caminhão </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="8"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Aquisição Moto - depósito</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="9"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Assistência produto</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="10"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BAIXA PRESTAÇÃO - ATESTADO DE ÓBITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="11"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BAIXA PRESTAÇÃO CHEQUE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="12"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BAIXA SISTEMA ANTIGO (CARTAO)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="13"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Bonificação metas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="14"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Bonificação Venda Crediário </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="15"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">CAERN - MOSSORÓ</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="16"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Cartão de crédito f nadja</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="17"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Certificado digital</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="18"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Combustível e lubrificante - filial Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="19"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">COMERCIAL ME</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="20"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Confecção de cartazes</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="21"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Conserto/reparo móvel - loja mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="22"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Conserto/reparo veículo Tracker PBO 6175</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="23"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Crachás - funcionários</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="24"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DAS MENSAL</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="25"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa c/ alimentação de colaborador - loja Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="26"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa com aniversário - colaborador</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="27"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa com carga intermunicipal</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="28"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa Juros Blu</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="29"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa Juros Sicredi</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="30"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa Juros Stone</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="31"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESA MANUTENCAO REPARARO TSW-0H64</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="32"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESA MANUTENCAO REPARO MYP 2481</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="33"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESA MANUTENCAO REPARO PDK-0P79 TOYOTA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="34"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa Pagamento ACI</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="35"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesas com Cursos</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="36"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESAS COM DEDETIZAÇÃO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="37"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesas com Passagens</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="38"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">despesas diversas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="39"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesas Diversas - Administrativo </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="40"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">despesas diversas - depósito</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="41"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESAS DIVERSAS - LOJA ASSU</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="42"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESAS DIVERSAS - LOJA MOSSORÓ</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="43"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESAS MANUTENÇÃO/REPARO CAMINHA - DEE-9G35 </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="44"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESAS  MANUTENÇÃO/REPARO - SAVEIRO PKK-3H15 - DEPOSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="45"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">DESPESAS MANUTENÇÃO/REPARO - SAVEIRO - QGL-4D13 - MOSSORO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="46"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesas pessoais</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="47"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Despesa venda de motos</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="48"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">empréstimo caminhão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="49"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">empréstimo energia solar</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="50"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">EMPRÉSTIMO PRONAMPE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="51"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Equipamento localizador</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="52"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Entrada Credito Cliente</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="53"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Entrada de Venda a Prazo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="54"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Lancamento Saldo Implantacao</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="55"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Recebimento Juros Prestamista</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="56"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Recebimento Prestamista</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="57"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Renegociação de Dívidas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="58"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Transferencia Entrada Dinheiro Banco</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="59"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Transferencia Entrada Dinheiro Matriz</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="60"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Estorno Venda a Vista</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="61"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Fechamento Cartao Credito</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="62"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Fechamento Cartao Debito</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="63"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Feirão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="64"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">GRATIFICAÇAO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="65"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">GRATIFICAÇAO  - METAS BATIDAS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="66"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Honorários contábeis</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="67"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">ICMS DIferencial de Aliquota</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="68"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">ICMS - PARCELAMENTO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="69"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Importação de Títulos a Pagar</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="70"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Investimento Colassu</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="71"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">INVESTIMENTO ENERGIA SOLAR</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="72"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Investimento Veículo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="73"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Juros antecipação cartão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="74"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MANUTENÇÃO DE EQUIPAMENTO </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="75"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MANUTENÇÃO PREDIAL E REPARO - DEPOSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="76"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MANUTENÇÃO PREDIAL E REPARO - LOJA ASSU</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="77"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MANUTENÇÃO PREDIAL E REPARO - LOJA AVELLOZ</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="78"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MANUTENÇÃO PREDIAL E REPARO - LOJA MOSSORÓ CENTRO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="79"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MANUTENÇÃO PREDIAL E REPARO - LOJA MOSSORÓ PARTAGE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="80"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL DE EXPEDIENTE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="81"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL DE EXPEDIENTE - CREDIARIO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="82"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL DE EXPEDIENTE - DEPOSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="83"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Material de expediente - filial mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="84"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Material de expediente - financeiro</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="85"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL DE EXPEDIENTE - LOJA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="86"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL DE EXPEDIENTE - VENDEDOR</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="87"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL DE USO/CONSUMO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="88"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MATERIAL PARA CONTEÚDO PUBLICIDADE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="89"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento 13 Salario</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="90"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO 13 SALARIO - COMISSAO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="91"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO ADIANTAMENTO 13 SALARIO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="92"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Adiantamento de Viagem</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="93"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Adiantamento Salarial</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="94"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Agua</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="95"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO AGUA - CASA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="96"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO AGUA - DEPOSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="97"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Agua E Esgoto</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="98"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO AGUA - LOJA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="99"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Ajuda de Custo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="100"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Alimentação</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="101"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO ALIMENTAÇÃO - LOJA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="102"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento alimentação - Loja Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="103"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aluguel</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="104"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aluguel - Anthuannet Cabral </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="105"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aluguel - H F Pinto</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="106"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento aluguel - loja Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="107"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento aluguel maquineta </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="108"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aluguel - Matheus Cabral</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="109"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aluguel - Rui Veras</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="110"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Alvara de Licenca</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="111"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento anuidade cartão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="112"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aquisição de Equipamento - Loja Assu</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="113"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aquisição Equipamento - Depósito</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="114"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento aquisição equipamento - loja avelloz</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="115"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento aquisição equipamento - loja mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="116"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aquisição Fachada</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="117"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aquisicao Pequenos Bens</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="118"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Aquisicao Veiculo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="119"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Assessoria Contabil/Fiscal</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="120"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO BRINDE/PATROCINIO/DOAÇAO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="121"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento capacitação - colaboradores</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="122"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento carrocinha mão de força - caminhão </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="123"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Carro de Som</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="124"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Cartorio</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="125"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Cdl</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="126"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Cofins</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="127"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Combustivel E Lubrificante</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="128"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento com Confraternização</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="129"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Comissao</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="130"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO COMISSAO - GARANTIA ESTENDIDA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="131"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO COMISSAO - OUT LET</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="132"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Compra de Mercadoria - Loja Assu</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="133"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Compra de Mercadoria - Loja Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="134"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Conserto/Reparo Instalacao</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="135"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO MOTO - PLACA OVZ - 1036</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="136"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO MOTO - PLACA POO - 2G11</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="137"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO MOTO - PLACA QGD 2620</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="138"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO MOTO - PLACA QGM - 7F40</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="139"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO MOTO - PLACA QGN - 8J61</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="140"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Conserto/Reparo Veiculo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="141"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO VEICULO - CAMINHAO - PLACA OJR-6E01</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="142"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO VEICULO - CAMINHAO - PLACA OKB 0029</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="143"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO VEICULO - CAMINHAO - PLACA OKC-6015</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="144"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO VEÍCULO OJT 4C25</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="145"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO VEICULO  - PLACA OJT 4C45</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="146"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO CONSERTO/REPARO VEICULO - STRADA - PLACA NNZ 4656</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="147"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Copa E Cozinha</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="148"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Correios</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="149"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Csll</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="150"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento decoração</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="151"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento de Desconto Concedido</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="152" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">Pagamento de Fornecedor</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="153"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento de Juros</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="154"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento de Multa</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="155"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento de Outras Despesas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="156"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Despesa Bancaria</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="157"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento despesa com informática</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="158"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO DESPESA - E-COMMERCE - SITE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="159"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento despesa logística publicidade</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="160"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Despesa Medica</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="161"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO DESPESAS COM VIAGEM</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="162"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento despesas com viagem - loja</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="163"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO DESPESAS - RESIDENCIA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="164"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento de Taxa das Administradoras de Cartões</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="165"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Devolucao de Venda</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="166"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO DIGITAL INFLUENCER</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="167"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO EMPRESA DE COBRANCA AGILIZA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="168"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO EMPRÉSTIMO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="169"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO EMPRÉSTIMO MM PRÉ MOLDADOS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="170"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Energia Eletrica</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="171"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Evento Publicitario</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="172"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO EXAME ADMISSIONAL/DEMISSIONAL</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="173"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Ferias</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="174"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Fgts</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="175"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO FORMAS - MM PRÉ MOLDADOS - CARTÃO SICREDI</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="176"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Freteiro</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="177"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Frete Sobre Compra</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="178"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento Gerenciamento Mídia</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="179"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO GRATIFICAÇÃO - FECHA MÊS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="180"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Honorario Advocaticio</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="181"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Honorario Contabil</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="182"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Hora Extra</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="183"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Hospedagem</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="184"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Icms</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="185"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Imposto Federal</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="186"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Inss</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="187"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Internet</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="188"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento investimento </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="189"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento investimento galpão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="190"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento investimento loja - Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="191"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento investimento Mossoro</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="192"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO INVESTIMENTO TERRENO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="193"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO IPTU</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="194"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO IPTU DEPÓSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="195"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO IPTU LOJA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="196"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO IPTU - LOJA MOSSORÓ</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="197"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO IPTU RESIDÊNCIA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="198"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Irpf</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="199"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Irpj</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="200"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO ISS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="201"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Judicial </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="202"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Junta Comercial </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="203"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Lavacao Veiculos</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="204"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento lavagem estofados</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="205"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Licenciamento -  MOTO POO2G11</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="206"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO LICENCIAMENTO MOTO QGN 8J61</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="207"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Licenciamento Veiculo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="208"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO LICENCIAMENTO VEICULO - CAMINHAO - OJT 4245</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="209"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Licenciamento Veiculo - Tracker PBO 6175</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="210"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MANUTENÇAO PREDIAL E REPARO - CASA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="211"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MANUTENÇÃO PREDIAL E REPARO - CASA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="212"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MAQUINETA PAGSEGURO -  LOJA ASSU</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="213"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Marcas E Patentes</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="214"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Material Decoracao</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="215"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MATERIAL DE LIMPEZA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="216"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Material de Limpeza - DEPOSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="217"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MATERIAL DE USO/ CONSUMO - DEPOSITO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="218"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Material de Uso/Consumo - Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="219"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MATERIAL LIMPEZA - CASA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="220"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MATERIAL LIMPEZA - LOJA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="221"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO MULTA - CARRO PARTICULAR</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="222"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Panfletos</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="223"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento pintura caminhão </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="224"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Pis</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="225"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO PLANO DE SAÚDE </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="226"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO PREMIAÇAO - MELHOR MARGEM DE VENDAS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="227"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO PREMIAÇAO - METAS BATIDA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="228"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Processo Trabalhista</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="229"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Pro Labore</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="230"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO PUBLICIDADE</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="231"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento publicidade design gráfico</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="232"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento publicidade em canal de televisão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="233"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Publicidade Em Carro de Som</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="234"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Publicidade Em Jornal</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="235"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Publicidade Em Outdoor</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="236"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Publicidade Em Placas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="237"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Publicidade Em Rádio</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="238"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Publicidade Em Revista</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="239"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento publicidade facebook</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="240"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento publicidade locução</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="241"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento publicidade meio digital</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="242"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Radio</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="243"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO REBOQUE VEÍCULO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="244"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO RECARGA DE EXTINTOR</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="245"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Recisão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="246"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Rede Nordeste</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="247"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Retirada Extra</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="248"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Salario</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="249"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento seguro </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="250"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Seguro Imovel</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="251"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Seguro Veiculo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="252"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento serviço de assistência ao cliente</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="253"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Serviço de Limpeza</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="254"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO SERVIÇO - MOTOS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="255"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento serviço plataforma meu crediario</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="256"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO SERVIÇO PRESTADO TERCEIROS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="257"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">pagamento serviço spc e serasa</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="258"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Simples Nacional</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="259"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Sindical</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="260"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Software</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="261"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Substituicao Tributaria</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="262"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Tabloides</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="263"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO TACÓGRAFO DE CAMINHÃO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="264"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO TAXA ADMINISTRATIVA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="265"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Taxa Municipal</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="266"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PAGAMENTO TAXI</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="267"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Telefonia Fixa</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="268"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Telefonia Movel</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="269"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Tv</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="270"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Uniforme</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="271"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Vale Transporte</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="272"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Pagamento Vigilancia E Monitoramento</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="273"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Parcelamento Federal</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="274"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PARCELAMENTO PF </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="275"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">PARCELAMENTO SIMPLES NACIONAL</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="276"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Premiação </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="277"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Publicidade Loja Mossoró</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="278"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Quitação dívida trabalhista</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="279"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">RASTREAMENTO CARROS</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="280"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">reembolso </span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="281"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Rescisão</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="282"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">RETIRADA DA LOJA -  RESIDÊNCIA JOÃO VIEIRA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="283"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">RETIRADA DA LOJA - RESIDÊNCIA MARÍLIA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="284"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">RETIRADA DA LOJA - SÓCIO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="285"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Revisão veículo TRACKER PBO 6175</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="286"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Sacolas personalizadas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="287"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Saída Credito Cliente</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="288"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Saída Para Implantação de Saldo Inicial</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="289"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Saída por ajuste de caixa</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="290"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Saída Por Falta de Caixa</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="291"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Saída Por Perda/Roubo</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="292"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Seguro Marília</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="293"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Seguro veículo TRACKER PBO 6175</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="294"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Serviço de Montagens</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="295"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">tarifa bancaria diversas</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="296"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Tarifa manutenção conta bancaria</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="297"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">tarifa serviço de cobrança banco</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="298"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">TAXA DE ESTACIONAMENTO</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="299"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Transferencia Saída Dinheiro Banco</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="300"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Transferencia Saída Dinheiro Matriz</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="301"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">TRANSPORTADORA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="302"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Vale avulso</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select name="documento_saida[dados_dos_pagamentos][0][historico_receita_despesa_id]" id="historico_receita_despesa_0" class="form-control  combobox-com-pesquisa" form="new_cte" value="247" atributo="historico_receita_despesa_id" data-pagamento_fornecedor="247" data-live-search="true" data-size="10" data-live-search-placeholder="Pesquisar" data-none-results-text="Nenhum registro encontrado" tabindex="-98"></select></div></div></div></div>
+
+                <div class="col-xs-12 no-padding container-prestamista-pagamento" data-forma-pagamento-id="" data-agrupador="1" id="container_prestamista_0">
+                </div>
+
+                <div class="col-xs-12 no-padding hidden" id="tabela_pagamentos">
+                    <button class="btn-primary btn botao-leitor-codigo coluna-dados-cheque" style="margin-bottom: 15px; display: none;" type="button">
+                      <span class="glyphicon glyphicon-barcode"></span>
+                    </button>
+
+
+                  <div class="" id="tabela_colunas_parcelas">
+                    <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap">
+                      <thead>
+                      <tr>
+                        <th>#</th>
+                        <th style="min-width: 130px;">Vencimento</th>
+                        <th style="min-width: 110px;">Valor</th>
+                        <th style="min-width: 4em; display: none;" class="coluna-dados-cheque">COMPE</th>
+                        <th style="min-width: 100px; display: none;" class="coluna-dados-cheque">Banco</th>
+                        <th style="min-width: 100px; display: none;" class="coluna-dados-cheque">Nº Agência</th>
+                        <th style="min-width: 50px; display: none;" class="coluna-dados-cheque">C1</th>
+                        <th style="min-width: 100px; display: none;" class="coluna-dados-cheque">Nº Conta</th>
+                        <th style="min-width: 50px; display: none;" class="coluna-dados-cheque">C2</th>
+                        <th style="min-width: 100px; display: none;" class="coluna-dados-cheque">Número</th>
+                        <th style="min-width: 50px; display: none;" class="coluna-dados-cheque">C3</th>
+                        <th style="min-width: 170px; display: none;" class="coluna-dados-cheque">Titular</th>
+                        <th style="min-width: 100px; display: none;" class="coluna-dados-cheque">CPF/CNPJ</th>
+                      </tr>
+                      </thead>
+                      <tbody class="conteiner-linhas-tabela-pagamentos" nivel="2">
+                        <tr class="copia-linha" nivel="2">
+                          <input class="form-control" form="new_cte" id="parcela_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][parcela]" value="1" atributo="parcela" type="hidden" style="">
+                          <td class="coluna-numero-parcela">1</td>
+                          <td class="coluna-editavel coluna-data-vencimento" tabindex="1"><div data-valor_coluna="" style="position: relative;">20/11/2026</div><div class="hide" data-container_elemento=""><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="new_cte" id="data_vencimento_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][data_vencimento]" value="20/11/2026" atributo="data_vencimento" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></td>
+                          <td class="coluna-editavel coluna-valor" style="" tabindex="1"><div data-valor_coluna="" style="position: relative;">0,00</div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico monetario" form="new_cte" id="valor_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][valor]" type="text" value="0,00" atributo="valor" mascara_monetario="true" style=""></div></td>
+
+
+                          <td class="coluna-editavel coluna-dados-cheque compe" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="compe_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][compe]" type="text" atributo="compe" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque banco" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><input class="form-control autocompletar" form="new_cte" id="autocompletar_banco_id_0_0" value="" atributo="banco_id" campo="codigo_banco" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="codigo_banco" data-timeout="1000" type="text" style=""><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_cte" id="banco_id_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][banco_id]" atributo="banco_id" type="hidden" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque agencia" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="numero_agencia_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][numero_agencia]" type="text" atributo="numero_agencia" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque c1" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="c1_0_0" maxlength="1" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][c1]" type="text" atributo="c1" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque conta" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="numero_conta_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][numero_conta]" type="text" atributo="numero_conta" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque c2" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="c2_0_0" maxlength="1" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][c2]" type="text" atributo="c2" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque cheque" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="numero_cheque_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][numero]" type="text" atributo="numero" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque c3" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control campo-numerico" form="new_cte" id="c3_0_0" maxlength="1" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][c3]" type="text" atributo="c3" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control" form="new_cte" id="titular_cheque_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][titular]" atributo="titular" type="text" style=""></div></td>
+                          <td class="coluna-editavel coluna-dados-cheque" tabindex="1" style="display: none;"><div data-valor_coluna="" style="position: relative;"></div><div class="hide" data-container_elemento=""><input class="form-control" form="new_cte" id="cpf_cheque_0_0" name="documento_saida[dados_dos_pagamentos][0][parcelas][0][dados_cheque][cpf_cnpj]" atributo="cpf_cnpj" type="text" style=""></div></td>
+                        </tr>
+                      </tbody>
+</table></div>                  </div>
+
+                  <div class="col-xs-12 no-padding">
+                    <div class="row contrato-nsu-venda" style="display: none;" data-pagamento_desabilitado="">
+                      <div class="col-xs-12">
+                        <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-editavel">
+                          <thead>
+                          <tr class="fundo-cinza">
+                            <th>Nº de Autorização</th>
+                            <th>NSU</th>
+                            <th>Nº do Contrato</th>
+                            <th class="th-id-terminal-pagamento">Identificador do Terminal</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                              <td><input class="form-control" disabled="disabled" form="new_cte" id="numero_autorizacao" name="documento_saida[dados_dos_pagamentos][0][numero_autorizacao]" atributo="numero_autorizacao" type="text" style=""></td>
+                              <td><input class="form-control" disabled="disabled" form="new_cte" id="nsu" name="documento_saida[dados_dos_pagamentos][0][nsu]" atributo="nsu" type="text" style=""></td>
+                              <td><input class="form-control" disabled="disabled" form="new_cte" id="numero_contrato" name="documento_saida[dados_dos_pagamentos][0][numero_contrato]" atributo="numero_contrato" type="text" style=""></td>
+                              <td>
+                                <input class="form-control id-terminal-pagamento" disabled="disabled" form="new_cte" id="id_terminal_pagamento" name="documento_saida[dados_dos_pagamentos][0][id_terminal_pagamento]" atributo="id_terminal_pagamento" type="text" style="">
+                              </td>
+                          </tr>
+                          </tbody>
+</table></div>                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="mensagem-aviso-tir">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    Esta forma de pagamento possui mais de uma definição de TIR com quantidades de parcelas diferentes
+                    para desconsiderar.
+                  </div>
+
+
+                </div>
+              </div>
+
+              <input class="form-control checkbox exclui-registro-relacionado" form="new_cte" id="_destroy_vencimento_0" name="documento_saida[dados_dos_pagamentos][0][_destroy]" value="true" atributo="_destroy" type="checkbox" style=""><label for="_destroy_vencimento_0">&nbsp;</label>
+
+                <span class="glyphicon glyphicon-trash remove-pagamento-documento " onclick="Venda.removeFormaPagamento(this);" title="Remover forma de pagamento"></span>
+
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-5">
+          <button type="button" class="btn btn-primary" onclick="copiaUltimaLinha('#copia_forma_pagamento'); Venda.preparaPagamentoCopiado();">
+            <span class="glyphicon glyphicon-plus-sign"></span> Nova Forma de Pagamento
+          </button>
+        </div>
+        <div class="col-xs-12 col-sm-7">
+          <div class="form-group" id="campo_valor_restante"><label class="col-xs-12 col-sm-6 no-padding-right control-label" id="titulo_campo_valor_restante" for="valor_restante">Valor Restante</label><div class="col-xs-12 col-sm-6"><input class="form-control campo-numerico monetario" disabled="disabled" form="new_cte" id="valor_restante" name="nao_considerar" type="text" value="0,00" atributo="valor_restante" mascara_monetario="true" style=""></div></div>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="modal_leitura_cheques" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-bancos="{&quot;001&quot;:1,&quot;104&quot;:2,&quot;237&quot;:3,&quot;341&quot;:4,&quot;399&quot;:5,&quot;356&quot;:6,&quot;033&quot;:7,&quot;318&quot;:8,&quot;004&quot;:9,&quot;041&quot;:10,&quot;748&quot;:11,&quot;756&quot;:12,&quot;566&quot;:25,&quot;590&quot;:27}"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Cheque</h4></div><div class="modal-body">
+    <div class="form-horizontal">
+      <div id="notificacoes-leitura-cheque-erro" class="hide alert-danger alert alert-dismissable tamanho-fonte" role="alert">
+        <b>CMC7 Inválido!</b>
+      </div>
+      <div id="notificacoes-leitura-cheque-sucesso" class="hide alert-success alert alert-dismissable tamanho-fonte" role="alert">
+        <b>CMC7: <span></span>!</b>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="col-xs-12">
+            <div class="form-group">
+              <input type="text" id="_cmc7" class="form-control" placeholder="CMC7" style="">
+            </div>
+          </div>
+          <div class="col-xs-12 dados-leitura-cheque">
+            <div class="form-group">
+              <input type="text" name="_compe" id="_compe" class="form-control" placeholder="Compe" style="width: 80px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_banco" id="_banco" class="form-control" placeholder="Banco" style="width: 80px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_agencia" id="_agencia" class="form-control" placeholder="Agência" style="width: 80px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_c1" id="_c1" class="form-control" placeholder="C1" style="width: 45px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_conta" id="_conta" class="form-control" placeholder="Conta" style="width: 85px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_c2" id="_c2" class="form-control" placeholder="C2" style="width: 45px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_cheque" id="_cheque" class="form-control" placeholder="Cheque" style="width: 80px; display: inline-block;" disabled="disabled">
+              <input type="text" name="_c3" id="_c3" class="form-control" placeholder="C3" style="width: 45px; display: inline-block;" disabled="disabled">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div><div class="modal-footer rodape-modal-cinza"><button type="button" class="btn btn-success" id="confirmar-leitura-cheque">Confirmar</button></div></div></div></div>
+
+<div class="modal fade" id="modal_definicoes_tir_calculado" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog tamanho-medio"><div class="modal-content tamanho-medio"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">TIR</h4></div><div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <table class="table table-condensed tabela-definicoes-tir">
+        <thead>
+        <tr>
+          <th>Produto/Serviço</th>
+          <th class="text-right">% Calculado</th>
+          <th class="text-right">% Mínimo</th>
+          <th class="text-right">% Máximo</th>
+        </tr>
+        </thead>
+        <tbody id="conteudo_tabela_definicoes_tir"></tbody>
+      </table>
+    </div>
+  </div>
+</div><div class="modal-footer rodape-modal-cinza"><button class="btn btn-default" type="button" data-dismiss="modal">Fechar</button></div></div></div></div>
+</div>
+
+<div class="col-xs-12">
+  <div class="col-xs-12"><div class="form-group" id="campo_observacoes"><label class="col-xs-12" id="titulo_campo_observacoes" for="observacoes">Observações:</label><div class="col-xs-12"><textarea class="form-control" form="new_cte" id="observacoes" name="[cte][observacoes]" style="resize: vertical;" atributo="observacoes"></textarea></div></div></div>
+</div>
+
+<link rel="stylesheet" href="#" media="all">
+
+
+
+
+  <div class="row">
+    <div class="col-xs-12">
+      <input type="submit" name="commit" value="Salvar" class="crud-btn-salvar btn btn-success" style="">
+<a class="btn btn-default" descricao="Voltar" href="cte.html">Voltar</a>
+
+
+
+    </div>
+  </div>
+</form>
+      </div>
+  </section>
+</main>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
+</body>
+</html>

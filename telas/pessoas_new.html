@@ -452,7 +452,7 @@
   </defs>
 </svg>
 <nav id="sidebar">
-  <a href="../menu/cadastros.html" class="sidebar-brand marca-erp" aria-label="Tela inicial" title="Tela inicial"></a>
+  <a href="../telas/home.html" class="sidebar-brand marca-erp" aria-label="Tela inicial" title="Tela inicial"></a>
   <div id="div_pesquisa_programa_menu">
     <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
   </div>
@@ -529,34 +529,7 @@
 <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_identidade"><label class="col-xs-12" id="titulo_campo_identidade" for="identidade">Identidade</label><div class="col-xs-12"><input class="form-control" form="new_pessoa" id="identidade" name="pessoa[identidade]" atributo="identidade" data-avisa-duplicidade="true" type="text" style=""></div></div></div>
 <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_data_emissao_identidade"><label class="col-xs-12" id="titulo_campo_data_emissao_identidade" for="data_emissao_identidade">Data Emissão Identidade</label><div class="col-xs-12"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="new_pessoa" id="data_emissao_identidade" name="pessoa[data_emissao_identidade]" atributo="data_emissao_identidade" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div></div>
 <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_orgao_emissor_identidade"><label class="col-xs-12" id="titulo_campo_orgao_emissor_identidade" for="orgao_emissor_identidade">Órgão Emissor Identidade</label><div class="col-xs-12"><input class="form-control" form="new_pessoa" id="orgao_emissor_identidade" name="pessoa[orgao_emissor_identidade]" atributo="orgao_emissor_identidade" type="text" style=""></div></div></div>
-<div class="col-xs-12 col-md-6"><div class="form-group" id="campo_uf_emissor_identidade_id"><label class="col-xs-12" id="titulo_campo_uf_emissor_identidade_id" for="uf_emissor_identidade_id">UF Emissor Identidade</label><div class="col-xs-12"><select name="pessoa[uf_emissor_identidade_id]" id="uf_emissor_identidade_id" class="form-control" form="new_pessoa" atributo="uf_emissor_identidade_id"><option value="">Selecione</option>
-<option value="1">AC</option>
-<option value="2">AL</option>
-<option value="3">AP</option>
-<option value="4">AM</option>
-<option value="5">BA</option>
-<option value="6">CE</option>
-<option value="7">DF</option>
-<option value="8">ES</option>
-<option value="9">GO</option>
-<option value="10">MA</option>
-<option value="11">MT</option>
-<option value="12">MS</option>
-<option value="13">MG</option>
-<option value="14">PR</option>
-<option value="15">PB</option>
-<option value="16">PA</option>
-<option value="17">PE</option>
-<option value="18">PI</option>
-<option value="19">RN</option>
-<option value="20">RS</option>
-<option value="21">RJ</option>
-<option value="22">RO</option>
-<option value="23">RR</option>
-<option value="24">SC</option>
-<option value="25">SE</option>
-<option value="26">SP</option>
-<option value="27">TO</option></select></div></div></div>
+<div class="col-xs-12 col-md-6"><div class="form-group" id="campo_uf_emissor_identidade_id"><label class="col-xs-12" id="titulo_campo_uf_emissor_identidade_id" for="uf_emissor_identidade_id">UF Emissor Identidade</label><div class="col-xs-12"><select name="pessoa[uf_emissor_identidade_id]" id="uf_emissor_identidade_id" class="form-control" form="new_pessoa" atributo="uf_emissor_identidade_id"><option value="">Selecione</option></select></div></div></div>
 <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_inscricao_estadual"><label class="col-xs-12" id="titulo_campo_inscricao_estadual" for="inscricao_estadual">Inscrição Estadual</label><div class="col-xs-12"><input class="form-control" form="new_pessoa" id="inscricao_estadual" name="pessoa[inscricao_estadual]" atributo="inscricao_estadual" type="text" style=""></div></div></div>
 <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_finalidade"><label class="col-xs-12" id="titulo_campo_finalidade" for="finalidade">Finalidade</label><div class="col-xs-12"><select name="pessoa[finalidade]" id="finalidade" class="form-control" form="new_pessoa" atributo="finalidade"><option value="">Selecione</option>
 <option value="C">Consumidor</option>
@@ -580,19 +553,7 @@
 
 <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_data_nascimento_fundacao"><label class="col-xs-12" id="titulo_campo_data_nascimento_fundacao" for="data_nascimento_fundacao">Data Nascimento</label><div class="col-xs-12"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="new_pessoa" id="data_nascimento_fundacao" name="pessoa[data_nascimento_fundacao]" atributo="data_nascimento_fundacao" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div></div>
 
-  <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_escolaridade_id"><label class="col-xs-12" id="titulo_campo_escolaridade_id" for="escolaridade_id">Escolaridade</label><div class="col-xs-12"><select name="pessoa[escolaridade_id]" id="escolaridade_id" class="form-control" form="new_pessoa" atributo="escolaridade_id"><option value="">Selecione</option>
-<option value="13">Fundamental incompleto</option>
-<option value="14">Fundamental completo</option>
-<option value="15">Médio incompleto</option>
-<option value="16">Médio completo</option>
-<option value="17">Superior incompleto</option>
-<option value="18">Superior completo</option>
-<option value="19">Pós-Graduação incompleto</option>
-<option value="20">Pós-Graduação completo</option>
-<option value="21">Mestrado incompleto</option>
-<option value="22">Mestrado completo</option>
-<option value="23">Doutorado incompleto</option>
-<option value="24">Doutorado completo</option></select></div></div></div>
+  <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_escolaridade_id"><label class="col-xs-12" id="titulo_campo_escolaridade_id" for="escolaridade_id">Escolaridade</label><div class="col-xs-12"><select name="pessoa[escolaridade_id]" id="escolaridade_id" class="form-control" form="new_pessoa" atributo="escolaridade_id"><option value="">Selecione</option></select></div></div></div>
   <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_cidade_naturalidade_id"><label class="col-xs-12" id="titulo_campo_cidade_naturalidade_id" for="cidade_naturalidade_id">Naturalidade</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_pessoa" value="" atributo="cidade_naturalidade_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_pessoa" id="autocompletar_cidade_naturalidade_id" value="" atributo="cidade_naturalidade_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_pessoa" id="cidade_naturalidade_id" name="pessoa[cidade_naturalidade_id]" atributo="cidade_naturalidade_id" type="hidden" style=""></div></div></div>
 
 <div class="col-xs-12 col-md-6"><div class="form-group" id="campo_historico_receita_despesa_id"><label class="col-xs-12" id="titulo_campo_historico_receita_despesa_id" for="historico_receita_despesa_id">Histórico de Receita e Despesa <span class="glyphicon glyphicon-info-sign" title="Será considerado para gerar Títulos a Pagar"></span></label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" disabled="disabled" form="new_pessoa" value="" atributo="historico_receita_despesa_id" campo="historicos_receitas_despesas.descricao" data-filtros="{&quot;escopos&quot;:&quot;ativos.saida&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="historicos_receitas_despesas.descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(238, 238, 238);"><input class="form-control autocompletar tt-input" disabled="disabled" form="new_pessoa" id="autocompletar_historico_receita_despesa_id" value="" atributo="historico_receita_despesa_id" campo="historicos_receitas_despesas.descricao" data-filtros="{&quot;escopos&quot;:&quot;ativos.saida&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="historicos_receitas_despesas.descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" disabled="disabled" form="new_pessoa" id="historico_receita_despesa_id" name="pessoa[historico_receita_despesa_id]" atributo="historico_receita_despesa_id" type="hidden" style=""></div></div></div>
@@ -657,11 +618,7 @@
               <div class="col-xs-2">
                     <span class="glyphicon glyphicon-trash botao-remove-linha pull-right" onclick="removeLinha(this);" title="Remover Endereço"></span>
               </div>
-              <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo_endereco_id"><label class="col-xs-12" id="titulo_campo_tipo_endereco_id" for="tipo_endereco_id">Tipo*</label><div class="col-xs-12"><select name="pessoa[enderecos_attributes][0][tipo_endereco_id]" id="tipo_endereco_id_0" class="form-control" form="new_pessoa" atributo="tipo_endereco_id"><option value="">Selecione</option>
-<option value="1">Comercial</option>
-<option value="2">Entrega</option>
-<option value="3">Residencial</option>
-<option value="4">Outros</option></select></div></div></div>
+              <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo_endereco_id"><label class="col-xs-12" id="titulo_campo_tipo_endereco_id" for="tipo_endereco_id">Tipo*</label><div class="col-xs-12"><select name="pessoa[enderecos_attributes][0][tipo_endereco_id]" id="tipo_endereco_id_0" class="form-control" form="new_pessoa" atributo="tipo_endereco_id"><option value="">Selecione</option></select></div></div></div>
               <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_cep_id"><label class="col-xs-6 col-sm-6 label_campo_cep" id="titulo_campo_cep_id" for="cep_id">CEP*</label><span class="col-xs-6 col-sm-6 text-right"><a id="link_buscar_cep_modal" class="btn btn-link alinha-link" title="Caso o CEP não estiver cadastrado, utilize a funcionalidade 'Buscar CEP' para cadastrar automaticamente (Tela de cadastro de CEP)">Buscar CEP</a></span><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_pessoa" value="" atributo="cep_id" mascara="99999-999" campo="cep" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="cep" data-timeout="1000" type="text" maxlength="9" autocomplete="off" readonly="" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_pessoa" id="autocompletar_cep_id_0" value="" atributo="cep_id" mascara="99999-999" campo="cep" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="cep" data-timeout="1000" type="text" maxlength="9" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-2"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_pessoa" id="cep_id_0" name="pessoa[enderecos_attributes][0][cep_id]" atributo="cep_id" type="hidden" style=""></div></div></div>
 
               <div class="col-xs-12"><div class="form-group" id="campo_bairro_id"><label class="col-xs-12" id="titulo_campo_bairro_id" for="bairro_id">Bairro*</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_pessoa" value="" atributo="bairro_id" campo="descricao" data-filtros="{}" data-filtrar_com="{&quot;cidade_id&quot;:&quot;cidade_id_0&quot;}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_pessoa" id="autocompletar_bairro_id_0" value="" atributo="bairro_id" campo="descricao" data-filtros="{}" data-filtrar_com="{&quot;cidade_id&quot;:&quot;cidade_id_0&quot;}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-3"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id input-bairro-id" form="new_pessoa" id="bairro_id_0" name="pessoa[enderecos_attributes][0][bairro_id]" atributo="bairro_id" type="hidden" style=""></div></div></div>
@@ -753,14 +710,7 @@
         <tbody id="copia_contatos">
 
             <tr class="copia-linha">
-              <td><select name="pessoa[contatos_attributes][0][meio_contato_id]" id="meio_contato_id_0" class="form-control" form="new_pessoa" atributo="meio_contato_id"><option value="">Selecione</option>
-<option value="1">Telefone Residencial</option>
-<option value="2">Telefone Comercial</option>
-<option value="4">E-mail</option>
-<option value="5">Skype</option>
-<option value="7">Outros</option>
-<option value="6">Telefone Celular</option>
-<option value="3">Celular</option></select></td>
+              <td><select name="pessoa[contatos_attributes][0][meio_contato_id]" id="meio_contato_id_0" class="form-control" form="new_pessoa" atributo="meio_contato_id"><option value="">Selecione</option></select></td>
 
               <td>
                 <input class="form-control" form="new_pessoa" id="informacao_0" name="pessoa[contatos_attributes][0][informacao]" atributo="informacao" type="text" style="">
@@ -801,11 +751,7 @@
         <tbody id="copia_referencias">
 
             <tr class="copia-linha">
-              <td><select name="pessoa[referencias_attributes][0][tipo_referencia_id]" id="tipo_referencia_id_0" class="form-control" form="new_pessoa" atributo="tipo_referencia_id"><option value="">Selecione</option>
-<option value="1">Particular</option>
-<option value="2">Comercial</option>
-<option value="3">Filiação</option>
-<option value="4">Pessoal</option></select></td>
+              <td><select name="pessoa[referencias_attributes][0][tipo_referencia_id]" id="tipo_referencia_id_0" class="form-control" form="new_pessoa" atributo="tipo_referencia_id"><option value="">Selecione</option></select></td>
               <td><input class="form-control" form="new_pessoa" id="informacao_0" name="pessoa[referencias_attributes][0][informacao]" atributo="informacao" type="text" style=""></td>
               <td>
                 <input class="form-control" form="new_pessoa" id="contato_0" name="pessoa[referencias_attributes][0][contato]" atributo="contato" type="text" style="">
@@ -909,12 +855,7 @@
           <div class="copia-linha">
             <div class="container-fluid row" style="padding: 0px !important;">
               <div class="container-tipo-dependente">
-                <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo_dependente_id"><label class="col-xs-12" id="titulo_campo_tipo_dependente_id" for="tipo_dependente_id">Tipo do dependente*</label><div class="col-xs-12"><select name="pessoa[dependentes_attributes][0][tipo_dependente_id]" id="tipo_dependente_id_0" class="form-control" form="new_pessoa" atributo="tipo_dependente_id"><option value="">Selecione</option>
-<option value="6">Pai</option>
-<option value="7">Mãe</option>
-<option value="8">Filho</option>
-<option value="9">Cônjuge</option>
-<option value="10">Outro</option></select></div></div></div>
+                <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo_dependente_id"><label class="col-xs-12" id="titulo_campo_tipo_dependente_id" for="tipo_dependente_id">Tipo do dependente*</label><div class="col-xs-12"><select name="pessoa[dependentes_attributes][0][tipo_dependente_id]" id="tipo_dependente_id_0" class="form-control" form="new_pessoa" atributo="tipo_dependente_id"><option value="">Selecione</option></select></div></div></div>
               </div>
 
               <div class="col-xs-12 col-sm-5"><div class="form-group" id="campo_quantidade"><label class="col-xs-12" id="titulo_campo_quantidade" for="quantidade">Quantidade*</label><div class="col-xs-12"><input class="form-control campo-numerico" form="new_pessoa" id="quantidade_dependente_0" name="pessoa[dependentes_attributes][0][quantidade]" type="number" atributo="quantidade" style=""></div></div></div>
@@ -952,8 +893,7 @@
         <th>Usuário</th>
         <th>Data</th>
         </tr></thead>
-        <tbody>
-        </tbody>
+        <tbody></tbody>
 </table></div>  </div>
 </div>
 

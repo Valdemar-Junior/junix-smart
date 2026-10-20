@@ -1,0 +1,1 @@
+td.cabecalho-fluxo-situacao{font-weight:bolder;background-color:white;color:#333333}td:not(.cabecalho-fluxo-situacao){min-width:100px}td{text-align:center}span.y-axis-fluxo-situacao{display:block;position:absolute;top:50%;left:50%;transform:translateX(-50%) translateY(-50%) rotate(-90deg)}@media (max-width: 767px){#gera_fluxo{margin:15px}}

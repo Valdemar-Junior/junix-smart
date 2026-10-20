@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="pt-BR" theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adicionar Forma de Pagamento</title>
+<link rel="icon" type="image/svg+xml" href="../assets/marca/favicon.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/guarda.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/formas_pagamentos.css">
+<style>
+  /* Valores extraídos do CSS original (application.css / menu.css) */
+  :root {
+    --fundo: #f2f1f6;
+    --acrilico: #ffffff;
+    --texto: #363636;
+    --borda-botao: #36363666;
+    --hover-botao: #f3f3f333;
+    --destaque: #ff035b;
+    --sombra: 0 0 1rem 0 rgba(0,0,0,0.25);
+    --sombra-pesquisa: 0 0 1rem 0 rgba(0,0,0,0.2);
+    --placeholder: #8e8e93;
+  }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] {
+      --fundo: #1c1c1e;
+      --acrilico: #2c2c2e;
+      --texto: #dfdfdf;
+      --borda-botao: #dfdfdf66;
+      --hover-botao: #1c1c1e33;
+    }
+  }
+  html[theme-mode=dark] {
+    --fundo: #141a1f;
+    --acrilico: #232a2f;
+    --texto: #dfdfdf;
+    --borda-botao: #dfdfdf66;
+    --hover-botao: #141a1f33;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 10px; }
+  body {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--fundo);
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .acrilico {
+    background: var(--acrilico);
+    box-shadow: var(--sombra);
+    border-radius: 15px;
+  }
+
+  /* ---------- Menu lateral ---------- */
+  #sidebar {
+    position: absolute;
+    top: 0; left: 0;
+    width: 250px;
+    padding-right: 15px;
+  }
+  .sidebar-brand {
+    height: 51px;
+    margin: 15px 0 15px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-marca {
+    width: 48px; height: 48px;
+  }
+  .logo-texto { line-height: 1; }
+  .logo-texto strong {
+    display: block;
+    font-size: 26px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--texto);
+  }
+  .logo-texto span {
+    display: block;
+    font-size: 12px; letter-spacing: 6px; text-align: center;
+    color: var(--texto);
+  }
+  #div_pesquisa_programa_menu {
+    margin: 0 0 0 10px;
+  }
+  #div_pesquisa_programa_menu input {
+    width: 100%;
+    height: 51px;
+    border: none;
+    border-radius: 15px;
+    padding: 0 12px;
+    font: 15px 'Work Sans', sans-serif;
+    color: var(--texto);
+    background: var(--acrilico);
+    box-shadow: var(--sombra-pesquisa);
+    outline: none;
+  }
+  #div_pesquisa_programa_menu input::placeholder { color: var(--placeholder); }
+  .sidebar-nav { list-style: none; margin: 0; padding: 0; }
+  .espacamento-itens-menu {
+    margin: 15px 0 15px 15px;
+    height: 51px;
+  }
+  .espacamento-itens-menu a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+  .espacamento-itens-menu svg {
+    width: 22px; height: 22px;
+    margin-right: 13px;
+    flex: none;
+    color: var(--destaque);
+  }
+  .espacamento-itens-menu .externo {
+    width: 16px; height: 16px; margin: 0 0 0 10px; color: var(--texto);
+  }
+
+  /* ---------- Barra superior ---------- */
+  #conteudo {
+    margin-left: 250px;
+    padding: 15px 15px 15px 0;
+  }
+  #barra_superior {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+  }
+  #barra_superior .titulo {
+    display: flex; align-items: center; gap: 15px;
+    font-size: 18px; font-weight: 400;
+  }
+  #barra_superior .titulo svg { width: 20px; height: 20px; }
+  #barra_superior .direita {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 22px;
+  }
+  .descricao-filial-menu {
+    text-transform: uppercase;
+    font-size: 12px; font-weight: 400;
+  }
+  .icone-topo { position: relative; display: flex; align-items: center; gap: 2px; }
+  .icone-topo svg { width: 20px; height: 20px; }
+  .icone-topo .caret {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
+  }
+  .icone-usuario[data-notificacoes]::after {
+    content: attr(data-notificacoes);
+    position: absolute;
+    top: -9px; left: 10px;
+    height: 12px;
+    padding: 0 4px;
+    border-radius: 12px;
+    background: var(--destaque);
+    color: white;
+    font: bolder 9px/13px monospace;
+  }
+
+  /* ---------- Conteúdo ---------- */
+  #container_conteudo {
+    margin-top: 15px;
+    padding: 15px;
+    min-height: 600px;
+  }
+  /* Mesma grade do ERP: .row > .col-lg-1 (vazia) + .col-sm-6.col-lg-5 por cartão,
+     com 15px de respiro lateral e margem inferior de 2% */
+  .grade-programas {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+  }
+  .grade-programas > a {
+    width: calc(50% - 30px);
+    margin: 0 15px 2%;
+  }
+  @media (min-width: 1200px) {
+    .grade-programas { padding-left: 8.3333%; }
+    .grade-programas > a { width: calc(41.6667% - 30px); }
+  }
+  .botao-programa-menu {
+    background-color: transparent;
+    border: 1px solid var(--borda-botao);
+    color: var(--texto);
+  }
+  .botao-programa-menu:hover { background-color: var(--hover-botao); }
+  .botao-responsivo {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    padding: 0 25px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-align: left;
+    overflow: hidden;
+  }
+  .texto-botao-responsivo { margin-left: 10px; }
+  .icone-botao-menu {
+    position: absolute;
+    right: 30px; top: 20px;
+    width: 40px; height: 40px;
+    color: var(--destaque);
+  }
+
+  /* ---------- Botão flutuante ---------- */
+  .flutuante {
+    position: fixed;
+    left: 20px; bottom: 20px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flutuante svg { width: 34px; height: 34px; }
+  .flutuante .ponto {
+    position: absolute; top: 2px; right: 2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--destaque);
+  }
+
+  /* ---------- Responsivo (mesmos pontos de quebra do original) ---------- */
+  @media (max-width: 767px) {
+    #sidebar { position: static; width: auto; padding: 0 16px; }
+    .espacamento-itens-menu { margin: 10px 0; }
+    #div_pesquisa_programa_menu { margin: 0; }
+    #conteudo { margin-left: 0; padding: 15px 16px; }
+    .grade-programas > a { width: calc(100% - 30px); }
+    .botao-responsivo { height: 55px; line-height: 55px; }
+    .icone-botao-menu { width: 30px; height: 30px; top: 12px; }
+    .descricao-filial-menu { display: none; }
+  }
+
+  /* ---------- Protótipo ---------- */
+  /* Nomes longos quebram em duas linhas, como no original (line-height 25px) */
+  .botao-responsivo { display: flex; align-items: center; line-height: 25px; padding-right: 85px; }
+  .vazio { padding: 40px 15px; text-align: center; color: #8e8e93; font-size: 16px; }
+  .pendente { max-width: 640px; margin: 40px auto; text-align: center; font-size: 16px; line-height: 1.6; }
+  .pendente h2 { font-weight: 400; font-size: 22px; margin: 0 0 10px; }
+  .pendente a { color: #2f84ec; }
+  .pendente img { max-width: 100%; border-radius: 10px; margin-top: 20px; box-shadow: var(--sombra); }
+  .rotulo-grupo { font-size: 13px; color: #8e8e93; }
+
+  /* Configurações: grupos em sanfona */
+  .sanfona { display: flex; flex-direction: column; gap: 10px; }
+  .sanfona details { border: 1px solid var(--borda-botao); border-radius: 10px; overflow: hidden; }
+  .sanfona summary {
+    cursor: pointer; padding: 12px 15px; font-size: 16px;
+    background: rgba(127,127,127,0.08); list-style: none;
+  }
+  .sanfona summary::-webkit-details-marker { display: none; }
+  .sanfona .lista { display: flex; flex-direction: column; padding: 10px 15px 15px; }
+  .sanfona .lista span { padding: 10px 15px; background: #337ab7; color: #fff; border-radius: 6px 6px 0 0; }
+  .sanfona .lista a { padding: 10px 15px; border: 1px solid var(--borda-botao); border-top: none; }
+  .sanfona .lista a:last-child { border-radius: 0 0 6px 6px; }
+  .sanfona .lista a:hover { background: var(--hover-botao); }
+
+  .marca-erp { display: block; background: url(../assets/marca/logo.svg) no-repeat center / auto 48px; }
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
+  }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-estrela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+    <symbol id="i-cadastros" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="5" width="16" height="16" rx="1.5"/><path d="M7 2.5h10v2.5H7zM7 9h10M7 12h10M7 15h6M7 18h4"/></g></symbol>
+    <symbol id="i-vendas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><path d="M9 7v8M12.5 7v8M16 7v8M6.7 11h13.3"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></g></symbol>
+    <symbol id="i-ecommerce" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4h3l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/><path d="M12 9.5l2 2 3-3.5"/></g></symbol>
+    <symbol id="i-compras" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h18l-2 11H5z"/><path d="M8 9l4-6 4 6M8 12v5M10.7 12v5M13.3 12v5M16 12v5"/></g></symbol>
+    <symbol id="i-financeiro" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2v2.1c2.3.3 4 1.7 4.3 3.9h-2.6c-.3-1-1.2-1.6-2.7-1.6-1.6 0-2.6.7-2.6 1.7 0 1 .8 1.4 3.2 2 3.1.7 5 1.8 5 4.4 0 2.2-1.7 3.7-4.6 4V21h-2v-2.6c-2.7-.3-4.5-1.8-4.7-4.2h2.6c.2 1.2 1.3 2 3.2 2 1.8 0 2.8-.7 2.8-1.8 0-1-.8-1.5-3.4-2.1C8.6 11.6 7 10.5 7 8.2 7 6.1 8.6 4.6 11 4.2V2z"/></symbol>
+    <symbol id="i-estoque" viewBox="0 0 24 24"><g fill="currentColor"><rect x="8.5" y="2.5" width="7" height="7" rx=".5"/><rect x="2.5" y="10.5" width="9" height="10" rx=".5"/><rect x="12.5" y="10.5" width="9" height="10" rx=".5"/></g></symbol>
+    <symbol id="i-gerencial" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="13" height="9" rx="1"/><path d="M5 11V8M8 11V6M11 11V9M8.5 13v4M5 21l3.5-4 3.5 4"/><circle cx="19" cy="5" r="2"/><path d="M19 8v6M17 21l2-7 2 7M15 10l4-1"/></g></symbol>
+    <symbol id="i-fiscal" viewBox="0 0 24 24"><path fill="currentColor" d="M3 2h18v20l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L3 22zm4.6 4.5v1.1c-1.2.2-2 1-2 2.1 0 1.3 1 1.8 2.2 2.1 1 .2 1.3.5 1.3.9 0 .5-.5.8-1.2.8-.8 0-1.3-.4-1.4-1H5.2c.1 1.2 1 2 2.4 2.2v1.1h1.2v-1.1c1.3-.2 2.1-1 2.1-2.1 0-1.4-1.1-1.9-2.3-2.2-1-.2-1.2-.5-1.2-.8 0-.4.4-.7 1-.7.7 0 1.1.3 1.2.8h1.3c-.1-1.1-.9-1.8-2.1-2V6.5zM12.5 8v1.5H19V8zm0 3.5V13H19v-1.5zm0 3.5v1.5H19V15z"/></symbol>
+    <symbol id="i-tributacao" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h11l4 4v16H4z"/><path d="M15 2v4h4M7 6h5M7 9h9M7 12h4M7 15h4M7 18h4"/><rect x="13" y="13" width="6" height="7" rx=".5"/><path d="M14.5 15h3M14.5 17h1M16.5 17h1M14.5 18.7h1M16.5 18.7h1"/></g></symbol>
+    <symbol id="i-integracoes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="9" r="2.3"/><path d="M8 3.5v2M8 12.5v2M2.5 9h2M11.5 9h2M4.1 5.1l1.4 1.4M10.5 11.5l1.4 1.4M4.1 12.9l1.4-1.4M10.5 6.5l1.4-1.4"/><circle cx="17" cy="16" r="2"/><path d="M17 11.5v2M17 18.5v2M12.5 16h2M19.5 16h2M13.8 12.8l1.4 1.4M18.8 17.8l1.4 1.4M13.8 19.2l1.4-1.4M18.8 14.2l1.4-1.4"/></g></symbol>
+    <symbol id="i-configuracoes" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 2h3.4l.5 2.6c.7.2 1.3.5 1.9.9l2.3-1.4 2.4 2.4-1.4 2.3c.4.6.7 1.2.9 1.9l2.6.5v3.4l-2.6.5c-.2.7-.5 1.3-.9 1.9l1.4 2.3-2.4 2.4-2.3-1.4c-.6.4-1.2.7-1.9.9l-.5 2.6h-3.4l-.5-2.6c-.7-.2-1.3-.5-1.9-.9l-2.3 1.4-2.4-2.4 1.4-2.3c-.4-.6-.7-1.2-.9-1.9L1.5 13.7v-3.4l2.6-.5c.2-.7.5-1.3.9-1.9L3.6 5.6 6 3.2l2.3 1.4c.6-.4 1.2-.7 1.9-.9zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></symbol>
+    <symbol id="i-mensalidades" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3" y="3" width="1.6" height="15"/><rect x="6" y="3" width="2.4" height="15"/><rect x="9.8" y="3" width="1.2" height="15"/><rect x="12.4" y="3" width="2.4" height="15"/><rect x="16.2" y="3" width="1.2" height="15"/><rect x="18.8" y="3" width="2.2" height="15"/><rect x="3" y="20" width="3" height="1.4"/><rect x="8" y="20" width="3" height="1.4"/><rect x="13" y="20" width="3" height="1.4"/><rect x="18" y="20" width="3" height="1.4"/></g></symbol>
+    <symbol id="i-relatorios" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 2h12l3 3v17H4z"/><path d="M7 11V8M9.5 11V5.5M12 11V7.5M7 14h9M7 17h5"/><circle cx="16.5" cy="17.5" r="2.3"/><path d="M16.5 14v1.2M16.5 19.8V21M13 17.5h1.2M18.8 17.5H20"/></g></symbol>
+    <symbol id="i-externo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 14v4.5a2.5 2.5 0 01-2.5 2.5h-10A2.5 2.5 0 013 18.5v-10A2.5 2.5 0 015.5 6H10"/><path d="M14 3h7v7M21 3l-9 9"/></g></symbol>
+    <symbol id="i-grade" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g></symbol>
+    <symbol id="i-manual" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 5.5c3-1.5 6.5-1.5 10 1 3.5-2.5 7-2.5 10-1V20c-3-1.5-6.5-1.5-10 1-3.5-2.5-7-2.5-10-1z"/><path d="M12 6.5V21"/></g></symbol>
+    <symbol id="i-sino" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 10a6 6 0 0112 0v5l2 3H4l2-3z"/><path d="M10 20.5a2 2 0 004 0"/></g></symbol>
+    <symbol id="i-usuario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-pessoa" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="24" cy="24" r="21.5"/><circle cx="24" cy="18" r="5"/><path d="M14 33v-3.5a6.5 6.5 0 016.5-6.5h7a6.5 6.5 0 016.5 6.5V33z" stroke-linejoin="round"/></g></symbol>
+    <symbol id="i-produto" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M11 22v-6a6 6 0 016-6h14a6 6 0 016 6v6"/><path d="M15 26h18v-2a3 3 0 013-3h4a4 4 0 010 8h-3v6H11v-6H8a4 4 0 010-8h4a3 3 0 013 3z"/><circle cx="8" cy="25" r="1.6"/><circle cx="40" cy="25" r="1.6"/><path d="M13 35v3M35 35v3M19 16h2M20 15v2M23 16h2M24 15v2M27 16h2M28 15v2"/></g></symbol>
+    <symbol id="i-kit" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M26 4h16v38H26M30 4v4M30 12v4"/><path d="M14 10h8v6h-8zM18 16v3"/><path d="M8 26v-3a4 4 0 014-4h16a4 4 0 014 4v3"/><path d="M10 29h20v-1a2 2 0 012-2h1a3 3 0 010 6h-1v6H8v-6H7a3 3 0 010-6h1a2 2 0 012 2z"/><circle cx="7" cy="29" r="1"/><circle cx="33" cy="29" r="1"/><path d="M10 38v3M30 38v3M13 31h1M17 31h1M21 31h1M25 31h1M15 34h1M19 34h1M23 34h1"/></g></symbol>
+    <symbol id="i-servico" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="15" cy="15" r="4"/><path d="M15 6v3M15 21v3M6 15h3M21 15h3M8.6 8.6l2.2 2.2M19.2 19.2l2.2 2.2M8.6 21.4l2.2-2.2M19.2 10.8l2.2-2.2"/><circle cx="15" cy="15" r="9"/><path d="M33 14l11 4v10c0 7-5 11-11 14-6-3-11-7-11-14V18z"/><path d="M33 18l7 2.5V28c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-7.5z"/><path d="M29 28l3 3 6-6"/><path d="M27 39l-3 6 4-1 2 3 2-5M39 39l3 6-4-1-2 3-2-5"/></g></symbol>
+  </defs>
+</svg>
+<nav id="sidebar">
+  <a href="../telas/home.html" class="sidebar-brand marca-erp" aria-label="Tela inicial" title="Tela inicial"></a>
+  <div id="div_pesquisa_programa_menu">
+    <input type="text" placeholder="Pesquisa..." aria-label="Pesquisa">
+  </div>
+  <ul class="sidebar-nav">
+    <li class="espacamento-itens-menu acrilico"><a href="../menu/favoritos.html"><svg><use href="#i-estrela"/></svg>Favoritos</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/cadastros.html"><svg><use href="#i-cadastros"/></svg>Cadastros</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/ecommerce.html"><svg><use href="#i-ecommerce"/></svg>E-commerce</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/compras.html"><svg><use href="#i-compras"/></svg>Compras</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/financeiro.html"><svg><use href="#i-financeiro"/></svg>Financeiro</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/estoque.html"><svg><use href="#i-estoque"/></svg>Estoque</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/gerencial.html"><svg><use href="#i-gerencial"/></svg>Gerencial</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/tributacao.html"><svg><use href="#i-tributacao"/></svg>Tributação</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/integracoes.html"><svg><use href="#i-integracoes"/></svg>Integrações</a></li>
+<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/configuracao.html"><svg><use href="#i-configuracoes"/></svg>Configurações</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/mensalidades.html"><svg><use href="#i-mensalidades"/></svg>Mensalidades</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="#"><svg><use href="#i-relatorios"/></svg>Relatórios<svg class="externo"><use href="#i-externo"/></svg></a></li>
+  </ul>
+</nav>
+<main id="conteudo">
+  <header id="barra_superior" class="acrilico">
+    <div class="titulo"><svg><use href="#i-grade"/></svg>Adicionar Forma de Pagamento</div>
+    <div class="direita">
+      <span class="descricao-filial-menu">Loja Demo Centro</span>
+      <a href="#" class="icone-topo" aria-label="Manuais"><svg><use href="#i-manual"/></svg></a>
+      <a href="#" class="icone-topo icone-usuario" data-notificacoes="930" aria-label="Notificações"><svg><use href="#i-sino"/></svg><span class="caret"></span></a>
+      <a href="#" class="icone-topo" aria-label="Perfil"><svg><use href="#i-usuario"/></svg><span class="caret"></span></a>
+    </div>
+  </header>
+  <section id="container_conteudo" class="acrilico">
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        
+<form class="form-horizontal formulario-padrao" id="new_forma_pagamento" action="#" onsubmit="return false" accept-charset="UTF-8" data-remote="true" method="post">
+  <input class="form-control" disabled="disabled" form="new_forma_pagamento" id="input_crud_salvar_continuar" name="crud_salvar_continuar" value="true" atributo="input_crud_salvar_continuar" type="hidden" style="">
+  
+
+
+
+  <div class="form-group" id="campo_descricao"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_descricao" for="descricao">Descrição*</label><div class="col-xs-12 col-sm-8"><input class="form-control" form="new_forma_pagamento" id="descricao" name="forma_pagamento[descricao]" atributo="descricao" type="text" style=""></div></div>
+
+<div><ul class="nav nav-tabs responsive hidden-xs hidden-sm" id="abas-428226139"><li class="active" id="cabecalho_aba_aba-428221435"><a href="#aba-428221435" style="display: inline-block; width: 100%;">Dados Básicos</a></li><li class="" id="cabecalho_aba_aba-428222544"><a href="#aba-428222544" style="display: inline-block; width: 100%;">Boletos/PIX</a></li><li class="" id="cabecalho_aba_aba-428223014"><a href="#aba-428223014" style="display: inline-block; width: 100%;">Cartão/Financeira</a></li><li class="" id="cabecalho_aba_aba-428223434"><a href="#aba-428223434" style="display: inline-block; width: 100%;">TEF</a></li><li class="" id="cabecalho_aba_aba-428223886"><a href="#aba-428223886" style="display: inline-block; width: 100%;">Nota Promissória/Duplicata</a></li><li class="" id="cabecalho_aba_aba-428224424"><a href="#aba-428224424" style="display: inline-block; width: 100%;">Análise de Crédito</a></li><li class="" id="cabecalho_aba_aba-428224810"><a href="#aba-428224810" style="display: inline-block; width: 100%;">Impressão</a></li></ul><div class="tab-content responsive hidden-xs hidden-sm"><div id="aba-428221435" class="tab-pane active"><div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_codigo_interno"><label class="col-xs-12" id="titulo_campo_codigo_interno" for="codigo_interno">Código Interno*</label><div class="col-xs-12"><select name="forma_pagamento[codigo_interno]" id="codigo_interno" class="form-control" form="new_forma_pagamento" atributo="codigo_interno"><option value="01">(01) Dinheiro</option>
+<option value="02">(02) Cheque</option>
+<option value="03">(03) Cartão de Crédito</option>
+<option value="04">(04) Cartão de Débito</option>
+<option value="05">(05) Cartão da Loja (Private Label)</option>
+<option value="10">(10) Vale Alimentação</option>
+<option value="11">(11) Vale Refeição</option>
+<option value="12">(12) Vale Presente</option>
+<option value="13">(13) Vale Combustível</option>
+<option value="14">(14) Duplicata Mercantil</option>
+<option value="15">(15) Boleto Bancário</option>
+<option value="16">(16) Depósito Bancário</option>
+<option value="17">(17) Pagamento Instantâneo (PIX) - Dinâmico</option>
+<option value="18">(18) Transferência bancária, Carteira Digital</option>
+<option value="19">(19) Programa de fidelidade, Cashback, Crédito Virtual</option>
+<option value="20">(20) Pagamento Instantâneo (PIX) - Estático</option>
+<option value="21">(21) Crédito em Loja</option>
+<option value="22">(22) Pagamento Eletrônico não informado - Falha de hardware do sistema emissor</option>
+<option value="23">(23) Pagamento Instantâneo (PIX) - Automático</option>
+<option value="24">(24) TEF - "Book Transfer"</option>
+<option value="91">(91) Pagamento Posterior</option>
+<option value="90">(90) Sem Pagamento</option>
+<option value="99">(99) Outros</option></select></div></div></div>
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo"><label class="col-xs-12" id="titulo_campo_tipo" for="tipo">Tipo*</label><div class="col-xs-12"><select name="forma_pagamento[tipo]" id="tipo" class="form-control" form="new_forma_pagamento" atributo="tipo"><option value="">Selecione</option>
+<option value="a_vista">À Vista</option>
+<option value="a_prazo">A Prazo</option></select></div></div></div>
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_ordem_exibicao"><label class="col-xs-12" id="titulo_campo_ordem_exibicao" for="ordem_exibicao">Ordem Exibição*</label><div class="col-xs-12"><input class="form-control campo-numerico" form="new_forma_pagamento" id="ordem_exibicao" name="forma_pagamento[ordem_exibicao]" type="text" atributo="ordem_exibicao" style=""></div></div></div>
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_portador_titulo_id"><label class="col-xs-12" id="titulo_campo_portador_titulo_id" for="portador_titulo_id">Portador Padrão</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_forma_pagamento" value="" atributo="portador_titulo_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_forma_pagamento" id="autocompletar_portador_titulo_id" value="" atributo="portador_titulo_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_forma_pagamento" id="portador_titulo_id" name="forma_pagamento[portador_titulo_id]" atributo="portador_titulo_id" type="hidden" style=""></div></div></div>
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_numero_maximo_parcelas"><label class="col-xs-12" id="titulo_campo_numero_maximo_parcelas" for="numero_maximo_parcelas">Nº Máximo de Parcelas <span class="glyphicon glyphicon-info-sign" title="Para controlar a quantidade máxima de parcelas permitidas no pedido de venda, títulos e renegociações de dívidas informe um valor maior que zero"></span></label><div class="col-xs-12"><input class="form-control campo-numerico" disabled="disabled" form="new_forma_pagamento" id="numero_maximo_parcelas" name="forma_pagamento[numero_maximo_parcelas]" type="text" value="0" atributo="numero_maximo_parcelas" style=""></div></div></div>
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_permitir_lancamentos"><label class="col-xs-12" id="titulo_campo_permitir_lancamentos" for="permitir_lancamentos">Permitir lançamentos</label><div class="col-xs-12"><select name="forma_pagamento[permitir_lancamentos][]" id="permitir_lancamentos" class="form-control bootstrap-multiselect" form="new_forma_pagamento" multiple="multiple" value="lancamento_cte" atributo="permitir_lancamentos" style="display: none;"><option value="lancamento_saida">Saída</option>
+<option value="lancamento_entrada">Entrada</option>
+<option value="lancamento_caixa">Caixa</option>
+<option selected="selected" value="lancamento_cte">CT-e</option></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" title="CT-e" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">CT-e</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="lancamento_saida" style=""> Saída</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="lancamento_entrada" style=""> Entrada</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="lancamento_caixa" style=""> Caixa</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="lancamento_cte" style=""> CT-e</label></a></li></ul></div></div></div></div>
+
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_dias_prorrogacao_parcela"><label class="col-xs-12" id="titulo_campo_dias_prorrogacao_parcela" for="dias_prorrogacao_parcela">Permitir Prorrogar Data do 1° Vencimento até (dias) <span class="glyphicon glyphicon-info-sign" title="Os dias a prorrogar serão aplicados sobre a data de vencimento calculada para a primeira parcela e irão refletir sobre as demais (Válido para vendas e renegociação de dívida)."></span></label><div class="col-xs-12"><input class="form-control campo-numerico" form="new_forma_pagamento" id="dias_prorrogacao_parcela" name="forma_pagamento[dias_prorrogacao_parcela]" type="text" atributo="dias_prorrogacao_parcela" style=""></div></div></div>
+
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo_inclusao_titulo"><label class="col-xs-12" id="titulo_campo_tipo_inclusao_titulo" for="tipo_inclusao_titulo">Permitir inclusão de títulos para <span class="glyphicon glyphicon-info-sign" title="Válido apenas para inclusão de títulos a receber."></span></label><div class="col-xs-12"><select name="forma_pagamento[tipo_inclusao_titulo][]" id="tipo_inclusao_titulo" class="form-control bootstrap-multiselect" form="new_forma_pagamento" multiple="multiple" value="1 2 4" atributo="tipo_inclusao_titulo" data-bms="{&quot;nonSelectedText&quot;:&quot;Todos selecionados&quot;}" style="display: none;"><option selected="selected" value="1">Pessoa Física</option>
+<option selected="selected" value="2">Pessoa Estrangeiro</option>
+<option selected="selected" value="4">Pessoa Jurídica</option></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" title="Pessoa Física, Pessoa Estrangeiro, Pessoa Jurídica" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todos selecionados</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all active"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div>
+
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_dias_entre_parcelas"><label class="col-xs-12" id="titulo_campo_dias_entre_parcelas" for="dias_entre_parcelas">Número de dias entre parcelas <span class="glyphicon glyphicon-info-sign" title="Número de dias entre os parcelamentos.
+Ex: Se for informado 7 dias, as parcelas terão data de vencimento de 7 em 7 dias.
+Será respeitado o parâmetro &quot;Prorrogar Data do 1º Vencimento para (dias)&quot;.
+Se não informado, será considerado período de 1 mês."></span></label><div class="col-xs-12"><input class="form-control campo-numerico" form="new_forma_pagamento" id="dias_entre_parcelas" name="forma_pagamento[dias_entre_parcelas]" type="text" atributo="dias_entre_parcelas" style=""></div></div></div>
+
+<div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_bloqueia_agendamento_entrega"><label class="col-xs-12 label-sm label-md label-lg" id="titulo_campo_bloqueia_agendamento_entrega" for="bloqueia_agendamento_entrega">Bloquear o agendamento de entrega do produto se a venda tem pendência de pagamento <span class="glyphicon glyphicon-info-sign" title="Pendência de pagamento refere-se ao recebimento no caixa, e/ou pagamento total de parcelas. Se configurar &quot;Sim&quot;, não será permitido agendar a entrega do produto pelo Agendamento de Serviços ou pela Gestão do Depósito.
+Romaneio de Separação: o bloqueio irá ocorrer quando confirmar o Romaneio de Separação. Não será permitido agendar entrega pelo Controle de Agendamento de Serviços.
+Gestão de Entrega: não será permitido selecionar a reserva. Não será permitido agendar entrega pelo Controle de Agendamento de Serviços."></span></label><div class="col-xs-12"><select name="forma_pagamento[bloqueia_agendamento_entrega]" id="bloqueia_agendamento_entrega" class="form-control" form="new_forma_pagamento" atributo="bloqueia_agendamento_entrega"><option value="0">Não</option>
+<option value="1">Bloquear no Romaneio de Separação</option>
+<option value="2">Bloquear na Gestão de Entrega</option></select></div></div></div>
+
+<div class="col-xs-12"></div>
+
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_parcela_mesmo_valor"><label class="col-xs-12" id="titulo_campo_parcela_mesmo_valor">Permitir apenas parcelas de mesmo valor</label><div class="col-xs-12"><input tipo="checkbox_toggle" desabilitado="true" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_parcela_mesmo_valor" form="new_forma_pagamento" name="forma_pagamento[parcela_mesmo_valor]" valor="false" value="false" atributo="parcela_mesmo_valor" disabled="disabled" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-disabled bootstrap-switch-id-parcela_mesmo_valor"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" disabled="disabled" form="new_forma_pagamento" id="parcela_mesmo_valor" name="forma_pagamento[parcela_mesmo_valor]" value="true" atributo="parcela_mesmo_valor" type="checkbox" style="display: none;"></div></div></div></div></div>
+
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_controla_vencimento_parcela"><label class="col-xs-12" id="titulo_campo_controla_vencimento_parcela">Controla vencimento de parcelas <span class="glyphicon glyphicon-info-sign" title="Válido apenas para títulos à pagar.
+Parâmetro é validado nas telas de Entrada e Título"></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_controla_vencimento_parcela" form="new_forma_pagamento" name="forma_pagamento[controla_vencimento_parcela]" valor="true" value="false" atributo="controla_vencimento_parcela" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-controla_vencimento_parcela"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="controla_vencimento_parcela" name="forma_pagamento[controla_vencimento_parcela]" value="true" atributo="controla_vencimento_parcela" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div>
+
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_aplica_dias_primeiro_vencimento"><label class="col-xs-12" id="titulo_campo_aplica_dias_primeiro_vencimento">Aplicar automaticamente os dias para o primeiro vencimento <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Quando definido &quot;Sim&quot; será aplicada a quantidade de dias definido em &quot;Permitir Prorrogar Data do 1º Vencimento até (dias)&quot; de forma automática no campo &quot;Data 1º Vencimento&quot; do pedido de venda e renegociação de dívida."></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" titulo="Aplicar automaticamente os dias para o primeiro vencimento &lt;span class=&quot;glyphicon glyphicon-info-sign cursor-pointer&quot; title=&quot;Quando definido &quot;Sim&quot; será aplicada a quantidade de dias definido em &quot;Permitir Prorrogar Data do 1º Vencimento até (dias)&quot; de forma automática no campo &quot;Data 1º Vencimento&quot; do pedido de venda e renegociação de dívida.&quot;&gt;&lt;/span&gt;" campo_oculto="true" id="_aplica_dias_primeiro_vencimento" form="new_forma_pagamento" name="forma_pagamento[aplica_dias_primeiro_vencimento]" value="false" atributo="aplica_dias_primeiro_vencimento" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-aplica_dias_primeiro_vencimento"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="aplica_dias_primeiro_vencimento" name="forma_pagamento[aplica_dias_primeiro_vencimento]" value="true" atributo="aplica_dias_primeiro_vencimento" type="checkbox" style="display: none;"></div></div></div></div></div>
+
+
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_controla_limite_credito"><label class="col-xs-12" id="titulo_campo_controla_limite_credito">Controlar o Limite de Crédito</label><div class="col-xs-12"><input tipo="checkbox_toggle" selecionado="true" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_controla_limite_credito" form="new_forma_pagamento" name="forma_pagamento[controla_limite_credito]" valor="false" value="false" atributo="controla_limite_credito" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-controla_limite_credito"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="controla_limite_credito" name="forma_pagamento[controla_limite_credito]" value="true" atributo="controla_limite_credito" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div>
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_contrato_reserva_dominio"><label class="col-xs-12" id="titulo_campo_contrato_reserva_dominio">Emitir Confissão de Dívida</label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_contrato_reserva_dominio" form="new_forma_pagamento" name="forma_pagamento[contrato_reserva_dominio]" valor="false" value="false" atributo="contrato_reserva_dominio" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-contrato_reserva_dominio"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="contrato_reserva_dominio" name="forma_pagamento[contrato_reserva_dominio]" value="true" atributo="contrato_reserva_dominio" type="checkbox" style="display: none;"></div></div></div></div></div>
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_ativo"><label class="col-xs-12" id="titulo_campo_ativo">Ativo</label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_ativo" form="new_forma_pagamento" name="forma_pagamento[ativo]" valor="true" value="false" atributo="ativo" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-ativo"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="ativo" name="forma_pagamento[ativo]" value="true" atributo="ativo" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div>
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_cliente_obrigatorio"><label class="col-xs-12" id="titulo_campo_cliente_obrigatorio">Obrigatório informar Cliente</label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_cliente_obrigatorio" form="new_forma_pagamento" name="forma_pagamento[cliente_obrigatorio]" valor="true" value="false" atributo="cliente_obrigatorio" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-cliente_obrigatorio"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="cliente_obrigatorio" name="forma_pagamento[cliente_obrigatorio]" value="true" atributo="cliente_obrigatorio" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div>
+
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_informa_nsu"><label class="col-xs-12" id="titulo_campo_informa_nsu">Informar número de autorização NSU</label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" titulo="Informar número de autorização NSU" campo_oculto="true" id="_informa_nsu" form="new_forma_pagamento" name="forma_pagamento[informa_nsu]" valor="false" value="false" atributo="informa_nsu" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-informa_nsu"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="informa_nsu" name="forma_pagamento[informa_nsu]" value="true" atributo="informa_nsu" type="checkbox" style="display: none;"></div></div></div></div></div>
+<div id="container_informa_identificador_terminal_pagamento" style="display: none;">
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_informa_identificador_terminal_pagamento"><label class="col-xs-12" id="titulo_campo_informa_identificador_terminal_pagamento">Informar Identificador do terminal de pagamento</label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" titulo="Informar Identificador do terminal de pagamento" campo_oculto="true" id="_informa_identificador_terminal_pagamento" form="new_forma_pagamento" name="forma_pagamento[informa_identificador_terminal_pagamento]" valor="false" value="false" atributo="informa_identificador_terminal_pagamento" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-informa_identificador_terminal_pagamento"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="informa_identificador_terminal_pagamento" name="forma_pagamento[informa_identificador_terminal_pagamento]" value="true" atributo="informa_identificador_terminal_pagamento" type="checkbox" style="display: none;"></div></div></div></div></div>
+</div>
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_informa_numero_contrato"><label class="col-xs-12" id="titulo_campo_informa_numero_contrato">Informar número de contrato</label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" titulo="Informar número de contrato" campo_oculto="true" id="_informa_numero_contrato" form="new_forma_pagamento" name="forma_pagamento[informa_numero_contrato]" valor="false" value="false" atributo="informa_numero_contrato" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-informa_numero_contrato"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="informa_numero_contrato" name="forma_pagamento[informa_numero_contrato]" value="true" atributo="informa_numero_contrato" type="checkbox" style="display: none;"></div></div></div></div></div>
+
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_utiliza_cdci"><label class="col-xs-12 label-sm label-md label-lg" id="titulo_campo_utiliza_cdci"> Vendas a prazo devem ser efetuadas via CDCI <span class="glyphicon glyphicon-info-sign" title="Será aplicado CDCI apenas para as vendas com acréscimos financeiros"></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_utiliza_cdci" form="new_forma_pagamento" name="forma_pagamento[utiliza_cdci]" valor="false" value="false" atributo="utiliza_cdci" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-utiliza_cdci"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="utiliza_cdci" name="forma_pagamento[utiliza_cdci]" value="true" atributo="utiliza_cdci" type="checkbox" style="display: none;"></div></div></div></div></div>
+
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_permite_venda_clientes_inadimplente"><label class="col-xs-12" id="titulo_campo_permite_venda_clientes_inadimplente">Permitir venda para Clientes inadimplentes <span class="glyphicon glyphicon-info-sign" title="Sim: Permite venda para o cliente mesmo ele estando inadimplente, ignorando a configuração da empresa &quot;Venda para clientes inadimplentes&quot;.
+Não: Respeita as configurações da empresa &quot;Venda para clientes inadimplentes&quot; (Bloqueia/avisa/solicita liberação)."></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_permite_venda_clientes_inadimplente" form="new_forma_pagamento" name="forma_pagamento[permite_venda_clientes_inadimplente]" valor="false" value="false" atributo="permite_venda_clientes_inadimplente" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-permite_venda_clientes_inadimplente"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="permite_venda_clientes_inadimplente" name="forma_pagamento[permite_venda_clientes_inadimplente]" value="true" atributo="permite_venda_clientes_inadimplente" type="checkbox" style="display: none;"></div></div></div></div></div>
+
+
+
+
+
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_permite_venda_clientes_restricao_credito"><label class="col-xs-12" id="titulo_campo_permite_venda_clientes_restricao_credito">Permitir venda para clientes com restrição de crédito <span class="glyphicon glyphicon-info-sign" title="Sim: Permite venda para o cliente mesmo ele estando com restrição de crédito, ignorando a configuração da empresa &quot;Venda para clientes com Restrição de Crédito&quot;.
+Não: Respeita as configurações da empresa &quot;Venda para clientes com Restrição de Crédito&quot; (Bloqueia/avisa/solicita liberação)."></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_permite_venda_clientes_restricao_credito" form="new_forma_pagamento" name="forma_pagamento[permite_venda_clientes_restricao_credito]" valor="false" value="false" atributo="permite_venda_clientes_restricao_credito" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-permite_venda_clientes_restricao_credito"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="permite_venda_clientes_restricao_credito" name="forma_pagamento[permite_venda_clientes_restricao_credito]" value="true" atributo="permite_venda_clientes_restricao_credito" type="checkbox" style="display: none;"></div></div></div></div></div>
+
+<div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_venda_sem_entrega"><label class="col-xs-12" id="titulo_campo_venda_sem_entrega">Permitir Salvar/Finalizar venda sem marcar a opção "Entregar" <span class="glyphicon glyphicon-info-sign" title="Sim: mesmo não marcando &quot;Entregar&quot; em cada item, será possível Salvar/Finalizar o Pedido
+Não: se ao menos um item do Pedido de venda não estiver marcado"></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_venda_sem_entrega" form="new_forma_pagamento" name="forma_pagamento[venda_sem_entrega]" valor="true" value="false" atributo="venda_sem_entrega" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-venda_sem_entrega"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="venda_sem_entrega" name="forma_pagamento[venda_sem_entrega]" value="true" atributo="venda_sem_entrega" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div>
+
+<div id="campo_calcula_credito_estorno_movimentacao" style="display: none">
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_calcula_credito_estorno_movimentacao"><label class="col-xs-12" id="titulo_campo_calcula_credito_estorno_movimentacao">Calcula Créditos no Estorno da Movimentação de Caixa <span class="glyphicon glyphicon-info-sign" title="Se configurado &quot;Sim&quot;, ao estornar a movimentação de caixa o valor do estorno será gerado em créditos para o cliente."></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_calcula_credito_estorno_movimentacao" form="new_forma_pagamento" name="forma_pagamento[calcula_credito_estorno_movimentacao]" valor="false" value="false" atributo="calcula_credito_estorno_movimentacao" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-calcula_credito_estorno_movimentacao"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="calcula_credito_estorno_movimentacao" name="forma_pagamento[calcula_credito_estorno_movimentacao]" value="true" atributo="calcula_credito_estorno_movimentacao" type="checkbox" style="display: none;"></div></div></div></div></div>
+</div>
+
+<div id="container_permite_gerar_troco" style="display: block;">
+  <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_permite_gerar_troco"><label class="col-xs-12" id="titulo_campo_permite_gerar_troco">Permite Gerar Troco <span class="glyphicon glyphicon-info-sign" title="Em Recebimentos com essa forma de pagamento, será permitido informar um valor maior para geração de troco.
+Esse parâmetro não se aplica a recebimento de títulos, onde sempre é permitido informar um valor maior para geração de troco."></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" campo_oculto="true" id="_permite_gerar_troco" form="new_forma_pagamento" name="forma_pagamento[permite_gerar_troco]" valor="false" value="false" atributo="permite_gerar_troco" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-permite_gerar_troco"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="permite_gerar_troco" name="forma_pagamento[permite_gerar_troco]" value="true" atributo="permite_gerar_troco" type="checkbox" style="display: none;"></div></div></div></div></div>
+  <span class="hide codigos-permitem-troco" data-codigos="[&quot;01&quot;, &quot;17&quot;]"></span>
+</div>
+
+
+  <div id="campo_utiliza_controle_liberacao_prorrogacao_parcela" style="" class="col-xs-12 col-sm-4 no-padding">
+    <div class="col-xs-12"><div class="form-group" id="campo_utiliza_controle_liberacao_prorrogacao_parcela"><label class="col-xs-12" id="titulo_campo_utiliza_controle_liberacao_prorrogacao_parcela">Utilizar Controle de Liberação</label><div class="col-xs-12"><input tipo="checkbox_toggle" campo_oculto="true" id="_utiliza_controle_liberacao_prorrogacao_parcela" form="new_forma_pagamento" name="forma_pagamento[utiliza_controle_liberacao_prorrogacao_parcela]" valor="false" value="false" atributo="utiliza_controle_liberacao_prorrogacao_parcela" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-utiliza_controle_liberacao_prorrogacao_parcela"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="utiliza_controle_liberacao_prorrogacao_parcela" name="forma_pagamento[utiliza_controle_liberacao_prorrogacao_parcela]" value="true" atributo="utiliza_controle_liberacao_prorrogacao_parcela" type="checkbox" style="display: none;"></div></div></div></div></div>
+    <div style="padding-left: 14px">
+      <a id="link_configuracao_nivel_tipo_liberacao" style="display: none" target="_blank" href="configuracoes_niveis_tipos_liberacoes.html">Configuração de Nível por Tipo de Liberação</a>
+    </div>
+  </div>
+
+<div id="campo_permite_venda_cliente_renegociacao_dividas_pendentes">
+</div>
+
+
+
+<div class="row arredondamento-automatico-parcelas" style="">
+  <div class="col-xs-12">
+    <div class="col-xs-12 col-sm-4"><div class="form-group" id="campo_arredondamento_automatico_parcelas"><label class="col-xs-12" id="titulo_campo_arredondamento_automatico_parcelas">Aplicar arredondamento automático no valor das parcelas <span class="glyphicon glyphicon-info-sign" title="Quando configurado 'Sim' o valor da diferença do arredondamento será atribuído na primeira parcela, na última parcela ou no valor do acréscimo financeiro, conforme configuração."></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-4" titulo="Aplicar arredondamento automático no valor das parcelas &lt;span class=&quot;glyphicon glyphicon-info-sign&quot; title=&quot;Quando configurado 'Sim' o valor da diferença do arredondamento será atribuído na primeira parcela, na última parcela ou no valor do acréscimo financeiro, conforme configuração.&quot;&gt;&lt;/span&gt;" campo_oculto="true" id="_arredondamento_automatico_parcelas" form="new_forma_pagamento" name="forma_pagamento[arredondamento_automatico_parcelas]" valor="false" value="false" atributo="arredondamento_automatico_parcelas" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-arredondamento_automatico_parcelas"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="arredondamento_automatico_parcelas" name="forma_pagamento[arredondamento_automatico_parcelas]" value="true" atributo="arredondamento_automatico_parcelas" type="checkbox" style="display: none;"></div></div></div></div></div>
+    <div class="col-xs-12 col-sm-4 none"><div class="form-group" id="campo_tipo_arredondamento_parcela"><label class="col-xs-12" id="titulo_campo_tipo_arredondamento_parcela" for="tipo_arredondamento_parcela">Atribuir a diferença de arredondamento na parcela <span class="glyphicon glyphicon-info-sign" title="- Primeira Parcela: O valor da diferença do arredondamento será atribuído na primeira parcela;
+            - Última Parcela: O valor da diferença do arredondamento será atribuído na última parcela;
+            - Acréscimo Financeiro: O valor do arredondamento (para cima) será acrescentado ao valor do acréscimo financeiro da venda, permitido utilizar essa opção somente se a empresa utiliza o controle de TIR.
+            O valor de todas as parcelas será arredondado para um valor inteiro a maior.
+            Exemplo: Cinco parcelas de R$ 170,09, todas as parcelas serão arredondadas para R$ 171,00."></span></label><div class="col-xs-12"><select name="forma_pagamento[tipo_arredondamento_parcela]" id="tipo_arredondamento_parcela" class="form-control" form="new_forma_pagamento" atributo="tipo_arredondamento_parcela"><option value="1">Primeira Parcela</option>
+<option value="0">Última Parcela</option>
+<option value="2">Acréscimo Financeiro</option></select></div></div></div>
+  </div>
+</div>
+
+</div><div id="aba-428222544" class="tab-pane"><div class="form-group" id="campo_gera_boleto"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_gera_boleto">Boleto</label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" campo_oculto="true" id="_gera_boleto" form="new_forma_pagamento" name="forma_pagamento[gera_boleto]" value="false" atributo="gera_boleto" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-gera_boleto"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="gera_boleto" name="forma_pagamento[gera_boleto]" value="true" atributo="gera_boleto" type="checkbox" style="display: none;"></div></div></div></div>
+<div class="form-group" id="campo_convenio_ids"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_convenio_ids" for="convenio_ids">Convênios Bancários</label><div class="col-xs-12 col-sm-8"><input class="form-control" form="new_forma_pagamento" id="oculto_convenio_ids" name="forma_pagamento[convenio_ids][]" value="" atributo="convenio_ids" type="hidden" style=""><select name="forma_pagamento[convenio_ids][]" id="convenio_ids" class="form-control bootstrap-multiselect" form="new_forma_pagamento" multiple="multiple" value="" atributo="convenio_ids" data-bms="{&quot;nonSelectedText&quot;:&quot;Selecione&quot;}" disabled="" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default disabled" data-toggle="dropdown" title="Selecione" disabled="" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Selecione</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div>
+
+<div class="form-group" id="campo_calcula_valor_despesas_bancarias"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_calcula_valor_despesas_bancarias">Calcular Valor de Despesas Bancárias <span class="glyphicon glyphicon-info-sign cursor-pointer" title="'Sim': quando gerado boleto, será incluído no mesmo o valor de Despesas Bancárias se houver definição no Convênio Bancário."></span></label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" informacao="'Sim': quando gerado boleto, será incluído no mesmo o valor de Despesas Bancárias se houver definição no Convênio Bancário." campo_oculto="true" id="_calcula_valor_despesas_bancarias" form="new_forma_pagamento" name="forma_pagamento[calcula_valor_despesas_bancarias]" valor="true" value="false" atributo="calcula_valor_despesas_bancarias" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-calcula_valor_despesas_bancarias"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="calcula_valor_despesas_bancarias" name="forma_pagamento[calcula_valor_despesas_bancarias]" value="true" atributo="calcula_valor_despesas_bancarias" type="checkbox" checked="checked" style="display: none;"></div></div></div></div>
+
+<div id="boletos-pix" class="none">
+  <div class="page-header separador"><h3><small>PIX</small></h3></div>
+
+  <div class="alert alert-warning" role="alert">A conta corrente informada será gravada nos documentos e nas movimentações de caixa, para posterior exportação no Sped Fiscal.</div>
+
+  <div class="form-group" id="campo_conta_corrente_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_conta_corrente_id" for="conta_corrente_id">Conta Corrente <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Conta Corrente onde o recurso PIX será recebido (Informação para registro 1601 - Sped Fiscal)."></span></label><div class="col-xs-12 col-sm-8"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_forma_pagamento" value="" atributo="conta_corrente_id" campo="numero_conta" data-filtros="{&quot;ativa&quot;:true}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="numero_conta" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="new_forma_pagamento" id="autocompletar_conta_corrente_id" value="" atributo="conta_corrente_id" campo="numero_conta" data-filtros="{&quot;ativa&quot;:true}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="numero_conta" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_forma_pagamento" id="conta_corrente_id" name="forma_pagamento[conta_corrente_id]" atributo="conta_corrente_id" type="hidden" style=""></div></div>
+
+  <div class="linha-conta-corrente none">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-9 dados-conta-corrente">
+    </div>
+  </div>
+</div>
+
+<div id="pix_cobranca" class="hide">
+  <div class="page-header separador"><h3><small>PIX Cobrança</small></h3></div>
+
+  <div class="alert alert-warning" role="alert">Ao informar a forma de pagamento, será habilitado o pagamento por PIX dos títulos gerados no pedido de venda.</div>
+
+  <div class="form-group" id="campo_forma_pagamento_pix_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_forma_pagamento_pix_id" for="forma_pagamento_pix_id">Forma de Pagamento PIX <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Forma de pagamento para pagamento por PIX(Cobrança)."></span></label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[forma_pagamento_pix_id]" id="forma_pagamento_pix_id" class="form-control" form="new_forma_pagamento" atributo="forma_pagamento_pix_id"><option value="">Selecione</option></select></div></div>
+</div>
+</div><div id="aba-428223014" class="tab-pane">
+<div class="form-group" id="campo_financeira"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_financeira">Financeira <span class="glyphicon glyphicon-info-sign" title="Se habilitado, títulos que têm como portador a financeira não gerarão cobrança." style="cursor: pointer;"></span></label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" desabilitado="false" data-utiliza-integracao-financeira="false" campo_oculto="true" id="_financeira" form="new_forma_pagamento" name="forma_pagamento[financeira]" valor="false" value="false" atributo="financeira" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-financeira"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="financeira" name="forma_pagamento[financeira]" value="true" atributo="financeira" data-utiliza-integracao-financeira="false" type="checkbox" style="display: none;"></div></div></div></div>
+<div id="tipo-integracao-financeira" style="display: none">
+  <div class="form-group" id="campo_integracao_financeira"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_integracao_financeira" for="integracao_financeira">Tipo de Integração Financeira</label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[integracao_financeira]" id="integracao_financeira" class="form-control" form="new_forma_pagamento" atributo="integracao_financeira"><option value="">Selecione</option>
+<option value="1">Losango</option>
+<option value="2">Semear</option></select></div></div>
+</div>
+
+<div class="form-group" id="campo_pessoa_administradora_id"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_pessoa_administradora_id" for="pessoa_administradora_id">Administradora/Financeira</label><div class="col-xs-12 col-sm-8"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="new_forma_pagamento" value="" atributo="pessoa_administradora_id" campo="nome" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="nome" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(238, 238, 238);"><input class="form-control autocompletar tt-input" form="new_forma_pagamento" id="autocompletar_pessoa_administradora_id" value="" atributo="pessoa_administradora_id" campo="nome" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="nome" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;" disabled="disabled"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-2"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="new_forma_pagamento" id="pessoa_administradora_id" name="forma_pagamento[pessoa_administradora_id]" atributo="pessoa_administradora_id" type="hidden" style=""></div></div>
+<div class="form-group" id="campo_bandeira"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_bandeira" for="bandeira">Bandeira</label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[bandeira]" id="bandeira" class="form-control" form="new_forma_pagamento" atributo="bandeira"><option value="">Sem bandeira</option>
+<option value="1">Visa</option>
+<option value="2">Mastercard</option>
+<option value="3">Maestro (Mastercard)</option>
+<option value="4">Elo (Cielo)</option>
+<option value="5">Paypal</option>
+<option value="6">Hipercard</option>
+<option value="7">American Express</option>
+<option value="8">Diners Club</option>
+<option value="9">Sorocred</option>
+<option value="10">Aura</option>
+<option value="11">Cabal</option>
+<option value="12">Verde Card</option>
+<option value="14">Personal Card</option>
+<option value="15">Credishop</option>
+<option value="16">Banricompras (Banrisul)</option>
+<option value="99">PIX</option></select></div></div>
+<div class="form-group" id="campo_tipo_parcelamento"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_tipo_parcelamento" for="tipo_parcelamento">Tipo de Parcelamento</label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[tipo_parcelamento]" id="tipo_parcelamento" class="form-control" disabled="disabled" form="new_forma_pagamento" value="varias_parcelas" atributo="tipo_parcelamento"><option selected="selected" value="varias_parcelas">Assumir quantidade de parcelas da forma de pagamento</option>
+<option value="parcela_unica">Parcela única</option></select></div></div>
+<div class="form-group" id="campo_prazo_parcela_unica"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_prazo_parcela_unica" for="prazo_parcela_unica">Prazo para Parcela Única</label><div class="col-xs-2"><input class="form-control campo-numerico" disabled="disabled" form="new_forma_pagamento" id="prazo_parcela_unica" name="forma_pagamento[prazo_parcela_unica]" type="number" atributo="prazo_parcela_unica" style=""></div><span style="line-height: 37px;">dias</span></div>
+
+<div class="form-group" id="campo_modo_busca_taxa_administracao"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_modo_busca_taxa_administracao" for="modo_busca_taxa_administracao">Taxas de Administração <span class="glyphicon glyphicon-info-sign" title="Esta definição será considerada para buscar as Taxas de Administração conforme definições abaixo "></span></label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[modo_busca_taxa_administracao]" id="modo_busca_taxa_administracao" class="form-control" disabled="disabled" form="new_forma_pagamento" atributo="modo_busca_taxa_administracao"><option value="1">Considerar parcela única</option>
+<option value="2">Considerar número de parcelas da venda</option></select></div></div>
+
+<div class="form-group" id="campo_codigo_credenciadora_cartao"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_codigo_credenciadora_cartao" for="codigo_credenciadora_cartao">Código da Credenciadora do Cartão <span class="glyphicon glyphicon-info-sign" title="Código das credenciadoras de cartão de débito ou crédito, obrigatório para emissão de CFe-SAT."></span></label><div class="col-xs-2"><input class="form-control" form="new_forma_pagamento" id="codigo_credenciadora_cartao" name="forma_pagamento[codigo_credenciadora_cartao]" atributo="codigo_credenciadora_cartao" type="text" style=""></div></div>
+
+
+
+<div class="page-header separador"><h3><small>Devolução de Venda</small></h3></div>
+<div class="col-sm-3"></div>
+<div class="col-sm-9 no-padding">
+  <div class="col-xs-12"><div class="form-group" id="campo_devolver_titulo_contra_administradora"><label class="col-xs-12" id="titulo_campo_devolver_titulo_contra_administradora">Devolver Títulos gerados contra a Administradora</label><div class="col-xs-12"><input tipo="checkbox_toggle" campo_oculto="true" id="_devolver_titulo_contra_administradora" form="new_forma_pagamento" name="forma_pagamento[devolver_titulo_contra_administradora]" valor="false" value="false" atributo="devolver_titulo_contra_administradora" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-devolver_titulo_contra_administradora bootstrap-switch-disabled"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="devolver_titulo_contra_administradora" name="forma_pagamento[devolver_titulo_contra_administradora]" value="true" atributo="devolver_titulo_contra_administradora" type="checkbox" style="display: none;" disabled=""></div></div></div></div></div>
+  <div class="text-info col-xs-12 alerta-credito-cliente" style="display: none;">
+    <span class="glyphicon glyphicon-info-sign"></span>
+    <strong>Serão gerados créditos para o cliente, caso houver configuração.</strong>
+  </div>
+</div>
+
+
+<div id="conteiner_taxas_administracoes" class="hide">
+  <div class="page-header separador"><h3><small>Taxas de Administração <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Taxas cobradas pelas instituições financeiras para gerir o crédito concedido no ato da venda."></span></small></h3></div>
+  <div class="col-xs-12">
+    <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-editavel">
+      <thead>
+      <tr>
+        <th class="coluna-filial-taxas">Filial</th>
+        <th>Parcela de</th>
+        <th>Até</th>
+        <th>Taxa (%)</th>
+        <th width="40px"></th>
+      </tr>
+      </thead>
+      <tbody id="copia_linha_taxas">
+        <tr class="copia-linha">
+          <td><select name="forma_pagamento[taxas_administracoes_attributes][0][filial_id]" id="filial_id_0" class="form-control" form="new_forma_pagamento" atributo="filial_id"><option value="">Todas Selecionadas</option></select></td>
+          <td><input class="form-control campo-numerico" form="new_forma_pagamento" id="parcela_inicial_0" name="forma_pagamento[taxas_administracoes_attributes][0][parcela_inicial]" type="text" atributo="parcela_inicial" style=""></td>
+          <td><input class="form-control campo-numerico" form="new_forma_pagamento" id="parcela_final_0" name="forma_pagamento[taxas_administracoes_attributes][0][parcela_final]" type="text" atributo="parcela_final" style=""></td>
+          <td><input class="form-control campo-numerico percentual" form="new_forma_pagamento" id="taxa_0" name="forma_pagamento[taxas_administracoes_attributes][0][taxa]" type="text" value="" atributo="taxa" mascara_monetario="true" style=""></td>
+          <td class="text-center">
+            <input class="form-control" form="new_forma_pagamento" id="id_0" name="forma_pagamento[taxas_administracoes_attributes][0][id]" atributo="id" type="hidden" style="">
+            <input class="form-control static-value" form="new_forma_pagamento" name="forma_pagamento[taxas_administracoes_attributes][0][_destroy]" value="false" atributo="_destroy" type="hidden" style=""><input class="form-control form-control checkbox exclui-registro-relacionado" form="new_forma_pagamento" id="_destroy_taxa_0" name="forma_pagamento[taxas_administracoes_attributes][0][_destroy]" value="true" atributo="_destroy" type="checkbox" style=""><label for="_destroy_taxa_0">&nbsp;</label>
+            <span id="btn_remove_taxa" class="glyphicon glyphicon-trash" title="Remover Taxa de Administração" onclick="removeLinha(this);"></span>
+          </td>
+        </tr>
+      </tbody>
+</table></div>    <button type="button" class="btn btn-primary" id="btn_adiciona_taxa" onclick="copiaUltimaLinha('#copia_linha_taxas');">
+      <span class="glyphicon glyphicon-plus-sign"></span> Nova Taxa de Administração
+    </button>
+  </div>
+</div>
+
+  <div id="conteiner_taxas_antecipacoes" class="hide">
+    <div class="page-header separador"><h3><small>Taxas de Antecipação <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Taxas cobradas pelas instituições financeiras para liberar antecipadamente o valor de vendas parceladas ou a prazo."></span></small></h3></div>
+    <div class="col-xs-12">
+      <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-editavel">
+        <thead>
+        <tr>
+          <th class="coluna-filial-taxas">Filial</th>
+          <th>Dias Antecipação Inicial</th>
+          <th>Dias Antecipação Final</th>
+          <th>Taxa (%)</th>
+          <th width="40px"></th>
+        </tr>
+        </thead>
+        <tbody id="copia_linha_taxas_antecipacoes">
+          <tr class="copia-linha">
+            <td>
+              <input class="form-control" form="new_forma_pagamento" id="id_taxa_antecipacao_0" name="forma_pagamento[taxas_antecipacoes_attributes][0][id]" atributo="id" type="hidden" style="">
+              <input class="form-control static-value" form="new_forma_pagamento" name="forma_pagamento[taxas_antecipacoes_attributes][0][_destroy]" value="false" atributo="_destroy" type="hidden" style=""><input class="form-control form-control checkbox exclui-registro-relacionado" form="new_forma_pagamento" id="_destroy_taxa_antecipacao_0" name="forma_pagamento[taxas_antecipacoes_attributes][0][_destroy]" value="true" atributo="_destroy" type="checkbox" style=""><label for="_destroy_taxa_antecipacao_0">&nbsp;</label>
+              <select name="forma_pagamento[taxas_antecipacoes_attributes][0][filial_id]" id="filial_id_taxa_antecipacao_0" class="form-control" form="new_forma_pagamento" atributo="filial_id"><option value="">Todas Selecionadas</option></select>
+            </td>
+            <td><input class="form-control campo-numerico" form="new_forma_pagamento" id="dias_inicial_taxa_antecipacao_0" name="forma_pagamento[taxas_antecipacoes_attributes][0][dias_inicial]" type="text" atributo="dias_inicial" style=""></td>
+            <td><input class="form-control campo-numerico" form="new_forma_pagamento" id="dias_final_taxa_antecipacao_0" name="forma_pagamento[taxas_antecipacoes_attributes][0][dias_final]" type="text" atributo="dias_final" style=""></td>
+            <td><input class="form-control campo-numerico percentual" form="new_forma_pagamento" id="taxa_taxa_antecipacao_0" name="forma_pagamento[taxas_antecipacoes_attributes][0][taxa]" type="text" value="" atributo="taxa" mascara_monetario="true" style=""></td>
+            <td class="text-center">
+              <span id="btn_remove_taxa_antecipacao" class="glyphicon glyphicon-trash" title="Remover Taxa de Antecipação" onclick="removeLinha(this);"></span>
+            </td>
+          </tr>
+        </tbody>
+</table></div>      <button type="button" class="btn btn-primary" id="btn_adiciona_taxa_antecipacao" onclick="copiaUltimaLinha('#copia_linha_taxas_antecipacoes');">
+        <span class="glyphicon glyphicon-plus-sign"></span> Nova Taxa de Antecipação
+      </button>
+    </div>
+  </div>
+
+
+<div id="conteiner_taxas_recebimentos" class="hide">
+  <div class="page-header separador"><h3><small>Taxa Recebimento de Título <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Taxas cobradas pelos lojistas para o recebimento de títulos no cartão de crédito ou débito referente vendas de outras formas de pagamento, exemplo, títulos de vendas pelo crediário próprio."></span></small></h3></div>
+  <div class="col-xs-12">
+    <div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-editavel">
+      <thead>
+      <tr>
+        <th class="coluna-filial-taxas">Filial</th>
+        <th>Parcela de</th>
+        <th>Até</th>
+        <th>Taxa (%)</th>
+        <th width="40px"></th>
+      </tr>
+      </thead>
+      <tbody id="copia_linha_taxas_recebimentos">
+        <tr class="copia-linha">
+          <td><select name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][filial_id]" id="filial_id_recebimento_0" class="form-control" form="new_forma_pagamento" atributo="filial_id"><option value="">Todas Selecionadas</option></select></td>
+          <td><input class="form-control campo-numerico" form="new_forma_pagamento" id="parcela_inicial_0" name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][parcela_inicial]" type="text" atributo="parcela_inicial" style=""></td>
+          <td><input class="form-control campo-numerico" form="new_forma_pagamento" id="parcela_final_0" name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][parcela_final]" type="text" atributo="parcela_final" style=""></td>
+          <td><input class="form-control campo-numerico percentual" form="new_forma_pagamento" id="taxa_0" name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][taxa]" type="text" value="" atributo="taxa" mascara_monetario="true" style=""></td>
+          <td class="text-center">
+            <input class="form-control" form="new_forma_pagamento" id="id_0" name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][id]" atributo="id" type="hidden" style="">
+            <input class="form-control static-value" form="new_forma_pagamento" name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][_destroy]" value="false" atributo="_destroy" type="hidden" style=""><input class="form-control form-control checkbox exclui-registro-relacionado" form="new_forma_pagamento" id="_destroy_taxa_0" name="forma_pagamento[formas_pagamentos_taxas_recebimentos_titulos_attributes][0][_destroy]" value="true" atributo="_destroy" type="checkbox" style=""><label for="_destroy_taxa_0">&nbsp;</label>
+            <span id="btn_remove_taxa" class="glyphicon glyphicon-trash" title="Remover Taxa de Recebimento de Título" onclick="removeLinha(this);"></span>
+          </td>
+        </tr>
+      </tbody>
+</table></div>    <button type="button" class="btn btn-primary" id="btn_adiciona_taxa_recebimento" onclick="copiaUltimaLinha('#copia_linha_taxas_recebimentos');">
+      <span class="glyphicon glyphicon-plus-sign"></span> Nova Taxa de Recebimento de Título
+    </button>
+  </div>
+</div>
+</div><div id="aba-428223434" class="tab-pane">  <div class="form-group" id="campo_aciona_tef"><label class="col-xs-12 col-sm-3 col-xs-12 col-sm-4 no-padding-right control-label" id="titulo_campo_aciona_tef">Aciona Integração com TEF</label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-8" campo_oculto="true" id="_aciona_tef" form="new_forma_pagamento" name="forma_pagamento[aciona_tef]" valor="false" value="false" atributo="aciona_tef" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-aciona_tef"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="aciona_tef" name="forma_pagamento[aciona_tef]" value="true" atributo="aciona_tef" type="checkbox" style="display: none;"></div></div></div></div>
+
+
+  <div class="form-group" id="campo_codigo_tipo_parcelamento"><label class="col-xs-12 col-sm-3 col-xs-12 col-sm-4 no-padding-right control-label" id="titulo_campo_codigo_tipo_parcelamento" for="codigo_tipo_parcelamento">TEF - Código do Tipo de Parcelamento <span class="glyphicon glyphicon-info-sign" title="Ex: 1- À vista (Débito). 2 - Parcelado com financiamento pelo estabelecimento (Crédito). 3 - Parcelado com financiamento pela administradora (Crédito)."></span></label><div class="col-xs-12 col-sm-6"><input class="form-control campo-numerico" disabled="disabled" form="new_forma_pagamento" id="codigo_tipo_parcelamento" name="forma_pagamento[codigo_tipo_parcelamento]" type="text" atributo="codigo_tipo_parcelamento" style=""></div></div>
+</div><div id="aba-428223886" class="tab-pane">
+<div class="page-header separador"><h3><small>Nota Promissória</small></h3></div>
+<div style="margin-bottom: 25px;" class="col-xs-12 no-padding">
+  <div class="form-group" id="campo_imprime_nota_promissoria_venda"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_imprime_nota_promissoria_venda" for="imprime_nota_promissoria_venda">Imprimir Nota promissória na Venda</label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[imprime_nota_promissoria_venda]" id="imprime_nota_promissoria_venda" class="form-control" form="new_forma_pagamento" value="1" atributo="imprime_nota_promissoria_venda"><option selected="selected" value="1">Não</option>
+<option value="2">Única (Valor Total)</option>
+<option value="3">Por Parcela (Valor da Parcela)</option></select></div></div>
+  <div class="form-group" id="campo_imprime_nota_promissoria_rengociacao"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_imprime_nota_promissoria_rengociacao" for="imprime_nota_promissoria_rengociacao">Imprimir Nota promissória na Renegociação de Dívidas</label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[imprime_nota_promissoria_rengociacao]" id="imprime_nota_promissoria_rengociacao" class="form-control" form="new_forma_pagamento" value="1" atributo="imprime_nota_promissoria_rengociacao"><option selected="selected" value="1">Não</option>
+<option value="2">Única (Valor Total)</option>
+<option value="3">Por Parcela (Valor da Parcela)</option></select></div></div>
+</div>
+
+<div class="page-header separador"><h3><small>Duplicata</small></h3></div>
+<div style="margin-bottom: 25px;" class="col-xs-12 no-padding">
+  <div class="form-group" id="campo_imprime_duplicata_venda"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_imprime_duplicata_venda" for="imprime_duplicata_venda">Imprimir Duplicata na Venda</label><div class="col-xs-12 col-sm-8"><select name="forma_pagamento[imprime_duplicata_venda]" id="imprime_duplicata_venda" class="form-control" form="new_forma_pagamento" value="1" atributo="imprime_duplicata_venda"><option selected="selected" value="1">Não</option>
+<option value="2">Única (Valor Total)</option>
+<option value="3">Por Parcela (Valor da Parcela)</option></select></div></div>
+</div>
+</div><div id="aba-428224424" class="tab-pane">  <div class="form-group" id="campo_mesa_credito"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_mesa_credito">Exigir Análise de Crédito</label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" campo_oculto="true" id="_mesa_credito" form="new_forma_pagamento" name="forma_pagamento[mesa_credito]" valor="false" value="false" atributo="mesa_credito" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-mesa_credito"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="mesa_credito" name="forma_pagamento[mesa_credito]" value="true" atributo="mesa_credito" type="checkbox" style="display: none;"></div></div></div></div>
+
+<div class="form-group" id="campo_permite_registro_spc"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_permite_registro_spc">Permite Registro no SPC <span class="glyphicon glyphicon-info-sign" title="&quot;Não&quot;: não serão gerados registros de negativação no SPC, mesmo que o cliente tenha títulos que atenda os requisitos para tal. Este parâmetro se aplica inclusive a validação de Registros do Avalista (Configuração na tela &quot;Empresa&quot;: &quot;Efetuar o Registro do Avalista=Sim&quot;). É válido apenas para Negativação."></span></label><div class="col-xs-12 col-sm-6"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-6" campo_oculto="true" id="_permite_registro_spc" form="new_forma_pagamento" name="forma_pagamento[permite_registro_spc]" valor="true" value="false" atributo="permite_registro_spc" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-permite_registro_spc"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="permite_registro_spc" name="forma_pagamento[permite_registro_spc]" value="true" atributo="permite_registro_spc" type="checkbox" checked="checked" style="display: none;"></div></div></div></div>
+
+
+
+
+<div class="form-group" id="campo_exige_consulta_plataforma_analise_credito"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_exige_consulta_plataforma_analise_credito">Exige consulta com a plataforma de Análise de Crédito</label><div class="col-xs-12 col-sm-6"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-6" campo_oculto="true" id="_exige_consulta_plataforma_analise_credito" form="new_forma_pagamento" name="forma_pagamento[exige_consulta_plataforma_analise_credito]" valor="false" value="false" atributo="exige_consulta_plataforma_analise_credito" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-exige_consulta_plataforma_analise_credito"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="exige_consulta_plataforma_analise_credito" name="forma_pagamento[exige_consulta_plataforma_analise_credito]" value="true" atributo="exige_consulta_plataforma_analise_credito" type="checkbox" style="display: none;"></div></div></div></div>
+</div><div id="aba-428224810" class="tab-pane">  <div class="form-group" id="campo_odt_ids"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_odt_ids" for="odt_ids">Impressões ao Salvar o Pedido de Venda <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Escolha quais documentos serão impressos ao salvar o documento (Impressões da análise de crédito).
+Disponível para seleção apenas quando o parâmetro &quot;Exige análise de crédito&quot; estiver ativo."></span></label><div class="col-xs-12 col-sm-6"><input class="form-control" form="new_forma_pagamento" id="oculto_odt_ids" name="forma_pagamento[odt_ids][]" value="" atributo="odt_ids" type="hidden" style=""><select name="forma_pagamento[odt_ids][]" id="odt_ids" class="form-control bootstrap-multiselect" form="new_forma_pagamento" multiple="multiple" value="" atributo="odt_ids" disabled="" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default disabled" data-toggle="dropdown" title="Nenhum registro selecionado" disabled="" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Nenhum registro selecionado</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"></ul></div></div></div>
+    <div class="form-group" id="campo_imprime_recibo_pagamento_entrega"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_imprime_recibo_pagamento_entrega">Imprime Recibo de Pagamento na Entrega <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Se habilitado, imprime o recibo de pagamento para entrega ao finalizar o Romaneio de Separação. Válido para os Processos de Venda 1, 2 e 3"></span></label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" campo_oculto="true" id="_imprime_recibo_pagamento_entrega" form="new_forma_pagamento" name="forma_pagamento[imprime_recibo_pagamento_entrega]" valor="false" value="false" atributo="imprime_recibo_pagamento_entrega" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-imprime_recibo_pagamento_entrega"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="imprime_recibo_pagamento_entrega" name="forma_pagamento[imprime_recibo_pagamento_entrega]" value="true" atributo="imprime_recibo_pagamento_entrega" type="checkbox" style="display: none;"></div></div></div></div>
+
+<div class="form-group" id="campo_imprime_comprovante_quitacao"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_imprime_comprovante_quitacao">Imprimir comprovante de quitação <span class="glyphicon glyphicon-info-sign cursor-pointer" title="&quot;Sim&quot;: imprime o Comprovante no momento da quitação do título (nenhuma parcela pendente). Válido somente para títulos a receber e pagamento efetuado no Caixa."></span></label><div class="col-xs-12 col-sm-8"><input tipo="checkbox_toggle" campo_oculto="true" id="_imprime_comprovante_quitacao" form="new_forma_pagamento" name="forma_pagamento[imprime_comprovante_quitacao]" value="false" atributo="imprime_comprovante_quitacao" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-off bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-imprime_comprovante_quitacao"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="new_forma_pagamento" id="imprime_comprovante_quitacao" name="forma_pagamento[imprime_comprovante_quitacao]" value="true" atributo="imprime_comprovante_quitacao" type="checkbox" style="display: none;"></div></div></div></div>
+</div></div><div class="panel-group responsive visible-xs visible-sm" id="collapse-abas-428226139"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428221435">Dados Básicos</a></h4></div><div id="collapse-aba-428221435" class="panel-collapse collapse in" style=""></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428222544">Boletos/PIX</a></h4></div><div id="collapse-aba-428222544" class="panel-collapse collapse"></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428223014">Cartão/Financeira</a></h4></div><div id="collapse-aba-428223014" class="panel-collapse collapse"></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428223434">TEF</a></h4></div><div id="collapse-aba-428223434" class="panel-collapse collapse"></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428223886">Nota Promissória/Duplicata</a></h4></div><div id="collapse-aba-428223886" class="panel-collapse collapse"></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428224424">Análise de Crédito</a></h4></div><div id="collapse-aba-428224424" class="panel-collapse collapse"></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#collapse-abas-428226139" href="#collapse-aba-428224810">Impressão</a></h4></div><div id="collapse-aba-428224810" class="panel-collapse collapse"></div></div></div></div>
+
+
+
+  <div class="row">
+    <div class="col-xs-12">
+      <input type="submit" name="commit" value="Salvar" class="crud-btn-salvar btn btn-success" style="">
+<input type="submit" name="commit" value="Salvar e Continuar" class="crud-btn-salvar-continuar btn btn-success" style="">
+<a class="btn btn-default" descricao="Voltar" href="formas_pagamentos.html">Voltar</a>
+
+
+    </div>
+  </div>
+</form>
+      </div>
+  </section>
+</main>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
+</body>
+</html>
