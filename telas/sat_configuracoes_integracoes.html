@@ -503,71 +503,7 @@
         </tr>
         </thead>
         <tbody id="conteudo_tabela_configuracao_sat">
-        <tr class="copia-linha linha-configuracao-sat">
-  <td><select name="configuracao_integracao_sat[][filial_id]" id="filial_id_new_0" class="form-control input-filial-id" atributo="filial_id"><option value="">Selecione</option></select></td>
-  <td><select name="configuracao_integracao_sat[][usuario_id]" id="usuario_id_new_0" class="form-control input-usuario-id" atributo="usuario_id" disabled="disabled" title="Tipo de integração não permite configuração por usuário"><option value="">Selecione</option></select></td>
-
-  <td>
-    <div class="col-xs-10 no-padding-left">
-      <input class="form-control input-token" id="token_new_0" name="configuracao_integracao_sat[][token]" atributo="token" type="text" style="">
-    </div>
-    <div class="col-xs-2 no-padding">
-      <span class="glyphicon glyphicon-edit gerar-token-automaticamente pull-right" title="Gerar token automaticamente"></span>
-    </div>
-  </td>
-
-  <td>
-    <select name="configuracao_integracao_sat[][modelo_nf_id]" id="modelo_nf_id_new_0" class="form-control input-modelo-nf-id" atributo="modelo_nf_id"><option value="">Selecione</option></select>
-  </td>
-
-  <td class="coluna-tipo-integracao">
-    <div class="col-xs-10 no-padding-left">
-      <select name="configuracao_integracao_sat[][tipo_integracao]" id="tipo_integracao_new_0" class="form-control input-tipo-integracao" atributo="tipo_integracao"><option carga_inicial="false" value="">Inexistente</option></select>
-    </div>
-    <div class="col-xs-2 no-padding">
-      <span class="glyphicon glyphicon-upload btn-carga-inicial" title="Executar carga inicial" style="display: none;"></span>
-    </div>
-  </td>
-
-  <td class="text-center">
-    <span class="glyphicon glyphicon-cog parametros-configuracao-sat" title="Configurações"></span>
-  </td>
-
-  <td class="text-center">
-    <input class="form-control" id="sat_id_new_0" name="configuracao_integracao_sat[][id]" atributo="id" type="hidden" style="">
-    <input class="form-control checkbox" id="remover_sat_new_0" name="configuracao_integracao_sat[][remover]" value="true" atributo="remover" type="checkbox" style=""><label for="remover_sat_new_0">&nbsp;</label>
-  </td>
-
-  <td class="hidden coluna-parametros-configuracao-sat">
-    <div class="conteudo-coluna-parametros-configuracao-sat">
-      <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_versao_djpdv"><label class="col-xs-12" id="titulo_campo_versao_djpdv" for="versao_djpdv">Versão DJPDV</label><div class="col-xs-12"><select name="configuracao_integracao_sat[][versao_djpdv]" id="versao_djpdv" class="form-control" value="1" atributo="versao_djpdv"><option selected="selected" value="1">1.7.0f</option>
-<option value="2">1.7.0n</option>
-<option value="3">1.7.0t</option>
-<option value="4">1.7.0u</option>
-<option value="5">2.0.2</option>
-<option value="6">2.0.8</option>
-<option value="7">4.0.0</option>
-<option value="8">4.1.5</option></select></div></div></div>
-      <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_versao_neverstop"><label class="col-xs-12" id="titulo_campo_versao_neverstop" for="versao_neverstop">Versão NeverStop</label><div class="col-xs-12"><select name="configuracao_integracao_sat[][versao_neverstop]" id="versao_neverstop" class="form-control" value="2" atributo="versao_neverstop"><option value="1">0.07</option>
-<option selected="selected" value="2">0.08</option></select></div></div></div>
-
-      <div class="col-xs-12"><div class="page-header separador"><h3><small>DJPDV</small></h3></div></div>
-      <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_numero_pre_venda_atual"><label class="col-xs-12" id="titulo_campo_numero_pre_venda_atual" for="numero_pre_venda_atual">Nº da Pré-Venda Atual</label><div class="col-xs-12"><input class="form-control input-numero-pre-venda" disabled="disabled" id="numero_pre_venda_atual" name="configuracao_integracao_sat[][numero_pre_venda_atual]" value="0" atributo="numero_pre_venda_atual" type="text" style=""></div></div></div>
-      <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_novo_numero_pre_venda"><label class="col-xs-12" id="titulo_campo_novo_numero_pre_venda" for="novo_numero_pre_venda">Novo Nº da Pré-Venda</label><div class="col-xs-12"><input class="form-control campo-numerico input-novo-numero-pre-venda" id="novo_numero_pre_venda" name="configuracao_integracao_sat[][novo_numero_pre_venda]" type="text" atributo="novo_numero_pre_venda" style=""></div></div></div>
-      <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_numero_kardex_atual"><label class="col-xs-12" id="titulo_campo_numero_kardex_atual" for="numero_kardex_atual">Nº Kardex Atual</label><div class="col-xs-12"><input class="form-control input-numero-kardex" disabled="disabled" id="numero_kardex_atual" name="configuracao_integracao_sat[][numero_kardex_atual]" value="0" atributo="numero_kardex_atual" type="text" style=""></div></div></div>
-      <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_novo_numero_kardex"><label class="col-xs-12" id="titulo_campo_novo_numero_kardex" for="novo_numero_kardex">Novo Nº Kardex</label><div class="col-xs-12"><input class="form-control campo-numerico input-novo-numero-kardex" id="novo_numero_kardex" name="configuracao_integracao_sat[][novo_numero_kardex]" type="text" atributo="novo_numero_kardex" style=""></div></div></div>
-
-      <div class="col-xs-12"><div class="page-header separador"><h3><small>Manager NeverStop</small></h3></div></div>
-
-      <div class="col-xs-12"><div class="form-group" id="campo_sign_ac"><label class="col-xs-12" id="titulo_campo_sign_ac" for="sign_ac">Assinatura do Aplicativo Comercial <span class="glyphicon glyphicon-info-sign" title="Campo signAC (B12) do manual do SAT"></span></label><div class="col-xs-12"><input class="form-control" id="sign_ac_new_0" name="configuracao_integracao_sat[][configuracao][sign_ac]" atributo="sign_ac" type="text" style=""></div></div></div>
-      <div class="col-xs-12"><div class="form-group" id="campo_url_recuperacao_xml"><label class="col-xs-12" id="titulo_campo_url_recuperacao_xml" for="url_recuperacao_xml">URL Recuperação do XML</label><div class="col-xs-12"><input class="form-control" id="url_recuperacao_xml_new_0" name="configuracao_integracao_sat[][configuracao][url_recuperacao_xml]" atributo="url_recuperacao_xml" type="text" style=""></div></div></div>
-      <div class="col-xs-12"><div class="form-group" id="campo_grupo"><label class="col-xs-12" id="titulo_campo_grupo" for="grupo">Grupo</label><div class="col-xs-12"><input class="form-control" id="grupo_new_0" name="configuracao_integracao_sat[][configuracao][grupo]" atributo="grupo" type="text" style=""></div></div></div>
-      <div class="col-xs-12"><div class="form-group" id="campo_cnpj"><label class="col-xs-12" id="titulo_campo_cnpj" for="cnpj">CNPJ</label><div class="col-xs-12"><input class="form-control" id="cnpj_new_0" name="configuracao_integracao_sat[][configuracao][cnpj]" atributo="cnpj" mascara="AA.AAA.AAA/AAAA-AA" type="text" maxlength="18" autocomplete="off" style=""></div></div></div>
-      <div class="col-xs-12"><div class="form-group" id="campo_usuario"><label class="col-xs-12" id="titulo_campo_usuario" for="usuario">Usuário</label><div class="col-xs-12"><input class="form-control" id="usuario_new_0" name="configuracao_integracao_sat[][configuracao][usuario]" atributo="usuario" type="text" style=""></div></div></div>
-      <div class="col-xs-12"><div class="form-group" id="campo_senha"><label class="col-xs-12" id="titulo_campo_senha" for="senha">Senha</label><div class="col-xs-12"><input class="form-control" id="senha_new_0" name="configuracao_integracao_sat[][configuracao][senha]" atributo="senha" type="password" style=""></div></div></div>
-    </div>
-  </td>
-</tr>
+        
 
         </tbody>
 </table></div>    </div>

@@ -10,6 +10,12 @@
 <script src="../assets/guarda.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/relatorio_servicos.css">
+<link rel="stylesheet" href="../assets/telas/config_filtros_padroes.css">
 <style>
   /* Valores extraídos do CSS original (application.css / menu.css) */
   :root {
@@ -277,6 +283,145 @@
   @media (prefers-color-scheme: dark) {
     html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
   }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
 </style>
 </head>
 <body>
@@ -340,9 +485,133 @@
     </div>
   </header>
   <section id="container_conteudo" class="acrilico">
-<!-- pendente --><div class="pendente"><h2>Relatório de Serviços</h2><p>Tela ainda não reconstruída.</p><p><a href="../menu/vendas.html">← Voltar para Vendas</a></p></div>
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        
+<form id="formulario" class="form-horizontal formulario-filtros" action="#" onsubmit="return false" accept-charset="UTF-8" data-remote="true" method="post">
+
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="space-6"></div>
+        <div class="panel panel-default painel-filtros-padroes">
+          <div class="panel-heading" data-toggle="collapse" href="#item_collapse_filtros_relatorio">
+            <h4 class="panel-title">
+              <span class="glyphicon glyphicon-filter"></span>
+              <a><strong>Filtros</strong></a>
+              <span id="central_relatorios" class="abrir-central-relatorios glyphicon glyphicon-list-alt pull-right cursor-pointer" title="Central de Relatórios" style="margin-right: 8px; margin-left: 5px;"></span>
+                <span class="glyphicon glyphicon-cog pull-right config-filtros-padroes ativo"></span>
+                <div class="opcoes-filtros-padroes pull-right hide">
+  <button class="btn btn btn-success btn-filtros-padroes btn-filtros-padroes-salva" type="button"><span class="glyphicon glyphicon-ok"></span> Salvar</button>
+  <button class="btn btn btn-default btn-filtros-padroes btn-filtros-padroes-descarta" type="button"><span class="glyphicon glyphicon-remove-sign"></span> Descartar</button>
+  <button class="btn btn btn-danger btn-filtros-padroes btn-filtros-padroes-exclui" type="button"><span class="glyphicon glyphicon-trash"></span> Excluir</button>
+</div>
+
+            </h4>
+          </div>
+          <div id="item_collapse_filtros_relatorio" class="item_collapse_filtros panel-collapse collapse in">
+            <div class="panel-body">
+              <div class="form-horizontal">
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_servico_id"><div class="form-group" id="campo_servico_id"><label class="col-xs-12" id="titulo_campo_servico_id" for="servico_id">Serviços</label><div class="col-xs-12"><select name="filtros[servico_id][]" id="servico_id" class="form-control bootstrap-multiselect" form="formulario" multiple="multiple" value="1 2" atributo="servico_id" data-bms="{&quot;nonSelectedText&quot;:&quot;Todos selecionados&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Garantia 12 Meses, Garantia 24 Meses</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_filial_id"><div class="form-group" id="campo_filial_id"><label class="col-xs-12" id="titulo_campo_filial_id" for="filial_id">Filiais de Venda</label><div class="col-xs-12"><select name="filtros[filial_id][]" id="filial_id" class="form-control bootstrap-multiselect" form="formulario" multiple="multiple" value="5 9" atributo="filial_id" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Selecione</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+  <div class="col-xs-12"><div class="campo-filtros-padroes" id="_filtro_padrao_data_emissao"><div class="form-group componente-periodo" id="campo_data_emissao"><label class="col-xs-12" id="titulo_campo_data_emissao" for="data_emissao">Período <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Será aplicado para selecionar as Vendas e os Cancelamentos."></span></label><div class="col-xs-12"><div class="div-filtro-periodo"><div class="bloco-inicial"><div class="div-select-opcoes-periodo"><select name="filtros[data_emissao]" id="data_emissao" class="form-control"><option value="este_mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="ultimos_30_dias">Últimos 30 dias</option>
+<option selected="selected" value="intervalo">Intervalo</option></select></div><div class="input-group datetimepicker div-periodo-inicial"><input class="form-control" form="formulario" id="data_emissao_inicial" name="filtros[data_emissao_inicial]" value="01/10/2026" atributo="data_emissao_inicial" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-inicial" form="formulario" id="oculto_data_emissao_inicial" name="filtros[data_emissao_inicial]" value="01/10/2026" atributo="data_emissao_inicial" type="hidden" style=""></span></div></div><div class="bloco-final"><div class="input-group datetimepicker div-periodo-final"><input class="form-control" form="formulario" id="data_emissao_final" name="filtros[data_emissao_final]" value="31/10/2026" atributo="data_emissao_final" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-final" form="formulario" id="oculto_data_emissao_final" name="filtros[data_emissao_final]" value="31/10/2026" atributo="data_emissao_final" type="hidden" style=""></span></div></div></div></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_vendedor_id"><div class="form-group" id="campo_vendedor_id"><label class="col-xs-12" id="titulo_campo_vendedor_id" for="vendedor_id">Vendedores</label><div class="col-xs-12"><select name="filtros[vendedor_id][]" id="vendedor_id" class="form-control bootstrap-multiselect" form="formulario" multiple="multiple" atributo="vendedor_id" data-bms="{&quot;nonSelectedText&quot;:&quot;Todos selecionados&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todos selecionados</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+
+
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_colunas_relatorio"><div class="form-group hide" id="campo_colunas_relatorio"><label class="col-xs-12" id="titulo_campo_colunas_relatorio" for="colunas_relatorio">Colunas do Relatório <span class="glyphicon glyphicon-info-sign" title="A impressão PDF pode não exibir todas as colunas selecionadas, devido a quantidade de informações e ao espaço disponível do relatório."></span></label><div class="col-xs-12"><select name="filtros[colunas_relatorio][]" id="colunas_relatorio" class="form-control bootstrap-multiselect" form="formulario" multiple="multiple" value="filial lancamento data_lancamento cliente cpf_cnpj vendedor vl_acrescimo vl_total nr_bilhete" data-padroes-venda="[&quot;filial_venda&quot;,&quot;lancamento_venda&quot;,&quot;data_lancamento_venda&quot;,&quot;descricao_produto&quot;,&quot;quantidade_venda&quot;,&quot;vl_unitario_venda&quot;,&quot;vl_total_venda&quot;]" data-padroes-servico="[&quot;filial&quot;,&quot;lancamento&quot;,&quot;data_lancamento&quot;,&quot;cliente&quot;,&quot;periodo_validade&quot;,&quot;vendedor&quot;,&quot;quantidade&quot;,&quot;quantidade_cancelada&quot;,&quot;data_cancelamento_servico&quot;,&quot;vl_unitario&quot;,&quot;vl_total&quot;,&quot;nr_bilhete&quot;]" data-obrigatorias-servico="[&quot;cliente&quot;,&quot;nr_bilhete&quot;]" atributo="colunas_relatorio" data-bms="{&quot;nonSelectedText&quot;:&quot;Todos selecionados&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">9 registros selecionados</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li><li class="multiselect-item multiselect-group"><label>Serviço</label></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="filial" style=""> Filial</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="filial_resumida" style=""> Filial (Descrição resumida)</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="lancamento" style=""> Nº Lançamento</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="data_lancamento" style=""> Data Lançamento</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="cliente" disabled="" style=""> Cliente</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="cpf_cnpj" style=""> CPF/CNPJ</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="sexo" style=""> Sexo</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="periodo_validade" style=""> Período Validade</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="vendedor" style=""> Vendedor</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="quantidade" style=""> Quantidade</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="quantidade_cancelada" style=""> Quantidade Cancelada</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="data_cancelamento_servico" style=""> Data Cancelamento</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="vl_unitario" style=""> Valor Unitário</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="vl_acrescimo" style=""> Valor Acréscimo</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="vl_total" style=""> Valor Total</label></a></li><li class="active"><a tabindex="0"><label class="checkbox"><input type="checkbox" value="nr_bilhete" disabled="" style=""> Número dos Bilhetes</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="identificador" style=""> Identificador</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="tempo_vigencia" style=""> Tempo de Vigência</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="valor_pro_labore" style=""> Valor Pró-labore</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="valor_custo" style=""> Valor Custo</label></a></li><li class="multiselect-item multiselect-group"><label>Venda</label></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="filial_venda" style=""> Filial</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="filial_resumida_venda" style=""> Filial (Descrição resumida)</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="lancamento_venda" style=""> Nº Lançamento</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="data_lancamento_venda" style=""> Data Lançamento</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="descricao_produto" style=""> Produto</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="quantidade_venda" style=""> Quantidade</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="vl_unitario_venda" style=""> Valor Unitário</label></a></li><li><a tabindex="0"><label class="checkbox"><input type="checkbox" value="vl_total_venda" style=""> Valor Total</label></a></li></ul></div></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_agrupamento"><div class="form-group" id="campo_agrupamento"><label class="col-xs-12" id="titulo_campo_agrupamento" for="agrupamento">Total Por</label><div class="col-xs-12"><select name="filtros[agrupamento]" id="agrupamento" class="form-control" form="formulario" value="vendedor_recuperacao_id" atributo="agrupamento"><option value="filial_venda_id">Filial de Venda</option>
+<option value="servico_id">Serviço</option>
+<option value="tipo_servico">Tipo de Serviço</option>
+<option selected="selected" value="vendedor_recuperacao_id">Vendedor</option>
+<option value="vendedor_servico_id">Vendedor - Tipo de Serviço</option></select></div></div></div></div>
+  <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_ordenacao"><div class="form-group hide" id="campo_ordenacao"><label class="col-xs-12" id="titulo_campo_ordenacao" for="ordenacao">Ordenar por</label><div class="col-xs-12"><select name="filtros[ordenacao]" id="ordenacao" class="form-control" form="formulario" atributo="ordenacao" disabled="disabled"><option value="data_venda">Data de venda</option>
+<option value="vendedor">Vendedor</option>
+<option value="cliente">Cliente</option>
+<option value="filial_vendedor" disabled="disabled">Filial e Vendedor</option></select></div></div></div></div>
+  <div class="col-xs-12 col-sm-12"><div class="campo-filtros-padroes" id="_filtro_padrao_descontar_devolucoes"><div class="form-group" id="campo_descontar_devolucoes"><label class="col-xs-12" id="titulo_campo_descontar_devolucoes">Descontar Cancelamentos <span title="Compreende cancelamentos de serviços efetuados pela devolução ou cancelamento da venda.
+Será aplicado somente as Vendas que forem selecionadas. Cancelamentos efetuados referente a Vendas de períodos anteriores, sempre serão listados no relatório." class="glyphicon glyphicon-info-sign cursor-pointer"></span></label><div class="col-xs-12"><input tipo="checkbox_toggle" tamanho="col-xs-12 col-sm-12" campo_oculto="true" value="false" id="_descontar_devolucoes" form="formulario" name="filtros[descontar_devolucoes]" atributo="descontar_devolucoes" class="static-value" type="hidden" style=""><div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-on bootstrap-switch-normal bootstrap-switch-animate bootstrap-switch-id-descontar_devolucoes"><div class="bootstrap-switch-container"><span class="bootstrap-switch-handle-on bootstrap-switch-primary">Sim</span><label class="bootstrap-switch-label">&nbsp;</label><span class="bootstrap-switch-handle-off bootstrap-switch-default">Não</span><input class="switch form-control" form="formulario" id="descontar_devolucoes" name="filtros[descontar_devolucoes]" value="true" atributo="descontar_devolucoes" type="checkbox" checked="checked" style="display: none;"></div></div></div></div></div></div>
+
+  <div class="col-xs-12"><a data-toggle="collapse" href="#mais_filtros"><span class="glyphicon glyphicon-plus" title="Clique aqui para mais filtros"></span></a><div class="collapse" style="margin-top: 10px;" id="mais_filtros"><div class="well"><div class="row">
+    <div class="col-xs-12 col-sm-12"><div class="campo-filtros-padroes" id="_filtro_padrao_tipo_servico"><div class="form-group" id="campo_tipo_servico"><label class="col-xs-12" id="titulo_campo_tipo_servico" for="tipo_servico">Tipos de Serviço</label><div class="col-xs-12"><select name="filtros[tipo_servico][]" id="tipo_servico" class="form-control bootstrap-multiselect" form="formulario" multiple="multiple" atributo="tipo_servico" data-bms="{&quot;nonSelectedText&quot;:&quot;Todos selecionados&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todos selecionados</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+    <div class="col-xs-12"><div class="campo-filtros-padroes" id="_filtro_padrao_data_lancamento"><div class="form-group componente-periodo" id="campo_data_lancamento"><label class="col-xs-12" id="titulo_campo_data_lancamento" for="data_lancamento">Período Lançamento Venda</label><div class="col-xs-12"><div class="div-filtro-periodo"><div class="bloco-inicial"><div class="div-select-opcoes-periodo"><select name="filtros[data_lancamento]" id="data_lancamento" class="form-control"><option value="este_mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="ultimos_30_dias">Últimos 30 dias</option>
+<option selected="selected" value="intervalo">Intervalo</option></select></div><div class="input-group datetimepicker div-periodo-inicial"><input class="form-control" form="formulario" id="data_lancamento_inicial" name="filtros[data_lancamento_inicial]" atributo="data_lancamento_inicial" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-inicial" form="formulario" id="oculto_data_lancamento_inicial" name="filtros[data_lancamento_inicial]" atributo="data_lancamento_inicial" type="hidden" style=""></span></div></div><div class="bloco-final"><div class="input-group datetimepicker div-periodo-final"><input class="form-control" form="formulario" id="data_lancamento_final" name="filtros[data_lancamento_final]" atributo="data_lancamento_final" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-final" form="formulario" id="oculto_data_lancamento_final" name="filtros[data_lancamento_final]" atributo="data_lancamento_final" type="hidden" style=""></span></div></div></div></div></div></div></div>
+    <div class="col-xs-12"><div class="campo-filtros-padroes" id="_filtro_padrao_data_validade"><div class="form-group componente-periodo" id="campo_data_validade"><label class="col-xs-12" id="titulo_campo_data_validade" for="data_validade">Período Validade</label><div class="col-xs-12"><div class="div-filtro-periodo"><div class="bloco-inicial"><div class="div-select-opcoes-periodo"><select name="filtros[data_validade]" id="data_validade" class="form-control"><option value="este_mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="ultimos_30_dias">Últimos 30 dias</option>
+<option selected="selected" value="intervalo">Intervalo</option></select></div><div class="input-group datetimepicker div-periodo-inicial"><input class="form-control" form="formulario" id="data_validade_inicial" name="filtros[data_validade_inicial]" atributo="data_validade_inicial" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-inicial" form="formulario" id="oculto_data_validade_inicial" name="filtros[data_validade_inicial]" atributo="data_validade_inicial" type="hidden" style=""></span></div></div><div class="bloco-final"><div class="input-group datetimepicker div-periodo-final"><input class="form-control" form="formulario" id="data_validade_final" name="filtros[data_validade_final]" atributo="data_validade_final" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-final" form="formulario" id="oculto_data_validade_final" name="filtros[data_validade_final]" atributo="data_validade_final" type="hidden" style=""></span></div></div></div></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_exibicao"><div class="form-group" id="campo_exibicao"><label class="col-xs-12" id="titulo_campo_exibicao" for="exibicao">Exibição</label><div class="col-xs-12"><select name="filtros[exibicao]" id="exibicao" class="form-control" form="formulario" value="2" atributo="exibicao"><option value="1">Detalhado</option>
+<option selected="selected" value="2">Resumido</option></select></div></div></div></div>
+    <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_tipo_documento"><div class="form-group" id="campo_tipo_documento"><label class="col-xs-12" id="titulo_campo_tipo_documento" for="tipo_documento">Considerar</label><div class="col-xs-12"><select name="filtros[tipo_documento]" id="tipo_documento" class="form-control" form="formulario" atributo="tipo_documento"><option value="">Todos os Serviços</option>
+<option value="1">Venda Normal</option>
+<option value="2">Recuperação</option>
+<option value="3">Problemas de comunicação</option></select></div></div></div></div>
+</div></div></div></div></div>
+
+              <div class="col-xs-12">
+  <div class="pull-right">
+    <div class="form-group col-xs-7" id="campo_formato_relatorio" style="min-width: 116px; margin-right: 5px;"><select name="filtros[_formato]" id="_formato" class="form-control campo-filtro" form="formulario" atributo="_formato"><option value="html">HTML</option>
+<option value="pdf">PDF</option>
+<option value="xls">XLS</option></select></div>
+    <button class="btn btn-primary" id="gerar" type="submit"><span class="glyphicon glyphicon-list-alt"></span> Gerar</button>
+  </div>
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</form>
+<link rel="stylesheet" href="#">
+
+
+
+
+
+
+<div class="modal fade" id="modal_central_relatorios" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog tamanho-grande"><div class="modal-content tamanho-grande"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Central de Relatórios</h4></div><div class="modal-body">
+  <div class="alert alert-info">
+    Relatórios concluídos ficarão disponíveis por 24 horas após a sua geração.
+  </div>
+  <div id="conteudo_modal_central_relatorios"></div>
+</div><div class="modal-footer rodape-modal-cinza"><button class="btn btn-default" type="button" data-dismiss="modal">Fechar</button></div></div></div></div>
+<div id="container_relatorio"></div>
+
+
+
+      </div>
   </section>
 </main>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
 </body>
 </html>

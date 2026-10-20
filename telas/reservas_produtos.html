@@ -10,6 +10,12 @@
 <script src="../assets/guarda.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/reservas_produtos.css">
+<link rel="stylesheet" href="../assets/telas/config_filtros_padroes.css">
 <style>
   /* Valores extraídos do CSS original (application.css / menu.css) */
   :root {
@@ -277,6 +283,145 @@
   @media (prefers-color-scheme: dark) {
     html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
   }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
 </style>
 </head>
 <body>
@@ -340,9 +485,427 @@
     </div>
   </header>
   <section id="container_conteudo" class="acrilico">
-<!-- pendente --><div class="pendente"><h2>Gestão de Entrega</h2><p>Tela ainda não reconstruída.</p><p><a href="../menu/estoque.html">← Voltar para Estoque</a></p></div>
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        <div class="row">
+  <form id="formulario_filtro" class="form-horizontal formulario-filtros" action="#" onsubmit="return false" accept-charset="UTF-8" method="post"><input type="hidden" name="_method" autocomplete="off" style="">
+
+  <input class="form-control" form="formulario_filtro" id="page" name="page" value="1" atributo="page" type="hidden" style="">
+
+  <div class="col-xs-12">
+    <div class="space-6"></div>
+    <div class="panel panel-default painel-filtros-padroes">
+      <div class="panel-heading" data-toggle="collapse" href="#item_collapse_filtros">
+        <h4 class="panel-title">
+          <span class="glyphicon glyphicon-filter"></span>
+          <a><strong>Filtros</strong></a>
+            <span class="glyphicon glyphicon-cog pull-right config-filtros-padroes ativo"></span>
+            <div class="opcoes-filtros-padroes pull-right hide">
+  <button class="btn btn btn-success btn-filtros-padroes btn-filtros-padroes-salva" type="button"><span class="glyphicon glyphicon-ok"></span> Salvar</button>
+  <button class="btn btn btn-default btn-filtros-padroes btn-filtros-padroes-descarta" type="button"><span class="glyphicon glyphicon-remove-sign"></span> Descartar</button>
+  <button class="btn btn btn-danger btn-filtros-padroes btn-filtros-padroes-exclui" type="button"><span class="glyphicon glyphicon-trash"></span> Excluir</button>
+</div>
+
+        </h4>
+      </div>
+      <div id="item_collapse_filtros" class="item_collapse_filtros panel-collapse collapse in">
+        <div class="panel-body">
+          <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_descricao_produto"><div class="form-group" id="campo_descricao_produto"><label class="col-xs-12" id="titulo_campo_descricao_produto" for="descricao_produto">Descrição do Produto</label><div class="col-xs-12"><input class="form-control" form="formulario_filtro" id="descricao_produto" name="filtros[descricao_produto]" atributo="descricao_produto" type="text" style=""></div></div></div></div>
+          <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_codigo_produto"><div class="form-group" id="campo_codigo_produto"><label class="col-xs-12" id="titulo_campo_codigo_produto" for="codigo_produto">Código do Produto</label><div class="col-xs-12"><input class="form-control" form="formulario_filtro" id="codigo_produto" name="filtros[codigo_produto]" atributo="codigo_produto" type="text" style=""></div></div></div></div>
+          <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_filial_entrega_id"><div class="form-group" id="campo_filial_entrega_id"><label class="col-xs-12" id="titulo_campo_filial_entrega_id" for="filial_entrega_id">Filial da Entrega</label><div class="col-xs-12"><select name="filtros[filial_entrega_id][]" id="filial_entrega_id" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" value="5 9 6 12 3 1" atributo="filial_entrega_id" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionadas&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todas selecionadas</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all active"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+          <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_locais_estocagens"><div class="form-group" id="campo_locais_estocagens"><label class="col-xs-12" id="titulo_campo_locais_estocagens" for="locais_estocagens">Local de Estocagem</label><div class="col-xs-12"><select name="filtros[locais_estocagens][]" id="locais_estocagens" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" value="315 307 327 316 317 324 306 318 321 322 312 326 310 325 303 313 301 314 323 305 304 302" atributo="locais_estocagens" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionadas&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todas selecionadas</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all active"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+          <div class="col-xs-12"><div class="campo-filtros-padroes" id="_filtro_padrao_data_previsao_entrega"><div class="form-group componente-periodo" id="campo_data_previsao_entrega"><label class="col-xs-12" id="titulo_campo_data_previsao_entrega" for="data_previsao_entrega">Previsão de Entrega</label><div class="col-xs-12"><div class="div-filtro-periodo"><div class="bloco-inicial"><div class="div-select-opcoes-periodo"><select name="filtros[data_previsao_entrega]" id="data_previsao_entrega" class="form-control"><option value="este_mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="ultimos_30_dias">Últimos 30 dias</option>
+<option selected="selected" value="intervalo">Intervalo</option></select></div><div class="input-group datetimepicker div-periodo-inicial"><input class="form-control" form="formulario_filtro" id="data_previsao_entrega_inicial" name="filtros[data_previsao_entrega_inicial]" atributo="data_previsao_entrega_inicial" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-inicial" form="formulario_filtro" id="oculto_data_previsao_entrega_inicial" name="filtros[data_previsao_entrega_inicial]" atributo="data_previsao_entrega_inicial" type="hidden" style=""></span></div></div><div class="bloco-final"><div class="input-group datetimepicker div-periodo-final"><input class="form-control" form="formulario_filtro" id="data_previsao_entrega_final" name="filtros[data_previsao_entrega_final]" atributo="data_previsao_entrega_final" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-final" form="formulario_filtro" id="oculto_data_previsao_entrega_final" name="filtros[data_previsao_entrega_final]" atributo="data_previsao_entrega_final" type="hidden" style=""></span></div></div></div></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_filial_venda_id"><div class="form-group" id="campo_filial_venda_id"><label class="col-xs-12" id="titulo_campo_filial_venda_id" for="filial_venda_id">Filial da Venda</label><div class="col-xs-12"><select name="filtros[filial_venda_id][]" id="filial_venda_id" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" value="5 9 6 12" atributo="filial_venda_id" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionadas&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todas selecionadas</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all active"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><div class="campo-filtros-padroes" id="_filtro_padrao_status"><div class="form-group" id="campo_status"><label class="col-xs-12" id="titulo_campo_status" for="status">Situação</label><div class="col-xs-12"><select name="filtros[status][]" id="status" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" value="2" atributo="status" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionadas&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Confirmado</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><div class="campo-filtros-padroes" id="_filtro_padrao_cliente_id"><div class="form-group" id="campo_cliente_id"><label class="col-xs-12" id="titulo_campo_cliente_id" for="cliente_id">Cliente</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario_filtro" value="" atributo="cliente_id" campo="nome" data-filtros="{&quot;escopos&quot;:&quot;clientes&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="nome" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario_filtro" id="autocompletar_cliente_id" value="" atributo="cliente_id" campo="nome" data-filtros="{&quot;escopos&quot;:&quot;clientes&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="nome" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario_filtro" id="cliente_id" name="filtros[cliente_id]" atributo="cliente_id" type="hidden" style=""></div></div></div></div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><div class="campo-filtros-padroes" id="_filtro_padrao_vendedor_id"><div class="form-group" id="campo_vendedor_id"><label class="col-xs-12" id="titulo_campo_vendedor_id" for="vendedor_id">Vendedor</label><div class="col-xs-12"><select name="filtros[vendedor_id][]" id="vendedor_id" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" value="15" atributo="vendedor_id" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Selecione</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+          <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_encomendas"><div class="form-group" id="campo_encomendas"><label class="col-sm-12 label-sm" id="titulo_campo_encomendas" for="encomendas">Considerar Reservas de Encomendas</label><div class="col-xs-12"><select name="filtros[encomendas]" id="encomendas" class="form-control" form="formulario_filtro" value="true" atributo="encomendas"><option selected="selected" value="true">Sim</option>
+<option value="false">Não</option></select></div></div></div></div>
+
+          <div class="col-xs-12 col-sm-6 col-md-6"><div class="campo-filtros-padroes" id="_filtro_padrao_tipo"><div class="form-group" id="campo_tipo"><label class="col-xs-12" id="titulo_campo_tipo" for="tipo">Tipo</label><div class="col-xs-12"><select name="filtros[tipo][]" id="tipo" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" atributo="tipo" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionados&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionados&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todas selecionados</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+          
+          <div class="col-xs-12"></div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><div class="campo-filtros-padroes" id="_filtro_padrao_cidades_ids"><div class="form-group" id="campo_cidades_ids"><label class="col-xs-12" id="titulo_campo_cidades_ids" for="cidades_ids">Cidades de Entrega</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="cidades_ids" class=" multiselect-autocompletar" form="formulario_filtro" multiple="multiple" permite_novos_elementos="true" campo="descricao" data-registros="[]" data-filtrar_com="{}" name="filtros[cidades_ids][]" id="cidades_ids" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div></div></div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><div class="campo-filtros-padroes" id="_filtro_padrao_bairros_ids"><div class="form-group" id="campo_bairros_ids"><label class="col-xs-12" id="titulo_campo_bairros_ids" for="bairros_ids">Bairros de Entrega</label><div class="col-xs-12"><select name="filtros[bairros_ids][]" id="bairros_ids" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" atributo="bairros_ids" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Nenhum registro selecionado</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"></ul></div></div></div></div></div>
+          <div class="col-xs-12"></div>
+          <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_rotas_ids"><div class="form-group" id="campo_rotas_ids"><label class="col-xs-12" id="titulo_campo_rotas_ids" for="rotas_ids">Rotas de Entrega</label><div class="col-xs-12"><select name="filtros[rotas_ids][]" id="rotas_ids" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" atributo="rotas_ids" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Nenhum registro selecionado</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+
+          <div class="col-xs-12"><a data-toggle="collapse" href="#mais_filtros"><span class="glyphicon glyphicon-plus" title="Clique aqui para mais filtros"></span></a><div class="collapse" style="margin-top: 10px;" id="mais_filtros"><div class="well"><div class="row">
+            <div class="col-xs-12"><div class="campo-filtros-padroes" id="_filtro_padrao_data_emissao"><div class="form-group componente-periodo" id="campo_data_emissao"><label class="col-xs-12" id="titulo_campo_data_emissao" for="data_emissao">Período de Emissão <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Período de emissão da venda, não se aplica às requisições."></span></label><div class="col-xs-12"><div class="div-filtro-periodo"><div class="bloco-inicial"><div class="div-select-opcoes-periodo"><select name="filtros[data_emissao]" id="data_emissao" class="form-control"><option value="este_mes">Este mês</option>
+<option value="mes_anterior">Mês anterior</option>
+<option value="ultimos_30_dias">Últimos 30 dias</option>
+<option selected="selected" value="intervalo">Intervalo</option></select></div><div class="input-group datetimepicker div-periodo-inicial"><input class="form-control" form="formulario_filtro" id="data_emissao_inicial" name="filtros[data_emissao_inicial]" atributo="data_emissao_inicial" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-inicial" form="formulario_filtro" id="oculto_data_emissao_inicial" name="filtros[data_emissao_inicial]" atributo="data_emissao_inicial" type="hidden" style=""></span></div></div><div class="bloco-final"><div class="input-group datetimepicker div-periodo-final"><input class="form-control" form="formulario_filtro" id="data_emissao_final" name="filtros[data_emissao_final]" atributo="data_emissao_final" type="text" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span><input class="form-control oculto-data-final" form="formulario_filtro" id="oculto_data_emissao_final" name="filtros[data_emissao_final]" atributo="data_emissao_final" type="hidden" style=""></span></div></div></div></div></div></div></div>
+
+              <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_pedido_ecommerce_id"><div class="form-group" id="campo_pedido_ecommerce_id"><label class="col-xs-12" id="titulo_campo_pedido_ecommerce_id" for="pedido_ecommerce_id">ID do pedido no E-commerce</label><div class="col-xs-12"><input class="form-control" form="formulario_filtro" id="pedido_ecommerce_id" name="filtros[pedido_ecommerce_id]" atributo="pedido_ecommerce_id" type="text" style=""></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_requisicao_mercadoria_id"><div class="form-group" id="campo_requisicao_mercadoria_id"><label class="col-xs-12" id="titulo_campo_requisicao_mercadoria_id" for="requisicao_mercadoria_id">N° Requisição</label><div class="col-xs-12"><input class="form-control campo-numerico" form="formulario_filtro" id="requisicao_mercadoria_id" name="filtros[requisicao_mercadoria_id]" type="text" atributo="requisicao_mercadoria_id" style=""></div></div></div></div>
+            
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_operacoes_vendas_ids"><div class="form-group" id="campo_operacoes_vendas_ids"><label class="col-xs-12" id="titulo_campo_operacoes_vendas_ids" for="operacoes_vendas_ids">Operação da Venda</label><div class="col-xs-12"><select name="filtros[operacoes_vendas_ids][]" id="operacoes_vendas_ids" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" atributo="operacoes_vendas_ids" data-bms="{&quot;nonSelectedText&quot;:&quot;Todas selecionadas&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Todas selecionadas</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_numero_lancamento"><div class="form-group" id="campo_numero_lancamento"><label class="col-xs-12" id="titulo_campo_numero_lancamento" for="numero_lancamento">Nº Lançamento <span class="glyphicon glyphicon-info-sign cursor-pointer" title="Número do Lançamento da Venda"></span></label><div class="col-xs-12"><input class="form-control campo-numerico" form="formulario_filtro" id="numero_lancamento" name="filtros[numero_lancamento]" type="text" atributo="numero_lancamento" style=""></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_romaneio_separacao_id"><div class="form-group" id="campo_romaneio_separacao_id"><label class="col-xs-12" id="titulo_campo_romaneio_separacao_id" for="romaneio_separacao_id">Nº Romaneio</label><div class="col-xs-12"><input class="form-control campo-numerico" form="formulario_filtro" id="romaneio_separacao_id" name="filtros[romaneio_separacao_id]" type="text" atributo="romaneio_separacao_id" style=""></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_transportadores_ids"><div class="form-group" id="campo_transportadores_ids"><label class="col-xs-12" id="titulo_campo_transportadores_ids" for="transportadores_ids">Transportador</label><div class="col-xs-12"><select name="filtros[transportadores_ids][]" id="transportadores_ids" class="form-control bootstrap-multiselect" form="formulario_filtro" multiple="multiple" atributo="transportadores_ids" data-bms="{&quot;nonSelectedText&quot;:&quot;Nenhum selecionado&quot;,&quot;allSelectedText&quot;:&quot;Todas selecionadas&quot;}" style="display: none;"></select><div class="btn-group" style="width: 100%;"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"><span class="multiselect-selected-text">Nenhum selecionado</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu" style="max-height: 400px; overflow: hidden auto;"><li class="multiselect-item filter" value="0"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text" placeholder="Pesquisar" style=""><span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button></span></div></li><li class="multiselect-item multiselect-all"><a tabindex="0" class="multiselect-all"><label class="checkbox"><input type="checkbox" value="multiselect-all" style="">  Selecionar todos</label></a></li></ul></div></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_marca_produto_id"><div class="form-group" id="campo_marca_produto_id"><label class="col-xs-12" id="titulo_campo_marca_produto_id" for="marca_produto_id">Marca do Produto</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario_filtro" value="" atributo="marca_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario_filtro" id="autocompletar_marca_produto_id" value="" atributo="marca_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario_filtro" id="marca_produto_id" name="filtros[marca_produto_id]" atributo="marca_produto_id" type="hidden" style=""></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_departamento_produto_id"><div class="form-group" id="campo_departamento_produto_id"><label class="col-xs-12" id="titulo_campo_departamento_produto_id" for="departamento_produto_id">Departamento</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario_filtro" value="" atributo="departamento_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario_filtro" id="autocompletar_departamento_produto_id" value="" atributo="departamento_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-2"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario_filtro" id="departamento_produto_id" name="filtros[departamento_produto_id]" atributo="departamento_produto_id" type="hidden" style=""></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_grupo_produto_id"><div class="form-group" id="campo_grupo_produto_id"><label class="col-xs-12" id="titulo_campo_grupo_produto_id" for="grupo_produto_id">Grupo</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario_filtro" value="" atributo="grupo_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario_filtro" id="autocompletar_grupo_produto_id" value="" atributo="grupo_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-3"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario_filtro" id="grupo_produto_id" name="filtros[grupo_produto_id]" atributo="grupo_produto_id" type="hidden" style=""></div></div></div></div>
+            <div class="col-xs-12 col-sm-6"><div class="campo-filtros-padroes" id="_filtro_padrao_subgrupo_produto_id"><div class="form-group" id="campo_subgrupo_produto_id"><label class="col-xs-12" id="titulo_campo_subgrupo_produto_id" for="subgrupo_produto_id">Subgrupo</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario_filtro" value="" atributo="subgrupo_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario_filtro" id="autocompletar_subgrupo_produto_id" value="" atributo="subgrupo_produto_id" campo="descricao" data-filtros="{}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-4"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario_filtro" id="subgrupo_produto_id" name="filtros[subgrupo_produto_id]" atributo="subgrupo_produto_id" type="hidden" style=""></div></div></div></div>
+
+            <div class="col-xs-12">
+              <div class="col-xs-12 no-padding campo-filtros-padroes" id="_filtro_padrao__ordenacao_consulta">
+  <div class="form-group col-xs-11 col-lg-6"><input class="form-control campo-filtro" disabled="disabled" form="formulario_filtro" id="_exibicao_ordenacao_consulta" name="filtros[_exibicao_ordenacao_consulta]" placeholder="Ordenar por: " atributo="_exibicao_ordenacao_consulta" type="text" style=""></div>
+  <span id="configura_ordenacao_consulta" class="glyphicon glyphicon-sort" style="cursor: pointer; margin-top: 8px;" title="Configurar Ordenação da Consulta"></span>
+  <input class="form-control" form="formulario_filtro" id="_ordenacao_consulta" name="filtros[_ordenacao_consulta]" atributo="_ordenacao_consulta" type="hidden" style="">
+</div>
+
+<div class="modal fade" id="modal_ordenacao_consulta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">Ordenação da Consulta</h4>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div id="copia_ordenacao">
+              <div class="copia-linha">
+                <div class="form-group col-xs-12 col-sm-7"><select name="" id="coluna" class="form-control campo-filtro" form="formulario_filtro" atributo="coluna"><option value="">Selecione</option>
+<option value="_data_lancamento_documento">Data do Pedido</option>
+<option value="_nome_cliente">Cliente</option>
+<option value="_descricao_produto">Produto</option>
+<option value="_codigo_produto">Cod. Produto</option>
+<option value="_numero_lancamento">Pedido de Venda</option>
+<option value="descricao_status">Situação</option>
+<option value="_numero_romaneio_separacao">N° Romaneio</option>
+<option value="_data_entrega">Data de Entrega Romaneio</option>
+<option value="quantidade">Quantidade</option>
+<option value="_valor_final_com_cdci">Valor</option>
+<option value="_descricao_cidade">Cidade</option>
+<option value="_descricao_bairro">Bairro</option>
+<option value="_descricao_filial_venda">Filial da Venda</option>
+<option value="_descricao_filial_entrega">Filial de Entrega</option>
+<option value="descricao_local_estocagem">Local de Estocagem</option>
+<option value="descricao_vendedor">Vendedor</option>
+<option value="data_previsao_entrega">Previsão de Entrega</option>
+<option value="descricao_transportador">Transportador</option>
+<option value="descricao_tipo">Tipo</option>
+<option value="_requisicao_distribuicao_mercadoria_id">Requisição/Distribuição</option>
+<option value="_valor_frete">Valor Frete</option>
+<option value="descricao_produto">Descrição Produto</option>
+<option value="_numero_lancamento_ordem_entrega">N° Lcto Reserva</option>
+<option value="descricao_marca">Marca Produto</option>
+<option value="_codigo_cliente">Código do Cliente</option>
+<option value="_pais">País</option>
+<option value="_logradouro_pessoa_endereco">Logradouro</option>
+<option value="_numero_pessoa_endereco">Número</option>
+<option value="_cep">CEP</option>
+<option value="_uf">UF</option></select></div>
+                <div class="form-group col-xs-12 col-sm-4"><select name="" id="ordem" class="form-control campo-filtro" form="formulario_filtro" atributo="ordem"><option value="">⇧</option>
+<option value="desc">⇩</option></select></div>
+                <div class="col-xs-12 col-sm-1" id="btn_remove_ordenacao">
+                  <span class="glyphicon glyphicon-minus botao-remove-linha" title="Remover Ordenação" onclick="removeLinha(this, &quot;&quot;, {confirm: false});"></span>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-12 text-center">
+            <span class="glyphicon glyphicon-plus botao-copia-linha" title="Adicionar Ordenação" onclick="copiaUltimaLinha('#copia_ordenacao', {}, this);"></span>
+          </div>
+          <div class="col-xs-12">
+            <button class="btn btn-success" id="concluir_ordenacao_consulta" type="button">Concluir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+            </div>
+</div></div></div></div>          <div class="col-xs-12">
+            <div class="pull-right">
+              <button id="pesquisar-reservas" class="btn btn-default" onclick="exibeMascara();" type="submit"><span class="glyphicon glyphicon-search"></span> Filtrar</button>
+              <button class="btn btn-default" onclick="limpaFormulario(this.form);" type="button"><span class="glyphicon glyphicon-erase"></span> Limpar</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</form>
+
+  <div id="conteudo-reservas-produtos">
+    <form class="form-horizontal formulario-padrao" id="formulario-reservas" action="#" onsubmit="return false" accept-charset="UTF-8" method="post">
+
+  <div class="col-xs-12" id="reservas-produtos">
+    <button type="button" class="btn btn-default botao-muda-visualizacao-tabela sobre-a-lista" modo_visualizacao="R" responsivo="sim" title="Alterar modo de visualização da tabela"><span class="glyphicon glyphicon-resize-full"></span></button><div class="btn-group botao-exibe-oculta-colunas sobre-a-lista" title="Configurar colunas da tabela"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span><span class="caret"></span></button><ul class="dropdown-menu multipla-selecao" role="menu"><li><ul class="configuracao-multipla-selecao"><li><span class="glyphicon glyphicon-cog botao-salva-configuracao-multipla-selecao" title="Salvar Configurações"></span><input class="configuracao-lista-input-quantidade-linhas pull-right" title="Configurar a quantidade de linhas da tabela para exibir." style=""></li></ul></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_id" type="checkbox" checked="checked" desabilitado="true" disabled="disabled" style=""><label for="oculta_id">Selecionar Todos</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__data_lancamento_documento" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__data_lancamento_documento">Data do Pedido</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__nome_cliente" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__nome_cliente">Cliente</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__descricao_produto" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__descricao_produto">Produto</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__codigo_produto" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__codigo_produto">Cod. Produto</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__numero_lancamento" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__numero_lancamento">Pedido de Venda</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_status" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_status">Situação</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_observacoes_internas" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_observacoes_internas">Observações Internas</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__observacoes" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__observacoes">Observações</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__endereco_entrega" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__endereco_entrega">Endereço de Entrega</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_encomenda_produto_id" type="checkbox" desabilitado="false" style=""><label for="oculta_encomenda_produto_id">Encomenda</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__numero_romaneio_separacao" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__numero_romaneio_separacao">N° Romaneio</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__data_entrega" type="checkbox" desabilitado="false" style=""><label for="oculta__data_entrega">Data de Entrega Romaneio</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_quantidade" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_quantidade">Quantidade</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__valor_final_com_cdci" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__valor_final_com_cdci">Valor</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__descricao_cidade" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__descricao_cidade">Cidade</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__descricao_bairro" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__descricao_bairro">Bairro</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__descricao_filial_venda" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__descricao_filial_venda">Filial da Venda</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__descricao_filial_entrega" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__descricao_filial_entrega">Filial de Entrega</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_local_estocagem" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_local_estocagem">Local de Estocagem</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__contatos" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__contatos">Contatos</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_vendedor" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta_descricao_vendedor">Vendedor</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_data_previsao_entrega" type="checkbox" desabilitado="false" style=""><label for="oculta_data_previsao_entrega">Previsão de Entrega</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_transportador" type="checkbox" desabilitado="false" style=""><label for="oculta_descricao_transportador">Transportador</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_tipo" type="checkbox" desabilitado="false" style=""><label for="oculta_descricao_tipo">Tipo</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__requisicao_distribuicao_mercadoria_id" type="checkbox" desabilitado="false" style=""><label for="oculta__requisicao_distribuicao_mercadoria_id">Requisição/Distribuição</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__valor_frete" type="checkbox" desabilitado="false" style=""><label for="oculta__valor_frete">Valor Frete</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_documento_id" type="checkbox" desabilitado="false" style=""><label for="oculta_documento_id">Auditoria</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_observacao_reserva_produto" type="checkbox" desabilitado="false" style=""><label for="oculta_observacao_reserva_produto">Observação da Reserva</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_id_pedido_ecommerce" type="checkbox" desabilitado="false" style=""><label for="oculta_id_pedido_ecommerce">ID do E-commerce</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_produto" type="checkbox" desabilitado="false" style=""><label for="oculta_descricao_produto">Descrição Produto</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__numero_lancamento_ordem_entrega" type="checkbox" desabilitado="false" style=""><label for="oculta__numero_lancamento_ordem_entrega">N° Lcto Reserva</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_observacoes_reserva_produto" type="checkbox" desabilitado="false" style=""><label for="oculta_observacoes_reserva_produto">Observações da Reserva</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__rotas_entregas" type="checkbox" checked="checked" desabilitado="false" style=""><label for="oculta__rotas_entregas">Rotas de Entrega</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta_descricao_marca" type="checkbox" desabilitado="false" style=""><label for="oculta_descricao_marca">Marca Produto</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__codigo_cliente" type="checkbox" desabilitado="false" style=""><label for="oculta__codigo_cliente">Código do Cliente</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__pais" type="checkbox" desabilitado="false" style=""><label for="oculta__pais">País</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__logradouro_pessoa_endereco" type="checkbox" desabilitado="false" style=""><label for="oculta__logradouro_pessoa_endereco">Logradouro</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__numero_pessoa_endereco" type="checkbox" desabilitado="false" style=""><label for="oculta__numero_pessoa_endereco">Número</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__cep" type="checkbox" desabilitado="false" style=""><label for="oculta__cep">CEP</label><span class="glyphicon glyphicon-move seta-mover"></span></li><li class="coluna-li margem-esquerda-li"><input class="checkbox mostra-esconde-colunas-tabela" id="oculta__uf" type="checkbox" desabilitado="false" style=""><label for="oculta__uf">UF</label><span class="glyphicon glyphicon-move seta-mover"></span></li></ul></div>
+<div class="btn-group sobre-a-lista btn-lista-impressoes-reservas" title="Imprimir">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    <span class="glyphicon glyphicon-print"></span>&nbsp;<span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a id="imprime_pdf_lista" class="cursor-pointer" target="_blank">Baixar PDF da lista de Reservas</a></li>
+    <li><a id="imprime-resumo-vendas" class=" cursor-pointer" target="_blank">Baixar PDF do resumo de venda das reservas selecionadas</a></li>
+  </ul>
+</div>
+<button class="btn btn-default sobre-a-lista" type="button" id="botao_selecionar_todos" title="Selecionar todos os registros das páginas."><span class="glyphicon glyphicon-unchecked"></span> </button>
+<button data-tabela="tabela_reserva_produto" class="btn btn-default exporta-excel sobre-a-lista" data-container_filtros="formulario_filtro" title="Exporta para o Excel" type="button"><i class="fa fa-file-excel-o" style="font-size:17px"></i></button>
+<button id="btn_abre_modal_pendencias_reservas" class="btn btn btn-primary sobre-a-lista" type="button" title="Verifica e resolve pendências na geração de reservas."><span class="glyphicon glyphicon-warning-sign"></span> Pendências</button>
+<div class="modal fade" id="modal_impressao_pdf" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" title="Fechar">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">Relatório de Gestão do Entrega</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group" id="campo_agrupamento"><label class="col-xs-12 col-sm-3 no-padding-right control-label" id="titulo_campo_agrupamento" for="agrupamento">Agrupamento</label><div class="col-xs-12 col-sm-8"><select name="agrupamento" id="agrupamento" class="form-control" atributo="agrupamento"><option value="filial_entrega">Filial de Entrega</option>
+<option value="filial_venda">Filial da Venda</option>
+<option value="cidade">Cidade</option>
+<option value="previsao_entrega">Previsão de entrega</option></select></div></div>
+      </div>
+      <div class="modal-footer">
+        <button id="botao_modal_gera_pdf" type="button" class="btn btn-default" data-dismiss="modal">Gerar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap tabela-responsiva configuracoes-colunas" id="tabela_reserva_produto" data-sortable="true" data-sortable-initialized="true"><thead><tr><th class="titulo_id nao-ocultar principal" style="min-width: 72px;" data-coluna_id="id" data-oculto="false" data-descricao="Selecionar Todos" data-sortable="false"><input type="checkbox" id="selecionar_todos" atributo="selecionar_todos" form="formulario-reservas" class="form-control checkbox selecionar-todos-reservas checkbox-cabecalho" campo_oculto="false" style=""><label for="selecionar_todos" style="top: 13px;"></label></th><th class="titulo__data_lancamento_documento" data-coluna_id="_data_lancamento_documento" data-oculto="false" data-descricao="Data do Pedido">Data do Pedido</th><th class="titulo__nome_cliente" style="min-width: 150px;" data-coluna_id="_nome_cliente" data-oculto="false" data-descricao="Cliente">Cliente</th><th class="titulo__descricao_produto" style="min-width: 150px;" data-coluna_id="_descricao_produto" data-oculto="false" data-descricao="Produto">Produto</th><th class="titulo__codigo_produto" data-coluna_id="_codigo_produto" data-oculto="false" data-descricao="Cod. Produto">Cod. Produto</th><th class="titulo__numero_lancamento" data-coluna_id="_numero_lancamento" data-oculto="false" data-descricao="Pedido de Venda">Pedido de Venda</th><th class="titulo_descricao_status" style="min-width: 150px;" data-coluna_id="descricao_status" data-oculto="false" data-descricao="Situação">Situação</th><th class="titulo_observacoes_internas" data-coluna_id="observacoes_internas" data-oculto="false" data-descricao="Observações Internas" data-sortable="false">Observações Internas</th><th class="titulo__observacoes" data-coluna_id="_observacoes" data-oculto="false" data-descricao="Observações" data-sortable="false">Observações</th><th class="titulo__endereco_entrega" data-coluna_id="_endereco_entrega" data-oculto="false" data-descricao="Endereço de Entrega" data-sortable="false">Endereço de Entrega</th><th class="titulo_encomenda_produto_id hide" data-coluna_id="encomenda_produto_id" data-oculto="true" data-descricao="Encomenda" data-sortable="false">Encomenda</th><th class="titulo__numero_romaneio_separacao" data-coluna_id="_numero_romaneio_separacao" data-oculto="false" data-descricao="N° Romaneio">N° Romaneio</th><th class="titulo__data_entrega hide" data-coluna_id="_data_entrega" data-oculto="true" data-descricao="Data de Entrega Romaneio">Data de Entrega Romaneio</th><th class="titulo_quantidade" data-coluna_id="quantidade" data-oculto="false" data-descricao="Quantidade">Quantidade</th><th class="titulo__valor_final_com_cdci" data-coluna_id="_valor_final_com_cdci" data-oculto="false" data-descricao="Valor">Valor</th><th class="titulo__descricao_cidade" style="min-width: 100px;" data-coluna_id="_descricao_cidade" data-oculto="false" data-descricao="Cidade">Cidade</th><th class="titulo__descricao_bairro" style="min-width: 150px;" data-coluna_id="_descricao_bairro" data-oculto="false" data-descricao="Bairro">Bairro</th><th class="titulo__descricao_filial_venda" data-coluna_id="_descricao_filial_venda" data-oculto="false" data-descricao="Filial da Venda">Filial da Venda</th><th class="titulo__descricao_filial_entrega" data-coluna_id="_descricao_filial_entrega" data-oculto="false" data-descricao="Filial de Entrega">Filial de Entrega</th><th class="titulo_descricao_local_estocagem" data-coluna_id="descricao_local_estocagem" data-oculto="false" data-descricao="Local de Estocagem">Local de Estocagem</th><th class="titulo__contatos" data-coluna_id="_contatos" data-oculto="false" data-descricao="Contatos" data-sortable="false">Contatos</th><th class="titulo_descricao_vendedor" data-coluna_id="descricao_vendedor" data-oculto="false" data-descricao="Vendedor">Vendedor</th><th class="titulo_data_previsao_entrega hide" data-coluna_id="data_previsao_entrega" data-oculto="true" data-descricao="Previsão de Entrega">Previsão de Entrega</th><th class="titulo_descricao_transportador hide" style="min-width: 150px;" data-coluna_id="descricao_transportador" data-oculto="true" data-descricao="Transportador">Transportador</th><th class="titulo_descricao_tipo hide" data-coluna_id="descricao_tipo" data-oculto="true" data-descricao="Tipo">Tipo</th><th class="titulo__requisicao_distribuicao_mercadoria_id hide" data-coluna_id="_requisicao_distribuicao_mercadoria_id" data-oculto="true" data-descricao="Requisição/Distribuição">Requisição/Distribuição</th><th class="titulo__valor_frete hide" data-coluna_id="_valor_frete" data-oculto="true" data-descricao="Valor Frete">Valor Frete</th><th class="titulo_documento_id hide" data-coluna_id="documento_id" data-oculto="true" data-descricao="Auditoria" data-sortable="false">Auditoria</th><th class="titulo_observacao_reserva_produto hide" data-coluna_id="observacao_reserva_produto" data-oculto="true" data-descricao="Observação da Reserva" data-sortable="false">Observação da Reserva</th><th class="titulo_id_pedido_ecommerce hide" data-coluna_id="id_pedido_ecommerce" data-oculto="true" data-descricao="ID do E-commerce" data-sortable="false">ID do E-commerce</th><th class="titulo_descricao_produto hide" style="min-width: 150px;" data-coluna_id="descricao_produto" data-oculto="true" data-descricao="Descrição Produto">Descrição Produto</th><th class="titulo__numero_lancamento_ordem_entrega hide" data-coluna_id="_numero_lancamento_ordem_entrega" data-oculto="true" data-descricao="N° Lcto Reserva">N° Lcto Reserva</th><th class="titulo_observacoes_reserva_produto hide" data-coluna_id="observacoes_reserva_produto" data-oculto="true" data-descricao="Observações da Reserva" data-sortable="false" data-atributo_consulta="observacao_reserva_produto">Observações da Reserva</th><th class="titulo__rotas_entregas" style="min-width: 230px;" data-coluna_id="_rotas_entregas" data-oculto="false" data-descricao="Rotas de Entrega" data-sortable="false">Rotas de Entrega</th><th class="titulo_descricao_marca hide" data-coluna_id="descricao_marca" data-oculto="true" data-descricao="Marca Produto">Marca Produto</th><th class="titulo__codigo_cliente hide" data-coluna_id="_codigo_cliente" data-oculto="true" data-descricao="Código do Cliente">Código do Cliente</th><th class="titulo__pais hide" data-coluna_id="_pais" data-oculto="true" data-descricao="País">País</th><th class="titulo__logradouro_pessoa_endereco hide" data-coluna_id="_logradouro_pessoa_endereco" data-oculto="true" data-descricao="Logradouro">Logradouro</th><th class="titulo__numero_pessoa_endereco hide" data-coluna_id="_numero_pessoa_endereco" data-oculto="true" data-descricao="Número">Número</th><th class="titulo__cep hide" data-coluna_id="_cep" data-oculto="true" data-descricao="CEP">CEP</th><th class="titulo__uf hide" data-coluna_id="_uf" data-oculto="true" data-descricao="UF">UF</th></tr></thead><tbody></tbody><tfoot><tr></tr></tfoot></table></div>
+    <div class="text-center div-paginacao-responsiva row"></div>
+  </div>
+
+  <!-- ESTA MODAL TAMBÉM É UTILIZADA NA TELA DE PEDIDO DE COMPRA -->
+
+<div class="modal fade" id="modal_entrega" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="labelModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="labelModal">Alteração da Entrega</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+
+          <div class="col-xs-12">
+            <div class="notificacoes-gerais-sistema"></div>
+          </div>
+
+          <input class="form-control" form="formulario-reservas" id="tipo_alteracao" name="tipo_alteracao" atributo="tipo_alteracao" type="hidden" style="">
+
+          <div id="container_filial_entrega">
+            <div class="col-xs-12"><div class="form-group" id="campo_filial_entrega_id"><label class="col-xs-12" id="titulo_campo_filial_entrega_id" obrigatorio="true" for="filial_entrega_id">Filial*</label><div class="col-xs-12"><select id="filial_entrega_id" class="form-control" form="formulario-reservas" atributo="filial_entrega_id" style="display: none;"><option value="">Selecione</option>
+
+
+
+
+<option value="3">Depósito</option>
+<option value="1">Lojão dos Móveis</option></select><div class="btn-group"><button type="button" class="multiselect dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="multiselect-selected-text">Selecione</span> <b class="caret"></b></button><ul class="multiselect-container dropdown-menu"><li><a tabindex="0"><label class="radio"><input type="radio" value="" style=""> Selecione</label></a></li><li class="active"><a tabindex="0"><label class="radio"><input type="radio" value="5" style=""> LOJA DEMO CENTRO</label></a></li><li><a tabindex="0"><label class="radio"><input type="radio" value="9" style=""> LOJA DEMO 2</label></a></li><li><a tabindex="0"><label class="radio"><input type="radio" value="6" style=""> DEPÓSITO DEMO</label></a></li><li><a tabindex="0"><label class="radio"><input type="radio" value="12" style=""> LOJA DEMO 3</label></a></li><li><a tabindex="0"><label class="radio"><input type="radio" value="3" style=""> Depósito</label></a></li><li><a tabindex="0"><label class="radio"><input type="radio" value="1" style=""> Lojão dos Móveis</label></a></li></ul></div></div></div></div>
+            <div class="painel-locais-estocagens"><div class="col-xs-12"><div class="form-group" id="campo_local_estocagem_id"><label class="col-xs-12" id="titulo_campo_local_estocagem_id" for="local_estocagem_id">Local de Estocagem*</label><div class="col-xs-12"><select id="local_estocagem_id" class="form-control" atributo="local_estocagem_id"><option value="">Selecione</option>
+
+
+<option value="324">Assistencia LOJA DEMO 3</option>
+
+</select></div></div></div>
+</div>
+
+            <div class="painel-modelo-nf" style="display: none;">
+              
+            </div>
+
+            <div class="painel-codigo-unico" style="display: none;">
+              <div class="col-xs-12"><div class="form-group" id="campo_numero_codigo_unico"><label class="col-xs-12" id="titulo_campo_numero_codigo_unico" for="numero_codigo_unico">Código Único</label><div class="col-xs-12"><input class="form-control" form="formulario-reservas" id="numero_codigo_unico" atributo="numero_codigo_unico" type="text" style=""></div></div></div>
+            </div>
+
+            <div class="col-xs-12"><div class="form-group" id="campo_justificativa_id"><label class="col-xs-12" id="titulo_campo_justificativa_id" for="justificativa_id">Justificativa</label><div class="col-xs-12"><select id="justificativa_id" class="form-control" form="formulario-reservas" atributo="justificativa_id"><option value="">Selecione</option>
+</select></div></div></div>
+            <div class="col-xs-12"><div class="form-group" id="campo_motivo"><label class="col-xs-12" id="titulo_campo_motivo" for="motivo">Observação</label><div class="col-xs-12"><input class="form-control" form="formulario-reservas" id="motivo" atributo="motivo" type="text" style=""></div></div></div>
+          </div>
+
+
+
+          <div id="container_previsao_entrega">
+            <div class="col-xs-12"><div class="form-group" id="campo_data_previsao_entrega"><label class="col-xs-12" id="titulo_campo_data_previsao_entrega" obrigatorio="true" for="data_previsao_entrega">Previsão de Entrega*</label><div class="col-xs-12"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data" form="formulario-reservas" id="data_previsao_entrega" atributo="data_previsao_entrega" type="text" mascara="99/99/9999" maxlength="10" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div></div>
+          </div>
+
+          <div id="container_quantidade">
+            <div class="col-xs-12"><div class="form-group" id="campo_quantidade"><label class="col-xs-12" id="titulo_campo_quantidade" obrigatorio="true" for="quantidade">Quantidade*</label><div class="col-xs-12"><input class="form-control campo-numerico decimal" form="formulario-reservas" id="quantidade" type="text" value="" atributo="quantidade" data-precisao_decimal="0" style=""></div></div></div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-success" id="btn_salvar_entrega">Alterar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="modal fade" id="modal_observacao_reserva_produto" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="labelModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="labelModal">Alterar Observação</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+
+          <div class="col-xs-12">
+            <div class="notificacoes-gerais-sistema"></div>
+          </div>
+
+          <div class="col-xs-12"><div class="form-group" id="campo_observacao_reserva_produto"><label class="col-xs-12" id="titulo_campo_observacao_reserva_produto" for="observacao_reserva_produto">Observação</label><div class="col-xs-12"><textarea class="form-control" form="formulario-reservas" id="observacao_reserva_produto" rows="5" style="resize: vertical;" atributo="observacao_reserva_produto"></textarea></div></div></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-success" id="btn_salvar_observacao">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="modal fade" id="modal_contatos" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="labelModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="labelModal">Contatos</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="row" id="conteudo_modal">
+          <div class="conteudo-modal-contatos">
+</div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="col-xs-12">
+    <button class="btn btn-success" id="btn_gerar_romaneio" type="button">Gerar Romaneio</button><br>
+    <div class="container-quantidade-selecionada">
+      <span>Quantidade de registros selecionados: </span>
+      <span class="quantidade-selecionada">0</span><br>
+
+      <span>Quantidade de vendas selecionadas: </span>
+      <span class="quantidade-vendas-selecionada">0</span>
+    </div>
+  </div>
+</form>
+  </div>
+</div>
+
+<link rel="stylesheet" href="#">
+
+
+
+
+
+<div class="modal fade" id="modal_romaneio" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="labelModal">
+  <div class="modal-dialog tamanho-grande" role="document">
+    <div class="modal-content tamanho-grande">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="labelModal">Romaneio de Entrega</h4>
+      </div>
+
+      <div class="modal-body" id="conteudo_modal_romaneio"></div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-success" form="formulario_modal_romaneio">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="#" media="screen">
+<link rel="stylesheet" href="#" media="print">
+  
+
+<div class="modal fade" id="modal_calendario_entrega_montagem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog tamanho-medio"><div class="modal-content tamanho-medio"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Calendário</h4></div><div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <div id="__calendario_quantidades_entrega_montagem"></div>
+    </div>
+  </div>
+</div></div></div></div>
+<div class="modal fade" id="modal_endereco_entrega" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="labelModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_desvinculo_encomenda" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Desvincular Encomenda</h4></div><div class="modal-body">
+  <div class="notificacoes-gerais-sistema"></div>
+  <form class="form-horizontal formulario-padrao" action="#" onsubmit="return false" accept-charset="UTF-8" method="post">
+    <div class="row">
+      <div class="col-xs-12"><div class="form-group" id="campo_pedido_venda"><label class="col-xs-12" id="titulo_campo_pedido_venda" for="pedido_venda">Pedido de Venda</label><div class="col-xs-12"><input class="form-control" disabled="disabled" id="pedido_venda" name="pedido_venda" atributo="pedido_venda" type="text" style=""></div></div></div>
+      <div class="col-xs-12"><div class="form-group" id="campo_descricao_produto"><label class="col-xs-12" id="titulo_campo_descricao_produto" for="descricao_produto">Produto</label><div class="col-xs-12"><input class="form-control" disabled="disabled" id="descricao_produto" name="descricao_produto" atributo="descricao_produto" type="text" style=""></div></div></div>
+      <div class="col-xs-12"><div class="form-group" id="campo_encomenda"><label class="col-xs-12" id="titulo_campo_encomenda" for="encomenda">Encomenda</label><div class="col-xs-12"><input class="form-control" disabled="disabled" id="encomenda" name="encomenda" atributo="encomenda" type="text" style=""></div></div></div>
+      <div class="col-xs-12"><div class="form-group" id="campo_situacao_encomenda"><label class="col-xs-12" id="titulo_campo_situacao_encomenda" for="situacao_encomenda">Situação da Encomenda</label><div class="col-xs-12"><input class="form-control" disabled="disabled" id="situacao_encomenda" name="situacao_encomenda" atributo="situacao_encomenda" type="text" style=""></div></div></div>
+
+      <div class="col-xs-12 text-info font-12">
+        Desvinculando a Encomenda da reserva, o estoque ficará disponível para novas Vendas.<br>
+        E será gerada automaticamente nova Encomenda para a reserva.
+        <div class="space-6"></div>
+      </div>
+      <div class="col-xs-12">
+        <button class="btn btn-danger" id="botao_desvinculo_encomenda" type="button">Desvincular Encomenda</button>
+      </div>
+    </div>
+</form></div></div></div></div>
+
+<div class="modal fade" id="modal_pendencias_reservas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog tamanho-medio"><div class="modal-content tamanho-medio"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Pendências</h4></div><div class="modal-body">
+  <div id="conteudo_modal_pendencias_reservas"></div>
+</div></div></div></div>
+
+
+      </div>
   </section>
 </main>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
 </body>
 </html>

@@ -10,6 +10,11 @@
 <script src="../assets/guarda.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/telas/simples_remessa.css">
 <style>
   /* Valores extraídos do CSS original (application.css / menu.css) */
   :root {
@@ -277,6 +282,145 @@
   @media (prefers-color-scheme: dark) {
     html[theme-mode=auto] .marca-erp { background-image: url(../assets/marca/logo_claro.svg); }
   }
+
+  /* Ajustes do ERP sobre o Bootstrap 3 (valores lidos do CSS original) */
+  #container_conteudo { font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--texto); }
+  #container_conteudo a:not(.btn) { color: #2f84ec; }
+  #container_conteudo .panel-title > a { color: inherit; }
+  /* no ERP, rótulos, botões e cabeçalhos aparecem com peso normal */
+  #container_conteudo label, #container_conteudo .btn, #container_conteudo th { font-weight: 500; }
+  #container_conteudo .panel-title { font-weight: 500; }
+  #container_conteudo .nav-tabs a { font-weight: 400; }
+  .btn { outline: 0 !important; border-radius: 5px; }
+  .painel-filtros-padroes, .painel-filtros-padroes > .panel-heading { background-color: #f5f5f5; }
+
+  /* seleção múltipla com busca (Kit de Produto) */
+  .Tokenize .TokensContainer { list-style: none; margin: 0; padding: 6px 12px; min-height: 58px; cursor: text;
+    background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+  .Tokenize .Placeholder { color: #999; padding: 4px 0 0 24px; position: relative; }
+  .Tokenize .lupa-multiselect-autocompletar { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; }
+  .Tokenize .lupa-multiselect-autocompletar:before { content: "\e003"; font-family: 'Glyphicons Halflings'; color: #ccc; font-size: 14px; }
+  .Tokenize .TokenSearch input { border: 0; outline: 0; width: 5px; padding: 0; background: transparent; color: inherit; }
+  .Tokenize .Dropdown { display: none; }
+  .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    color: #fff; background-color: #2f84ec; border-color: transparent; }
+  .modal-header { background-color: #2f84ec; color: #fff; }
+  .nav > li > a:hover, .nav > li > a:focus { color: #2f84ec; }
+  .sobre-a-lista { margin: 0 5px 10px 0; }
+  .botao-muda-visualizacao-tabela { display: none; }
+  .form-control { border-radius: 10px; }
+  .panel { border-radius: 10px; }
+  .panel-heading { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .panel-heading.collapsed { border-radius: 10px; }
+  .panel-heading[data-toggle=collapse] { cursor: pointer; }
+  .input-group-btn .btn { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+  .input-group .input-group-addon:last-child { border-top-right-radius: 10px !important; border-bottom-right-radius: 10px !important; }
+  .container-pesquisa .input-group .form-control { border-top-left-radius: 10px !important; border-bottom-left-radius: 10px !important; }
+  .tab-pane { padding-top: 20px; }
+  .table thead { background-color: #2f84ec !important; color: #fff !important; }
+  .table tbody { cursor: grab; }
+  .div-table { overflow-x: auto; }
+  .div-table .table { margin-bottom: 0; }
+  .div-table .table thead { white-space: nowrap; }
+  .nao-quebra-linha { white-space: nowrap; }
+  table[data-sortable] th, table[data-sortable] td { text-align: left; padding: 10px; }
+  table[data-sortable] thead th { border-bottom: 2px solid #e0e0e0; }
+  .btn-group.grupo-botoes-radio > .opcao-componente-radio.btn:last-of-type { border-radius: 0 4px 4px 0; }
+  .data-atualizacao-cadastro { text-align: right; color: #bbb; margin: 5px; }
+  .static-value { padding-top: 7px; }
+  .cursor-pointer { cursor: pointer; }
+  .margem-inferior { margin-bottom: 15px; }
+
+  #container_conteudo .nav-tabs > li.active > a { color: #555; }
+
+  /* checkbox do ERP */
+  input.checkbox { display: none; }
+  input.checkbox + label { cursor: pointer; position: relative; padding-left: 35px; margin-right: 10px; color: #333; margin-top: 7px; min-height: 25px; }
+  input.checkbox:disabled + label { cursor: default; }
+  input.checkbox:disabled + label:before { opacity: 0.4; }
+  input.checkbox + label:before, input.checkbox + label:after { content: ''; width: 25px; height: 25px; left: 0; bottom: 0; text-align: center; position: absolute; }
+  input.checkbox + label:before { background-color: transparent; border: 2px solid #b1b0b0; border-radius: 3px; transition: all .3s ease-in-out; }
+  input.checkbox:checked + label:before { box-shadow: inset 0 0 0 13px #2f84ec; border: 3px solid #2f84ec; }
+  input.checkbox:checked + label:after { content: "\2713"; line-height: 26px; font-size: 18px; color: #fff; }
+  /* controles que o ERP mantém ocultos até haver registro */
+  .exclui-registro-relacionado + label, #remove_imagem_padrao_pessoa, #remove_imagem_padrao_produto { display: none; }
+  #div_imagem_padrao_pessoa, #div_imagem_padrao_produto { position: relative; display: inline-block; }
+
+  /* campos com busca (typeahead) */
+  .input-group .twitter-typeahead { display: table-cell !important; width: 100%; }
+  .twitter-typeahead .tt-input { position: relative !important; vertical-align: middle; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .tt-hint, .tt-dropdown-menu { display: none !important; }
+  .twitter-typeahead .tt-input:not([disabled]):not([readonly]) { background-color: #fff !important; }
+  .painel-filtros-padroes .panel-heading, .painel-filtros-padroes .panel-heading * { font-weight: 400; }
+
+  /* bootstrap-switch: 100px, cada metade com 50px */
+  .bootstrap-switch { display: inline-block; position: relative; overflow: hidden; width: 100px; border: 1px solid #ccc;
+    border-radius: 4px; cursor: pointer; text-align: left; vertical-align: middle; line-height: 8px; user-select: none; }
+  .bootstrap-switch .bootstrap-switch-container { display: inline-block; width: 150px; white-space: nowrap; transition: margin-left .5s; }
+  .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container { margin-left: 0; }
+  .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container { margin-left: -50px; }
+  .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-label {
+    display: inline-block !important; box-sizing: border-box; width: 50px; height: 100%; padding: 6px 0;
+    font-size: 14px; line-height: 20px; text-align: center; cursor: pointer; vertical-align: top; }
+  .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary { background: #2f84ec; color: #fff; }
+  .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { background: #eee; color: #000; }
+  .bootstrap-switch .bootstrap-switch-label { background: #fff; color: #333; margin: -1px 0; }
+  .bootstrap-switch input { position: absolute !important; opacity: 0; z-index: -1; }
+
+  /* envio de arquivo */
+  .botao-upload-arquivo { position: absolute; width: 115px; border-bottom-right-radius: 0; border-top-right-radius: 0; }
+  .campo-descricao-arquivo-upload { cursor: default !important; padding-left: 120px; }
+  .campo-oculto-arquivo-upload { display: none !important; }
+
+  /* abas do ERP: o painel ativo é mostrado pelo script abaixo */
+  .tab-content > .tab-pane { display: none; }
+  .tab-content > .tab-pane.active { display: block; }
+
+
+  /* ---------- Tema escuro (valores do tema escuro do ERP) ---------- */
+  @media (prefers-color-scheme: dark) {
+    html[theme-mode=auto] #container_conteudo,
+    html[theme-mode=auto] #container_conteudo label,
+    html[theme-mode=auto] input.checkbox + label { color: #f5f5f5; }
+    html[theme-mode=auto] .panel { background-color: #2c2c2e; }
+    html[theme-mode=auto] .panel-default { border-color: #222; }
+    html[theme-mode=auto] .panel-default > .panel-heading,
+    html[theme-mode=auto] .painel-filtros-padroes > .panel-heading { background-color: #3a3a3c; color: #f5f5f5; border-color: #222; }
+    html[theme-mode=auto] .painel-filtros-padroes { background-color: #2c2c2e; }
+    html[theme-mode=auto] .form-control, html[theme-mode=auto] textarea,
+    html[theme-mode=auto] .twitter-typeahead .tt-input:not([disabled]):not([readonly]) {
+      background-color: #1c1c1e !important; color: #fff; border-color: #3a3a3c; }
+    html[theme-mode=auto] .form-control[disabled], html[theme-mode=auto] .form-control[readonly] { background-color: #3a3a3c !important; }
+    html[theme-mode=auto] .item_collapse_filtros .form-control { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .input-group-addon { color: #f5f5f5; background-color: #1c1c1e; border-color: #222; }
+    html[theme-mode=auto] .btn-default { color: #f5f5f5; background-color: #2c2c2e; border-color: #222; }
+    html[theme-mode=auto] .btn-default:hover, html[theme-mode=auto] .btn-default:focus { color: #fff; background-color: #1c1c1e; border-color: #111; }
+    html[theme-mode=auto] .nav-tabs { border-bottom-color: #1c1c1e; }
+    html[theme-mode=auto] #container_conteudo .nav-tabs > li.active > a,
+    html[theme-mode=auto] .nav-tabs > li.active > a:hover,
+    html[theme-mode=auto] .nav-tabs > li.active > a:focus { color: #f5f5f5; background-color: #1c1c1e; border: 1px solid #2c2c2e; }
+    html[theme-mode=auto] .nav-tabs > li > a:hover { border-color: #2c2c2e #2c2c2e #1c1c1e; background-color: transparent; }
+    html[theme-mode=auto] .div-table { background-color: #222; }
+    html[theme-mode=auto] table[data-sortable].sortable-theme-bootstrap { background-color: #48484a; color: #f5f5f5; }
+    html[theme-mode=auto] .table-striped > tbody > tr:nth-of-type(odd) { background-color: #3a3a3c; }
+    html[theme-mode=auto] .table-hover > tbody > tr:hover { background-color: #2c2c2e !important; }
+    html[theme-mode=auto] .table-bordered, html[theme-mode=auto] .table-bordered td, html[theme-mode=auto] .table-bordered th { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch { border-color: #222; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default { color: #fff; background: #48484a; }
+    html[theme-mode=auto] .bootstrap-switch .bootstrap-switch-label { color: #fff; background: #1f1f1f; }
+    html[theme-mode=auto] .Tokenize .TokensContainer { background-color: #1c1c1e; color: #f5f5f5; border-color: #3a3a3c; }
+    html[theme-mode=auto] .dropdown-menu, html[theme-mode=auto] .dropdown-menu > li > a { background-color: #2c2c2e; color: #f5f5f5; }
+    html[theme-mode=auto] .modal-content, html[theme-mode=auto] .modal-footer { background-color: #1c1c1e; color: #f5f5f5; }
+    html[theme-mode=auto] .img-thumbnail { background-color: #2c2c2e; border-color: #3a3a3c; }
+    html[theme-mode=auto] .page-header { border-bottom-color: #3a3a3c; }
+    html[theme-mode=auto] .list-group-item { background-color: #34424b; border-color: #20292e; }
+    html[theme-mode=auto] .close { color: #fff; text-shadow: none; }
+  }
+
+  /* Layout do protótipo convive com o Bootstrap */
+  #sidebar a, #barra_superior a { color: inherit; text-decoration: none; }
+  #sidebar *, #barra_superior * { box-sizing: border-box; }
+  #barra_superior .titulo { font-family: 'Work Sans', sans-serif; }
 </style>
 </head>
 <body>
@@ -315,13 +459,13 @@
   <ul class="sidebar-nav">
     <li class="espacamento-itens-menu acrilico"><a href="../menu/favoritos.html"><svg><use href="#i-estrela"/></svg>Favoritos</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/cadastros.html"><svg><use href="#i-cadastros"/></svg>Cadastros</a></li>
-<li class="espacamento-itens-menu acrilico"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
+<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/vendas.html"><svg><use href="#i-vendas"/></svg>Vendas</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/ecommerce.html"><svg><use href="#i-ecommerce"/></svg>E-commerce</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/compras.html"><svg><use href="#i-compras"/></svg>Compras</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/financeiro.html"><svg><use href="#i-financeiro"/></svg>Financeiro</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/estoque.html"><svg><use href="#i-estoque"/></svg>Estoque</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/gerencial.html"><svg><use href="#i-gerencial"/></svg>Gerencial</a></li>
-<li class="espacamento-itens-menu acrilico ativo"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
+<li class="espacamento-itens-menu acrilico"><a href="../menu/fiscal.html"><svg><use href="#i-fiscal"/></svg>Fiscal</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/tributacao.html"><svg><use href="#i-tributacao"/></svg>Tributação</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/integracoes.html"><svg><use href="#i-integracoes"/></svg>Integrações</a></li>
 <li class="espacamento-itens-menu acrilico"><a href="../menu/configuracao.html"><svg><use href="#i-configuracoes"/></svg>Configurações</a></li>
@@ -340,9 +484,243 @@
     </div>
   </header>
   <section id="container_conteudo" class="acrilico">
-<!-- pendente --><div class="pendente"><h2>Simples Remessa</h2><p>Tela ainda não reconstruída.</p><p><a href="../menu/fiscal.html">← Voltar para Fiscal</a></p></div>
+<div id="atualiza_conteudo" class="destaque-conteudo">
+        <form class="form-horizontal formulario-padrao" id="formulario" action="#" onsubmit="return false" accept-charset="UTF-8" data-remote="true" method="post">
+    
+<div class="row">
+  <div class="col-xs-12 col-sm-6">
+    <div class="form-group" id="campo_numero_lancamento"><label class="col-md-4 col-lg-4 no-padding-right control-label" id="titulo_campo_numero_lancamento" for="numero_lancamento">Nº Lançamento</label><div class="col-lg-6"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario" atributo="numero_lancamento" campo="numero_lancamento" data-filtros="{&quot;escopos&quot;:&quot;entregas_futuras_pendentes&quot;}" data-filtrar_com="{}" data-filtros_lista="{&quot;exibir_entregas_futuras_pendentes&quot;:true,&quot;grupos_operacoes_documentos.tipo_grupo_ilike&quot;:&quot;ENTREGA_FUTURA&quot;}" data-atributo_descricao="numero_lancamento" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario" id="autocompletar_numero_lancamento" atributo="numero_lancamento" campo="numero_lancamento" data-filtros="{&quot;escopos&quot;:&quot;entregas_futuras_pendentes&quot;}" data-filtrar_com="{}" data-filtros_lista="{&quot;exibir_entregas_futuras_pendentes&quot;:true,&quot;grupos_operacoes_documentos.tipo_grupo_ilike&quot;:&quot;ENTREGA_FUTURA&quot;}" data-atributo_descricao="numero_lancamento" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-0"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario" id="numero_lancamento" name="simples_remessa[numero_lancamento]" atributo="numero_lancamento" type="hidden" style=""></div></div>
+    <input class="form-control" form="formulario" id="fechamento_por_local" name="nao_considerar" value="{}" atributo="fechamento_por_local" type="hidden" style="">
+  </div>
+
+  <div class="col-lg-1"></div>
+
+  <div class="col-xs-12"></div>
+
+  <input class="form-control" form="formulario" id="entrega_futura_id" name="simples_remessa[entrega_futura_id]" atributo="entrega_futura_id" type="hidden" style="">
+
+  <div class="col-xs-12 col-sm-6">
+    <div class="form-group" id="campo_operacao_documento_id"><label class="col-lg-4 no-padding-right control-label" id="titulo_campo_operacao_documento_id" for="operacao_documento_id">Operação*</label><div class="col-lg-6"><select name="simples_remessa[operacao_documento_id]" id="operacao_documento_id" class="form-control" form="formulario" atributo="operacao_documento_id" data-gera_ordem_entrega="[129,53,14]" data-operacoes_sugere_entrega="[14,129,53]" data-operacoes_geram_entrega="[51,6,55,129,53,14]" data-operacao_nao_movimenta_estoque="[75,13,18,22,24,25,21,62,57,78,54,66,129,130,64,118,82,119,83,73,124,76,67,53,123,14]"></select></div></div>
+    <input class="form-control" form="formulario" id="empresa_utiliza_controle_ordem_entrega" name="nao_considerar" value="true" atributo="empresa_utiliza_controle_ordem_entrega" type="hidden" style="">
+  </div>
+
+  <div class="col-xs-12 col-sm-6">
+    <div class="form-group" id="campo_data_hora_saida"><label class="col-lg-4 no-padding-right control-label" id="titulo_campo_data_hora_saida" for="data_hora_saida">Data de Saída</label><div class="col-lg-6"><div class="input-group datetimepicker" style="width: 100%"><input class="form-control campo-data campo-data-hora" form="formulario" id="data_hora_saida" name="simples_remessa[data_hora_saida]" value="" data-datetime="true" atributo="data_hora_saida" type="text" mascara="99/99/9999 99:99" maxlength="16" autocomplete="off" style=""><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div></div>
+  </div>
+
+  <div class="col-xs-12 col-sm-6">
+    <div class="form-group" id="campo_numero_documento"><label class="col-lg-4 no-padding-right control-label" id="titulo_campo_numero_documento" for="numero_documento">Nº Documento</label><div class="col-lg-6"><input class="form-control" disabled="disabled" form="formulario" id="numero_documento" name="simples_remessa[numero_documento]" atributo="numero_documento" type="text" style=""></div></div>
+  </div>
+
+  <div class="col-xs-12 col-sm-6">
+    <div class="form-group" id="campo_serie"><label class="col-lg-4 no-padding-right control-label" id="titulo_campo_serie" for="serie">Série</label><div class="col-lg-6"><input class="form-control" disabled="disabled" form="formulario" id="serie" name="simples_remessa[serie]" atributo="serie" type="text" style=""></div></div>
+  </div>
+
+  <div class="col-xs-12">
+    <div class="form-group" id="campo_cliente"><label class="col-lg-2 no-padding-right control-label" id="titulo_campo_cliente" for="cliente">Cliente</label><div class="col-lg-9"><input class="form-control" disabled="disabled" form="formulario" id="cliente" name="simples_remessa[cliente]" atributo="cliente" type="text" style=""></div></div>
+  </div>
+
+  <div class="col-xs-12">
+    <div class="form-group" id="campo_chave_acesso"><label class="col-lg-2 no-padding-right control-label" id="titulo_campo_chave_acesso" for="chave_acesso">Chave de Acesso</label><div class="col-lg-9"><input class="form-control" disabled="disabled" form="formulario" id="chave_acesso" name="simples_remessa[chave_acesso]" atributo="chave_acesso" type="text" style=""></div></div>
+  </div>
+</div>
+
+    <input class="form-control" form="formulario" id="empresa_utiliza_codigo_unico" name="nao_considerar" value="false" atributo="empresa_utiliza_codigo_unico" type="hidden" style="">
+
+
+
+<div class="div-table"><table class="table table-bordered table-hover table-striped sortable-theme-bootstrap" id="tabela_itens">
+    <thead>
+    <tr>
+      <th><input checked="checked" class="form-control checkbox checkbox-cabecalho" form="formulario" id="seleciona_todos" name="nao_enviar" value="true" atributo="seleciona_todos" type="checkbox" style=""><label for="seleciona_todos">&nbsp;</label></th>
+      <th>Seq.</th>
+      <th>Código</th>
+      <th min-width="200px">Descrição</th>
+      <th>Quantidade (Simples Remessa)</th>
+      <th>Quantidade (Entrega Futura)</th>
+      <th>Valor Unitário</th>
+      <th>Desconto</th>
+      <th>Total Líquido</th>
+      <th class="coluna-entregar" style="display: none;">Entregar</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table></div>
+
+    <div style="margin-top: 20px;">
+  <div class="panel panel-default">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#painel_detalhes_transporte">
+      <h4 class="panel-title">
+        <a id="titulo_detalhe_transporte"><span class="fa fa-truck fa-flip-horizontal"></span><strong> Detalhes do Transporte</strong></a>
+      </h4>
+    </div>
+    <div id="painel_detalhes_transporte" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_tipo_frete"><label class="col-xs-12" id="titulo_campo_tipo_frete" for="tipo_frete">Frete</label><div class="col-xs-12"><select name="simples_remessa[tipo_frete]" id="tipo_frete" class="form-control" form="formulario" value="9" atributo="tipo_frete"><option value="">Selecione</option>
+<option value="0">0 - Contratação do Frete por conta do Remetente (CIF)</option>
+<option value="1">1 - Contratação do Frete por conta do Destinatário (FOB)</option>
+<option value="2">2 - Contratação do Frete por conta de Terceiros</option>
+<option value="3">3 - Transporte Próprio por conta do Remetente</option>
+<option value="4">4 - Transporte Próprio por conta do Destinatário</option>
+<option selected="selected" value="9">9 - Sem Ocorrência de Transporte</option></select></div></div></div>
+        <div class="col-xs-12 col-sm-6"><div class="form-group" id="campo_transportador_id"><label class="col-xs-12" id="titulo_campo_transportador_id" for="transportador_id">Transportador</label><div class="col-xs-12"><div class="container-pesquisa" style="width: 100%"><div class="input-group" style="width: 100%"><span class="twitter-typeahead" style="position: relative; display: inline-block; direction: ltr;"><input class="form-control autocompletar tt-hint" form="formulario" value="" atributo="transportador_id" campo="descricao" data-filtros="{&quot;escopos&quot;:&quot;ativo&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input class="form-control autocompletar tt-input" form="formulario" id="autocompletar_transportador_id" value="" atributo="transportador_id" campo="descricao" data-filtros="{&quot;escopos&quot;:&quot;ativo&quot;}" data-filtrar_com="{}" data-filtros_lista="{}" data-atributo_descricao="descricao" data-timeout="1000" type="text" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><span class="tt-dropdown-menu dropdown-componente-pesquisa" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;"><div class="tt-dataset-1"></div></span></span><span class="input-group-addon cursor-pointer span-elemento-pesquisa"><span class="glyphicon glyphicon-search"></span></span></div></div><input class="form-control autocompletar-id" form="formulario" id="transportador_id" name="simples_remessa[transportador_id]" atributo="transportador_id" type="hidden" style=""></div></div></div>
+        <div class="col-xs-12 col-sm-6 campo-peso-bruto oculto"><div class="form-group" id="campo_peso_bruto"><label class="col-xs-12" id="titulo_campo_peso_bruto" for="peso_bruto">Peso Bruto</label><div class="col-xs-12"><input class="form-control campo-numerico decimal" form="formulario" id="peso_bruto" name="simples_remessa[peso_bruto]" type="text" value="0,000" atributo="peso_bruto" data-precisao_decimal="3" mascara_monetario="true" style=""></div></div></div>
+        <div class="col-xs-12 col-sm-6 campo-peso-liquido oculto"><div class="form-group" id="campo_peso_liquido"><label class="col-xs-12" id="titulo_campo_peso_liquido" for="peso_liquido">Peso Líquido</label><div class="col-xs-12"><input class="form-control campo-numerico decimal" form="formulario" id="peso_liquido" name="simples_remessa[peso_liquido]" type="text" value="0,000" atributo="peso_liquido" data-precisao_decimal="3" mascara_monetario="true" style=""></div></div></div>
+        <div class="col-xs-12 col-sm-6 campo-quantidade-volume oculto"><div class="form-group" id="campo_quantidade_volume"><label class="col-xs-12" id="titulo_campo_quantidade_volume" for="quantidade_volume">Quantidade de Volumes</label><div class="col-xs-12"><input class="form-control campo-numerico" form="formulario" id="quantidade_volume" name="simples_remessa[quantidade_volume]" type="text" value="0" atributo="quantidade_volume" style=""></div></div></div>
+        <div class="col-xs-12 col-sm-6 campo-especie-volume oculto"><div class="form-group" id="campo_especie_volume"><label class="col-xs-12" id="titulo_campo_especie_volume" for="especie_volume">Espécie dos Volumes</label><div class="col-xs-12"><input class="form-control" form="formulario" id="especie_volume" name="simples_remessa[especie_volume]" value="" atributo="especie_volume" type="text" style=""></div></div></div>
+        <div class="col-xs-12 col-sm-6 campo-marca-volume oculto"><div class="form-group" id="campo_marca_volume"><label class="col-xs-12" id="titulo_campo_marca_volume" for="marca_volume">Marca dos Volumes</label><div class="col-xs-12"><input class="form-control" form="formulario" id="marca_volume" name="simples_remessa[marca_volume]" atributo="marca_volume" type="text" style=""></div></div></div>
+        <div class="col-xs-12 col-sm-6 campo-numero-volume oculto"><div class="form-group" id="campo_numero_volume"><label class="col-xs-12" id="titulo_campo_numero_volume" for="numero_volume">Nº de Volumes</label><div class="col-xs-12"><input class="form-control" form="formulario" id="numero_volume" name="simples_remessa[numero_volume]" atributo="numero_volume" type="text" style=""></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+<div class="row">
+  <div class="col-xs-12 col-sm-7">
+    <div class="form-group" id="campo_observacoes"><label class="col-xs-12 col-sm-3 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_observacoes" for="observacoes">Observações</label><div class="col-sm-12"><textarea class="form-control" form="formulario" id="observacoes" name="simples_remessa[observacoes]" rows="3" style="resize: vertical;" atributo="observacoes"></textarea></div></div>
+  </div>
+
+  <div id="painel_resumo_simples_remessa" class="col-xs-12 col-sm-5">
+    <div class="col-xs-12 well">
+      <div class="col-xs-12">
+        Total da Nota: <strong>R$ 0,00</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <button class="btn btn-info" id="botao_emitir_simples_remessa" type="button">Finalizar</button>
+    <a class="btn btn-default" descricao="Voltar" href="#">Voltar</a>
+
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" title="Fechar"><span aria-hidden="true">×</span></button><h4 class="modal-title">Quantidade por Local de Estocagem</h4></div><div class="modal-body"><input class="form-control" form="formulario" id="filtro_produto_id" name="nao_considerar" atributo="filtro_produto_id" type="hidden" style="">
+
+<div class="quantidade-por-local-estocagem">
+      <div class="form-group campo-quantidade-local-estocagem" id="campo_quantidade_local_estocagem">
+        <label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" for="quantidade_local_estocagem" id="titulo_campo_quantidade_local_estocagem">Quantidade no LOJA DEMO CENTRO</label>
+        <div class="col-sm-12 input-group" style="padding-left: 15px; padding-right: 15px;">
+          <input atributo="quantidade_local_estocagem" class="form-control campo-numerico " data-local_id="306" form="formulario" id="quantidade_local_estocagem" name="nao_considerar" type="text" style="">
+          <span class="input-group-addon input-group-estoque-atual">Atual: <span class="estoque-atual"></span></span>
+        </div>
+      </div>
+
+      <div class="form-group campo-codigos-unicos" id="campo_codigos_unicos"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos" for="codigos_unicos">Quantidade no LOJA DEMO CENTRO</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="codigos_unicos" class=" multiselect-autocompletar" form="formulario" multiple="multiple" permite_novos_elementos="true" campo="numero" data-registros="[]" data-filtrar_com="{&quot;produto_id&quot;:&quot;filtro_produto_id&quot;}" name="simples_remessa[codigos_unicos][]" id="codigos_unicos_306" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div>
+    <div class="form-group campo-codigos-unicos-manual-saida" id="campo_codigos_unicos_manual_saida"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos_manual_saida" for="codigos_unicos_manual_saida">Quantidade no LOJA DEMO CENTRO</label><div class="col-xs-12"><input class="form-control" form="formulario" id="codigos_unicos_manual_saida_306" name="simples_remessa[codigos_unicos_manual_saida]" atributo="codigos_unicos_manual_saida" campo="numero" type="text" style=""></div></div>
+      <div class="form-group campo-quantidade-local-estocagem" id="campo_quantidade_local_estocagem">
+        <label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" for="quantidade_local_estocagem" id="titulo_campo_quantidade_local_estocagem">Quantidade no LOJA DEMO 3</label>
+        <div class="col-sm-12 input-group" style="padding-left: 15px; padding-right: 15px;">
+          <input atributo="quantidade_local_estocagem" class="form-control campo-numerico " data-local_id="322" form="formulario" id="quantidade_local_estocagem" name="nao_considerar" type="text" style="">
+          <span class="input-group-addon input-group-estoque-atual">Atual: <span class="estoque-atual"></span></span>
+        </div>
+      </div>
+
+      <div class="form-group campo-codigos-unicos" id="campo_codigos_unicos"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos" for="codigos_unicos">Quantidade no LOJA DEMO 3</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="codigos_unicos" class=" multiselect-autocompletar" form="formulario" multiple="multiple" permite_novos_elementos="true" campo="numero" data-registros="[]" data-filtrar_com="{&quot;produto_id&quot;:&quot;filtro_produto_id&quot;}" name="simples_remessa[codigos_unicos][]" id="codigos_unicos_322" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div>
+    <div class="form-group campo-codigos-unicos-manual-saida" id="campo_codigos_unicos_manual_saida"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos_manual_saida" for="codigos_unicos_manual_saida">Quantidade no LOJA DEMO 3</label><div class="col-xs-12"><input class="form-control" form="formulario" id="codigos_unicos_manual_saida_322" name="simples_remessa[codigos_unicos_manual_saida]" atributo="codigos_unicos_manual_saida" campo="numero" type="text" style=""></div></div>
+      <div class="form-group campo-quantidade-local-estocagem" id="campo_quantidade_local_estocagem">
+        <label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" for="quantidade_local_estocagem" id="titulo_campo_quantidade_local_estocagem">Quantidade no Assistencia LOJA DEMO 3</label>
+        <div class="col-sm-12 input-group" style="padding-left: 15px; padding-right: 15px;">
+          <input atributo="quantidade_local_estocagem" class="form-control campo-numerico " data-local_id="324" form="formulario" id="quantidade_local_estocagem" name="nao_considerar" type="text" style="">
+          <span class="input-group-addon input-group-estoque-atual">Atual: <span class="estoque-atual"></span></span>
+        </div>
+      </div>
+
+      <div class="form-group campo-codigos-unicos" id="campo_codigos_unicos"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos" for="codigos_unicos">Quantidade no Assistencia LOJA DEMO 3</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="codigos_unicos" class=" multiselect-autocompletar" form="formulario" multiple="multiple" permite_novos_elementos="true" campo="numero" data-registros="[]" data-filtrar_com="{&quot;produto_id&quot;:&quot;filtro_produto_id&quot;}" name="simples_remessa[codigos_unicos][]" id="codigos_unicos_324" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div>
+    <div class="form-group campo-codigos-unicos-manual-saida" id="campo_codigos_unicos_manual_saida"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos_manual_saida" for="codigos_unicos_manual_saida">Quantidade no Assistencia LOJA DEMO 3</label><div class="col-xs-12"><input class="form-control" form="formulario" id="codigos_unicos_manual_saida_324" name="simples_remessa[codigos_unicos_manual_saida]" atributo="codigos_unicos_manual_saida" campo="numero" type="text" style=""></div></div>
+      <div class="form-group campo-quantidade-local-estocagem" id="campo_quantidade_local_estocagem">
+        <label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" for="quantidade_local_estocagem" id="titulo_campo_quantidade_local_estocagem">Quantidade no ATIVO - LOJA DEMO 3</label>
+        <div class="col-sm-12 input-group" style="padding-left: 15px; padding-right: 15px;">
+          <input atributo="quantidade_local_estocagem" class="form-control campo-numerico " data-local_id="321" form="formulario" id="quantidade_local_estocagem" name="nao_considerar" type="text" style="">
+          <span class="input-group-addon input-group-estoque-atual">Atual: <span class="estoque-atual"></span></span>
+        </div>
+      </div>
+
+      <div class="form-group campo-codigos-unicos" id="campo_codigos_unicos"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos" for="codigos_unicos">Quantidade no ATIVO - LOJA DEMO 3</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="codigos_unicos" class=" multiselect-autocompletar" form="formulario" multiple="multiple" permite_novos_elementos="true" campo="numero" data-registros="[]" data-filtrar_com="{&quot;produto_id&quot;:&quot;filtro_produto_id&quot;}" name="simples_remessa[codigos_unicos][]" id="codigos_unicos_321" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div>
+    <div class="form-group campo-codigos-unicos-manual-saida" id="campo_codigos_unicos_manual_saida"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos_manual_saida" for="codigos_unicos_manual_saida">Quantidade no ATIVO - LOJA DEMO 3</label><div class="col-xs-12"><input class="form-control" form="formulario" id="codigos_unicos_manual_saida_321" name="simples_remessa[codigos_unicos_manual_saida]" atributo="codigos_unicos_manual_saida" campo="numero" type="text" style=""></div></div>
+      <div class="form-group campo-quantidade-local-estocagem" id="campo_quantidade_local_estocagem">
+        <label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" for="quantidade_local_estocagem" id="titulo_campo_quantidade_local_estocagem">Quantidade no ATIVO LOJA DEMO CENTRO</label>
+        <div class="col-sm-12 input-group" style="padding-left: 15px; padding-right: 15px;">
+          <input atributo="quantidade_local_estocagem" class="form-control campo-numerico " data-local_id="318" form="formulario" id="quantidade_local_estocagem" name="nao_considerar" type="text" style="">
+          <span class="input-group-addon input-group-estoque-atual">Atual: <span class="estoque-atual"></span></span>
+        </div>
+      </div>
+
+      <div class="form-group campo-codigos-unicos" id="campo_codigos_unicos"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos" for="codigos_unicos">Quantidade no ATIVO LOJA DEMO CENTRO</label><div class="col-xs-12"><select descricao="Pesquisar" atributo="codigos_unicos" class=" multiselect-autocompletar" form="formulario" multiple="multiple" permite_novos_elementos="true" campo="numero" data-registros="[]" data-filtrar_com="{&quot;produto_id&quot;:&quot;filtro_produto_id&quot;}" name="simples_remessa[codigos_unicos][]" id="codigos_unicos_318" style="margin: 0px; padding: 0px; border: 0px; display: none;"></select><div class="multiselect-autocompletar Tokenize"><ul class="TokensContainer Autosize"><li class="Placeholder" style="display: list-item;"><div class="lupa-multiselect-autocompletar"></div> Pesquisar</li><li class="TokenSearch"><input size="5" style=""></li></ul><ul class="Dropdown" style="display: none;"></ul></div></div></div>
+    <div class="form-group campo-codigos-unicos-manual-saida" id="campo_codigos_unicos_manual_saida"><label class="col-xs-12 label-sm label-md label-lg no-padding-right control-label" id="titulo_campo_codigos_unicos_manual_saida" for="codigos_unicos_manual_saida">Quantidade no ATIVO LOJA DEMO CENTRO</label><div class="col-xs-12"><input class="form-control" form="formulario" id="codigos_unicos_manual_saida_318" name="simples_remessa[codigos_unicos_manual_saida]" atributo="codigos_unicos_manual_saida" campo="numero" type="text" style=""></div></div>
+</div>
+
+<div class="quantidade-por-filial">
+      <table class="table table-bordered">
+        <tbody>
+
+            
+                
+                
+                
+                
+                
+            
+                
+                
+                
+                
+                
+            
+                
+                
+                
+                
+            
+                
+                
+                
+                
+            
+                
+            
+                
+                
+                
+      </tbody></table>
+</div>
+
+<button class="btn btn-success" id="concluir_quantidade_por_local" type="button">Concluir</button>
+</div></div></div></div>
+</form>
+
+
+      </div>
   </section>
 </main>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
+  // Interruptores Sim/Não
+  $(document).on('click', '.bootstrap-switch', function () {
+    var on = $(this).hasClass('bootstrap-switch-on');
+    $(this).toggleClass('bootstrap-switch-on', !on).toggleClass('bootstrap-switch-off', on);
+    $(this).find('input').prop('checked', !on);
+  });
+  // Botões de opção (Física / Jurídica / Estrangeira)
+  $(document).on('click', '.opcao-componente-radio', function () {
+    $(this).siblings('.opcao-componente-radio').removeClass('btn-primary').addClass('btn-default');
+    $(this).removeClass('btn-default').addClass('btn-primary');
+    $('input[type="hidden"][name="' + $(this).attr('name') + '"]').val($(this).val());
+  });
+  // Abas do ERP (li#cabecalho_aba_... > a[href="#aba-..."])
+  $(document).on('click', 'li[id^="cabecalho_aba_"] > a', function (e) {
+    e.preventDefault();
+    var alvo = $($(this).attr('href'));
+    $(this).closest('ul').children('li').removeClass('active');
+    $(this).parent().addClass('active');
+    alvo.siblings('.tab-pane').removeClass('active in');
+    alvo.addClass('active in');
+  });
+  // Links sem destino no protótipo não recarregam a página
+  $(document).on('click', 'a[href="#"]', function (e) { e.preventDefault(); });
+</script>
 </body>
 </html>
