@@ -1,9 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="JUNIX SMART">
-  <g transform="translate(4 6)">
-    <rect x="0" y="0" width="52" height="52" rx="14" fill="#ff035b"/>
-    <path d="M33 12v20.5c0 6.4-4.6 10.5-10.8 10.5-5.2 0-9-2.8-10.2-7.4l6-2.2c.6 2.1 2 3.4 4 3.4 2.6 0 4-1.7 4-4.6V12z" fill="#fff"/>
-    <circle cx="40" cy="14" r="4" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" role="img" aria-label="JUNIX SMART">
+  <g transform="translate(2 4)">
+  <defs>
+    <linearGradient id="jg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#f2316a"/>
+      <stop offset="0.5" stop-color="#8b2fb8"/>
+      <stop offset="1" stop-color="#2b3ae6"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="56" height="56" rx="16" fill="url(#jg)"/>
+  <path d="M35.5 12.5v20.2c0 7.6-5.2 12.3-12.6 12.3-6.2 0-10.6-3.3-12-8.7l6.9-2.6c.7 2.5 2.4 4 4.9 4 3.2 0 5-2 5-5.5V12.5z" fill="#fff"/>
+  <circle cx="43.5" cy="14.5" r="4.6" fill="#fff"/>
   </g>
-  <text x="68" y="38" font-family="'Work Sans','Helvetica Neue',Arial,sans-serif" font-size="34" font-weight="700" letter-spacing="1" fill="#1d2b36">JUNIX</text>
-  <text x="70" y="56" font-family="'Work Sans','Helvetica Neue',Arial,sans-serif" font-size="12.5" font-weight="500" letter-spacing="6.4" fill="#1d2b36">SMART</text>
+  <text x="70" y="40" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="36" font-weight="900" letter-spacing="1.5" fill="#10202e">JUNIX</text>
+  <text x="72" y="59" font-family="'Helvetica Neue',Arial,sans-serif" font-size="13" font-weight="500" letter-spacing="20.6" fill="#10202e">SMART</text>
 </svg>
