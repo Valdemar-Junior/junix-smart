@@ -164,25 +164,18 @@
     calcularLinha(tr);
   }
 
-  var listaProdutos;
   function prepararLinha(tr) {
     var busca = tr.querySelector('input.input-produto');
     if (!busca) return;
-    busca.setAttribute('list', listaProdutos.id);
     busca.setAttribute('autocomplete', 'off');
     busca.placeholder = 'Código ou descrição';
-    var espera;
-    busca.addEventListener('input', function () {
-      clearTimeout(espera);
-      espera = setTimeout(function () { buscarProdutos(busca.value); }, 250);
-      var achado = mapaProdutos[busca.value];
-      if (achado) escolherProduto(tr, achado);
-    });
+    E.sugestoes(busca, buscarProdutos, function (item) { escolherProduto(tr, item.produto); }, true);
+    busca.addEventListener('input', function () { campoLinha(tr, 'produto_id').value = ''; });
     busca.addEventListener('change', function () {
-      var achado = mapaProdutos[busca.value];
-      if (achado) { escolherProduto(tr, achado); return; }
-      // digitou só o código: procura exato
-      if (busca.value.trim()) sb.from('produtos').select('id,codigo,descricao').eq('codigo', busca.value.trim()).limit(1)
+      if (campoLinha(tr, 'produto_id').value || !busca.value.trim()) return;
+      // digitou o código (ou o texto exato da lista) sem escolher: procura exato
+      var codigo = busca.value.trim().split(' - ')[0];
+      sb.from('produtos').select('id,codigo,descricao').eq('codigo', codigo).limit(1)
         .then(function (r) { if (!r.error && r.data.length) escolherProduto(tr, r.data[0]); });
     });
     ['quantidade', 'valor_unitario', 'valor_descontos'].forEach(function (a) {
@@ -202,18 +195,14 @@
     });
   }
 
-  var mapaProdutos = {};
   function rotuloProduto(p) { return p.codigo + ' - ' + p.descricao; }
   function buscarProdutos(texto) {
-    var t = String(texto || '').replace(/^\d+\s-\s/, '').trim();
+    var t = String(texto || '').replace(/^\d+\s-\s/, '').trim().replace(/[,()]/g, ' ');
     var q = sb.from('produtos').select('id,codigo,descricao').eq('ativo', true).order('descricao').limit(30);
-    if (t) q = q.or('descricao.ilike.%' + t.replace(/[,()]/g, ' ') + '%,codigo.ilike.' + t.replace(/[,()]/g, '') + '%');
-    q.then(function (r) {
-      if (r.error) return;
-      listaProdutos.innerHTML = r.data.map(function (p) {
-        mapaProdutos[rotuloProduto(p)] = p;
-        return '<option value="' + E.esc(rotuloProduto(p)) + '">';
-      }).join('');
+    if (t) q = q.or('descricao.ilike.%' + t + '%,codigo.ilike.' + t.replace(/\s/g, '') + '%');
+    return q.then(function (r) {
+      if (r.error) return [];
+      return r.data.map(function (p) { return { id: p.id, rotulo: rotuloProduto(p), produto: p }; });
     });
   }
 
@@ -675,11 +664,6 @@
     prepararCelulas();
     E.prepararMascaras();
     E.prepararBuscas('documentos');
-
-    listaProdutos = document.createElement('datalist');
-    listaProdutos.id = 'lista_produtos_venda';
-    document.body.appendChild(listaProdutos);
-    buscarProdutos('');
 
     // linha modelo: a primeira, limpa (as demais capturadas saem)
     linhas().forEach(function (tr, i) { if (i) tr.remove(); });

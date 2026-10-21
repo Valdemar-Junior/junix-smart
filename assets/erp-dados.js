@@ -479,6 +479,100 @@
   }
 
   // campos com busca (digita e escolhe): usa <datalist> com resultados do banco
+  // ---------- lista de sugestões das buscas (no lugar do typeahead do ERP) ----------
+  // buscar(texto) -> Promise<[{id, rotulo}]>; escolher(item) é chamado ao clicar ou dar Enter.
+  // comLupa: o botão de pesquisa ao lado do campo abre a lista completa.
+  function sugestoes(vis, buscar, escolher, comLupa) {
+    var menu = document.createElement('div');
+    menu.className = 'erp-sugestoes';
+    menu.setAttribute('role', 'listbox');
+    document.body.appendChild(menu);
+    var itens = [], ativo = -1, espera, pedido = 0;
+
+    function posicionar() {
+      var r = vis.getBoundingClientRect(), estilo = getComputedStyle(vis);
+      menu.style.left = (r.left + window.scrollX) + 'px';
+      menu.style.top = (r.bottom + window.scrollY + 2) + 'px';
+      menu.style.minWidth = r.width + 'px';
+      menu.style.background = estilo.backgroundColor === 'rgba(0, 0, 0, 0)' ? '' : estilo.backgroundColor;
+      menu.style.color = estilo.color;
+    }
+    function fechar() { menu.style.display = 'none'; ativo = -1; }
+    function desenhar() {
+      if (!itens.length) {
+        menu.innerHTML = '<div class="erp-sugestoes-vazio">Nenhum registro encontrado</div>';
+      } else {
+        menu.innerHTML = itens.map(function (it, i) {
+          return '<div class="erp-sugestao' + (i === ativo ? ' ativo' : '') + '" role="option" data-i="' + i + '">' + esc(it.rotulo) + '</div>';
+        }).join('');
+      }
+      posicionar();
+      menu.style.display = 'block';
+    }
+    function abrir(texto) {
+      var meu = ++pedido;
+      buscar(texto).then(function (lista) {
+        if (meu !== pedido || document.activeElement !== vis) return;   // resposta velha ou saiu do campo
+        itens = lista || []; ativo = itens.length ? 0 : -1;
+        desenhar();
+      });
+    }
+    function escolherItem(i) {
+      var it = itens[i]; if (!it) return;
+      vis.value = it.rotulo;
+      fechar();
+      escolher(it);
+    }
+    menu.addEventListener('mousedown', function (e) {
+      e.preventDefault();                                   // não tira o foco do campo
+      var d = e.target.closest('.erp-sugestao');
+      if (d) escolherItem(Number(d.dataset.i));
+    });
+    vis.addEventListener('input', function () {
+      clearTimeout(espera);
+      espera = setTimeout(function () { abrir(vis.value); }, 200);
+    });
+    vis.addEventListener('focus', function () { if (!vis.value) abrir(''); });
+    vis.addEventListener('blur', function () { setTimeout(fechar, 150); });
+    vis.addEventListener('keydown', function (e) {
+      if (menu.style.display !== 'block') {
+        if (e.key === 'ArrowDown') { e.preventDefault(); abrir(vis.value); }
+        return;
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        ativo = (ativo + (e.key === 'ArrowDown' ? 1 : -1) + itens.length) % itens.length;
+        desenhar();
+        var el = menu.querySelector('.ativo'); if (el) el.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter') {
+        if (ativo >= 0) { e.preventDefault(); e.stopPropagation(); escolherItem(ativo); }
+      } else if (e.key === 'Escape') {
+        fechar();
+      }
+    });
+    window.addEventListener('resize', function () { if (menu.style.display === 'block') posicionar(); });
+    if (comLupa) {
+      var grupo = vis.closest('.input-group');
+      Array.prototype.forEach.call(grupo ? grupo.querySelectorAll('.input-group-addon') : [], function (b) {
+        if (!b.querySelector('.glyphicon-search')) return;
+        b.style.cursor = 'pointer';
+        b.addEventListener('mousedown', function (e) { e.preventDefault(); vis.focus(); abrir(''); });
+      });
+    }
+    return { abrir: abrir, fechar: fechar };
+  }
+  (function estiloSugestoes() {
+    var st = document.createElement('style');
+    st.textContent =
+      '.erp-sugestoes{display:none;position:absolute;z-index:3000;max-height:300px;overflow-y:auto;background:#fff;color:#363636;' +
+      'border:1px solid rgba(0,0,0,.15);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:4px 0;font-size:14px}' +
+      '.erp-sugestao{padding:7px 14px;cursor:pointer;white-space:nowrap}' +
+      '.erp-sugestao:hover{background:rgba(47,132,236,.12)}' +
+      '.erp-sugestao.ativo{background:#2f84ec;color:#fff}' +
+      '.erp-sugestoes-vazio{padding:7px 14px;opacity:.65}';
+    document.head.appendChild(st);
+  })();
+
   function prepararBuscas(tabela) {
     Array.prototype.forEach.call(document.querySelectorAll('input.tt-input[atributo]'), function (vis, n) {
       var atributo = vis.getAttribute('atributo');
@@ -494,28 +588,25 @@
       var sugerida = String(vis.dataset.atributo_descricao || '').split('.').pop();
       var col = colunas(fk.tabela)[sugerida] ? sugerida : colunaRotulo(fk.tabela);
       vis.dataset.colunaRef = col;
-      var dl = document.createElement('datalist');
-      dl.id = 'busca_' + n;
-      document.body.appendChild(dl);
-      vis.setAttribute('list', dl.id);
       vis.setAttribute('autocomplete', 'off');
       vis.dataset.tabelaRef = fk.tabela;
-      var mapa = {}, espera;
       // filtros que o ERP declara no campo (ex.: só clientes ativos: {"cliente":true})
       var fixos = {};
       try { fixos = JSON.parse(vis.dataset.filtros || '{}'); } catch (e) { fixos = {}; }
       var colsRef = colunas(fk.tabela);
       Object.keys(fixos).forEach(function (k) { if (!colsRef[k] || typeof fixos[k] === 'object') delete fixos[k]; });
-      function buscar() {
-        var q = sb.from(fk.tabela).select('id,' + col).ilike(col, '%' + vis.value + '%');
+      sugestoes(vis, function (texto) {
+        var q = sb.from(fk.tabela).select('id,' + col).ilike(col, '%' + texto + '%');
         Object.keys(fixos).forEach(function (k) { q = q.eq(k, fixos[k]); });
-        q.order(col).limit(30).then(function (res) {
-          if (res.error) return;
-          mapa = {};
-          dl.innerHTML = res.data.map(function (r) { mapa[r[col]] = r.id; return '<option value="' + esc(r[col]) + '">'; }).join('');
+        return q.order(col).limit(30).then(function (res) {
+          if (res.error) return [];
+          return res.data.map(function (r) { return { id: r.id, rotulo: r[col] }; });
         });
-      }
-      vis.addEventListener('focus', buscar);
+      }, function (item) {
+        if (!oculto) return;
+        oculto.value = item.id;
+        oculto.dispatchEvent(new Event('change'));
+      }, fk.tabela !== 'ceps');
       // texto digitado por inteiro (sem escolher na lista): confirma pelo valor exato.
       // O Salvar também chama isto, para não gravar antes de a busca voltar.
       vis._confirmar = function () {
@@ -574,11 +665,8 @@
           });
         });
       }
-      vis.addEventListener('input', function () {
-        clearTimeout(espera); espera = setTimeout(buscar, 250);
-        if (oculto) oculto.value = mapa[vis.value] != null ? mapa[vis.value] : '';
-        if (oculto && oculto.value) oculto.dispatchEvent(new Event('change'));
-      });
+      // texto mudou depois de escolher: a escolha anterior deixa de valer
+      vis.addEventListener('input', function () { if (oculto) oculto.value = ''; });
       if (oculto) {
         oculto.addEventListener('change', function () { vis._preenchendo = aoEscolher(atributo, oculto.value, oculto); });
         oculto.dataset.visivel = vis.id;
@@ -908,7 +996,7 @@
   window.ERP = {
     sb: sb, META: META, EMPRESA_ID: EMPRESA_ID, colunas: colunas, fkDe: fkDe, colunaRotulo: colunaRotulo,
     agora: agoraLocal, esc: esc, numBR: numBR, dataBR: dataBR, dataHoraBR: dataHoraBR, paraISO: paraISO, paraNumero: paraNumero,
-    parametro: parametro, aviso: aviso, erroAmigavel: erroAmigavel, prepararBuscas: prepararBuscas,
+    parametro: parametro, aviso: aviso, erroAmigavel: erroAmigavel, prepararBuscas: prepararBuscas, sugestoes: sugestoes,
     preencherBuscas: preencherBuscas, prepararMascaras: prepararMascaras
   };
 
